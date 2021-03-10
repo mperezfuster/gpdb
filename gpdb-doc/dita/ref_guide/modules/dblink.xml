@@ -116,8 +116,9 @@ CREATE EXTENSION</codeblock></li>
         <p>To make a connection to a database with <codeph>dblink_connect()</codeph>, non-superusers
           must include host, user, and password information in the connection string. The host,
           user, and password information must be included even when connecting to a local database.
-          For example, the user <codeph>test_user</codeph> can create a <codeph>dblink</codeph>
-          connection to the local system <codeph>mdw</codeph> with this
+          There must also be an entry in <codeph>pg_hba.conf</codeph> file for this non-superuser
+          and the target database. For example, the user <codeph>test_user</codeph> can create a
+            <codeph>dblink</codeph> connection to the local system <codeph>mdw</codeph> with this
           command:<codeblock>testdb=> <b>SELECT dblink_connect('host=mdw port=5432 dbname=postgres user=test_user password=secret');</b></codeblock></p>
         <p>If non-superusers need to create <codeph>dblink</codeph> connections that do not require
           a password, they can use the <codeph>dblink_connect_u()</codeph> function. The
@@ -148,13 +149,49 @@ CREATE EXTENSION</codeblock></li>
             connection.<codeblock>testdb=# <b>GRANT EXECUTE ON FUNCTION dblink_connect_u(text) TO test_user;</b>
 testdb=# <b>GRANT EXECUTE ON FUNCTION dblink_connect_u(text, text) TO test_user;</b></codeblock></li>
           <li>Now <codeph>test_user</codeph> can create a connection to another local database
-            without a password. For example, <codeph>test_user</codeph> can log into the
-              <codeph>testdb</codeph> database and execute this command to create a connection named
-              <codeph>testconn</codeph> to the local <codeph>postgres</codeph> database.<codeblock>testdb=> <b>SELECT dblink_connect_u('testconn', 'dbname=postgres user=test_user');</b></codeblock>
+            without a password, as long as there is a correctly configured entry in
+              <codeph>pg_hba.conf</codeph>for the user and target database. For example,
+              <codeph>test_user</codeph> can log into the <codeph>testdb</codeph> database and
+            execute this command to create a connection named <codeph>testconn</codeph> to the local
+              <codeph>postgres</codeph> database.<codeblock>testdb=> <b>SELECT dblink_connect_u('testconn', 'dbname=postgres user=test_user');</b></codeblock>
             <note>If a <codeph>user</codeph> is not specified, <codeph>dblink_connect_u()</codeph>
               uses the value of the <codeph>PGUSER</codeph> environment variable when Greenplum
               Database was started. If <codeph>PGUSER</codeph> is not set, the default is the system
               user that started Greenplum Database.</note></li>
+          <li><codeph>test_user</codeph> can use the <codeph>dblink()</codeph> function to execute a
+            query using a <codeph>dblink</codeph> connection. For example, this command uses the
+              <codeph>dblink</codeph> connection named <codeph>testconn</codeph> created in the
+            previous step. <codeph>test_user</codeph> must have appropriate access to the
+            table.<codeblock>testdb=> <b>SELECT * FROM dblink('testconn', 'SELECT * FROM testdblink') AS dbltab(id int, product text);</b></codeblock></li>
+        </ol>
+      </section>
+      <section>
+        <title>Using dblink as a Non-Superuser with no authentication checks</title>
+        <p>In some cases, there might be the need for allowing certain non-superusers access to
+            <codeph>dblink</codeph> without making any authentication checks. The function
+            <codeph>dblink_connect_no_auth</codeph>provides this functionallity as it bypasses the
+            <codeph>pg_hba.conf</codeph> file and runs as superuser. </p>
+        <note type="warning">This is a high risk functionallity so it should be handled with care
+          and only granted to trustworthy users. Also please note that it is not possible to use
+            <codeph>dblink_connect_no_auth</codeph> to connect to a remote database, it will only
+          connect locally within the cluster.</note>
+        <p>Similarly to <codeph>dblink_connect_u</codeph> the function is not available by default,
+          it needs <codeph>gpadmin</codeph> superuser to grant permission to the desired user
+          beforehand:</p>
+        <ol id="ol_agf_qwj_x4b">
+          <li>As a superuser, grant the <codeph>EXECUTE</codeph> privilege on the
+              <codeph>dblink_connect_no_auth()</codeph> functions in the user database. This example
+            grants the privilege to the non-superuser <codeph>test_user</codeph> on the functions
+            with the signatures for creating an implicit or a named <codeph>dblink</codeph>
+            connection.<codeblock>testdb=# <b>GRANT EXECUTE ON FUNCTION dblink_connect_no_auth(text) TO test_user;</b>
+testdb=# <b>GRANT EXECUTE ON FUNCTION dblink_connect_no_auth(text, text) TO test_user;</b></codeblock></li>
+          <li>Now <codeph>test_user</codeph> can create a connection to another local database
+            without a password, regardless of what is specified in <codeph>pg_hba.conf</codeph>. For
+            example, <codeph>test_user</codeph> can log into the <codeph>testdb</codeph> database
+            and execute this command to create a connection named <codeph>testconn</codeph> to the
+            local <codeph>postgres</codeph>
+            database.<codeblock>testdb=> <b>SELECT dblink_connect_no_auth('testconn', 'dbname=postgres user=test_user');</b></codeblock>
+          </li>
           <li><codeph>test_user</codeph> can use the <codeph>dblink()</codeph> function to execute a
             query using a <codeph>dblink</codeph> connection. For example, this command uses the
               <codeph>dblink</codeph> connection named <codeph>testconn</codeph> created in the
