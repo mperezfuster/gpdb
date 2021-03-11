@@ -1187,37 +1187,33 @@
       <p>The following parameters configure the external tables feature of Greenplum Database.</p>
       <simpletable id="kh164454" frame="none">
         <strow>
-          <stentry>
-            <p>
+          <stentry><xref href="guc-list.xml#gpfdist_retry_timeout" type="section"
+              >gpfdist_retry_timeout</xref><p>
               <xref href="guc-list.xml#gp_external_enable_exec" type="section"
                 >gp_external_enable_exec</xref>
-            </p>
-            <p>
+            </p><p>
               <xref href="guc-list.xml#gp_external_enable_filter_pushdown" type="section"
                 >gp_external_enable_filter_pushdown</xref>
-            </p>
-            <p>
+            </p><p>
               <xref href="guc-list.xml#gp_external_max_segs" type="section"
                 >gp_external_max_segs</xref>
-            </p>
-            <p>
+            </p><p>
               <xref href="guc-list.xml#topic_lvm_ttc_3p" type="section"
                 >gp_initial_bad_row_limit</xref>
-            </p>
-            <p>
+            </p><p>
               <xref href="guc-list.xml#gp_reject_percent_threshold" type="section"
                 >gp_reject_percent_threshold</xref>
-            </p>
-          </stentry>
-          <stentry><p>
+            </p></stentry>
+          <stentry>
+            <p>
               <xref href="guc-list.xml#readable_external_table_timeout" type="section"
                 >readable_external_table_timeout</xref>
-            </p><p>
+            </p>
+            <p>
               <xref href="guc-list.xml#writable_external_table_bufsize" type="section"
-                >writable_external_table_bufsize</xref></p><xref
-              href="guc-list.xml#gpfdist_retry_timeout" type="section"
-              >gpfdist_retry_timeout</xref><p><xref href="guc-list.xml#verify_gpfdists_cert"
-                >verify_gpfdists_cert</xref></p></stentry>
+                >writable_external_table_bufsize</xref></p>
+            <p><xref href="guc-list.xml#verify_gpfdists_cert">verify_gpfdists_cert</xref></p>
+          </stentry>
         </strow>
       </simpletable>
     </body>
