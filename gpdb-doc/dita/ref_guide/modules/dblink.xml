@@ -153,7 +153,7 @@ testdb=# GRANT EXECUTE ON FUNCTION dblink_connect_u(text, text) TO test_user;</c
               <codeph>pg_hba.conf</codeph> for the user and target database. For example,
               <codeph>test_user</codeph> can log into the <codeph>testdb</codeph> database and
             execute this command to create a connection named <codeph>testconn</codeph> to the local
-              <codeph>postgres</codeph> database.<codeblock>testdb=> <b>SELECT dblink_connect_u('testconn', 'dbname=postgres user=test_user');</b></codeblock>
+              <codeph>postgres</codeph> database.<codeblock>testdb=> SELECT dblink_connect_u('testconn', 'dbname=postgres user=test_user');</codeblock>
             <note>If a <codeph>user</codeph> is not specified, <codeph>dblink_connect_u()</codeph>
               uses the value of the <codeph>PGUSER</codeph> environment variable when Greenplum
               Database was started. If <codeph>PGUSER</codeph> is not set, the default is the system
@@ -169,11 +169,11 @@ testdb=# GRANT EXECUTE ON FUNCTION dblink_connect_u(text, text) TO test_user;</c
         <title>Using dblink as a Non-Superuser without Authentication Checks</title>
         <p>In rare cases you may need to allow non-superusers to acccess to <codeph>dblink</codeph>
           without making any authentication checks. The function
-            <codeph>dblink_connect_no_auth</codeph> provides this functionality as it bypasses the
+            <codeph>dblink_connect_no_auth()</codeph> provides this functionality as it bypasses the
             <codeph>pg_hba.conf</codeph> file. </p>
-        <note type="warning">Using these functions introduces a security risk; ensure that you grant
+        <note type="warning">Using this function introduces a security risk; ensure that you grant
           unauthorized access only to trusted user accounts. Also note that
-            <codeph>dblink_connect_no_auth</codeph> functions limit connections to the local
+            <codeph>dblink_connect_no_auth()</codeph> functions limit connections to the local
           cluster, and do not permit connections to a remote database.</note>
         <p>These functions are not available by default; the <codeph>gpadmin</codeph> superuser must
           grant permission to the non-superuser beforehand:</p>
