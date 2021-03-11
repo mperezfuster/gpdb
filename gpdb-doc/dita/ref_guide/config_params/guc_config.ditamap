@@ -96,6 +96,7 @@
             <topicref href="guc-list.xml#gp_enable_exchange_default_partition"/>
             <topicref href="guc-list.xml#gp_enable_fast_sri"/>
             <topicref href="guc-list.xml#gp_enable_gpperfmon"/>
+            <topicref href="guc-list.xml#gp_enable_groupext_distinct_gather"/>
             <topicref href="guc-list.xml#gp_enable_groupext_distinct_pruning"/>
             <topicref href="guc-list.xml#gp_enable_multiphase_agg"/>
             <topicref href="guc-list.xml#gp_enable_predicate_propagation"/>
