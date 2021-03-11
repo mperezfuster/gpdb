@@ -1187,24 +1187,31 @@
       <p>The following parameters configure the external tables feature of Greenplum Database.</p>
       <simpletable id="kh164454" frame="none">
         <strow>
-          <stentry><xref href="guc-list.xml#gpfdist_retry_timeout" type="section"
-              >gpfdist_retry_timeout</xref><p>
+          <stentry>
+            <p>
               <xref href="guc-list.xml#gp_external_enable_exec" type="section"
                 >gp_external_enable_exec</xref>
-            </p><p>
+            </p>
+            <p>
               <xref href="guc-list.xml#gp_external_enable_filter_pushdown" type="section"
                 >gp_external_enable_filter_pushdown</xref>
-            </p><p>
+            </p>
+            <p>
               <xref href="guc-list.xml#gp_external_max_segs" type="section"
                 >gp_external_max_segs</xref>
-            </p><p>
+            </p>
+            <p>
               <xref href="guc-list.xml#topic_lvm_ttc_3p" type="section"
                 >gp_initial_bad_row_limit</xref>
-            </p><p>
+            </p>
+            <p>
               <xref href="guc-list.xml#gp_reject_percent_threshold" type="section"
                 >gp_reject_percent_threshold</xref>
-            </p></stentry>
+            </p>
+          </stentry>
           <stentry>
+            <p><xref href="guc-list.xml#gpfdist_retry_timeout" type="section"
+                >gpfdist_retry_timeout</xref></p>
             <p>
               <xref href="guc-list.xml#readable_external_table_timeout" type="section"
                 >readable_external_table_timeout</xref>
