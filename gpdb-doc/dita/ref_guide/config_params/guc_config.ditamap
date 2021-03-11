@@ -96,7 +96,6 @@
             <topicref href="guc-list.xml#gp_enable_exchange_default_partition"/>
             <topicref href="guc-list.xml#gp_enable_fast_sri"/>
             <topicref href="guc-list.xml#gp_enable_gpperfmon"/>
-            <topicref href="guc-list.xml#gp_enable_groupext_distinct_gather"/>
             <topicref href="guc-list.xml#gp_enable_groupext_distinct_pruning"/>
             <topicref href="guc-list.xml#gp_enable_multiphase_agg"/>
             <topicref href="guc-list.xml#gp_enable_predicate_propagation"/>
@@ -169,6 +168,7 @@
             <topicref href="guc-list.xml#gp_workfile_limit_files_per_query"/>
             <topicref href="guc-list.xml#gp_workfile_limit_per_query"/>
             <topicref href="guc-list.xml#gp_workfile_limit_per_segment"/>
+            <topicref href="guc-list.xml#gpfdist_retry_timeout"/>
             <topicref href="guc-list.xml#gpperfmon_port"/>
             <topicref href="guc-list.xml#ignore_checksum_failure"/>
             <topicref href="guc-list.xml#integer_datetimes"/>
