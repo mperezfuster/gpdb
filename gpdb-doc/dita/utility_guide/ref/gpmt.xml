@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA Topic//EN" "topic.dtd">
 <topic id="topic_vzy_mkx_bpb">
-  <title>gpmt-overview</title>
+  <title>gpmt</title>
   <body>
     <p> GPMT (Greenplum Magic Tool) provides a set of diagnostic utilities to troubleshoot and
       resolve common supportability issues, along with a consistent method for gathering information
@@ -16,7 +16,7 @@
       <title>Tools</title>
       <parml>
         <plentry>
-          <pt><varname>analyze_session</varname></pt>
+          <pt><xref href="gpmt-analyze_session.xml" type="topic" format="dita"></xref></pt>
           <pd>Collect information from a hung GPDB session for remote analysis.</pd>
         </plentry>
         <plentry>
@@ -24,7 +24,7 @@
           <pd>For VMware Support use only. Backup catalog prior to performing catalog repairs.</pd>
         </plentry>
         <plentry>
-          <pt><varname>gp_log_collector</varname>
+          <pt><xref href="gpmt-gp_log_collector.xml" type="topic" format="dita"></xref>
           </pt>
           <pd>Basic GPDB log collection utility.</pd>
         </plentry>
@@ -37,11 +37,11 @@
           <pd>For VMware Support use only. GPDB Health Check.</pd>
         </plentry>
         <plentry>
-          <pt><varname>gpstatscheck</varname></pt>
+          <pt><xref href="gpmt-gpstatscheck.xml" type="topic" format="dita"></xref></pt>
           <pd>Check for missing stats on objects used in a query.</pd>
         </plentry>
         <plentry>
-          <pt><varname>packcore</varname></pt>
+          <pt><xref href="gpmt-packcore.xml" type="topic" format="dita"></xref></pt>
           <pd>Package core files into single tarball for remote analysis.</pd>
         </plentry>
         <plentry>
