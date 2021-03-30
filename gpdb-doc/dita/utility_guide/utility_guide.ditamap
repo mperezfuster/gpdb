@@ -35,13 +35,7 @@
             <topicref href="ref/gpmapreduce.xml"/>
             <topicref href="ref/gpmapreduce-yaml.xml"/>
             <topicref href="ref/gpmovemirrors.xml"/>
-            <topicref href="ref/gpmt-only.xml"/>
-            <topicref href="ref/gpmt-overview.xml">
-                <topicref href="ref/gpmt-analyze_session.xml"/>
-                <topicref href="ref/gpmt-gp_log_collector.xml"/>
-                <topicref href="ref/gpmt-gpstatscheck.xml"/>
-                <topicref href="ref/gpmt-packcore.xml"/>
-            </topicref>
+            <topicref href="ref/gpmt.xml"/>
             <!-- hidden until testing is complete -msk
         <topicref href="ref/gpmovemirrors.xml"/>
 -->
