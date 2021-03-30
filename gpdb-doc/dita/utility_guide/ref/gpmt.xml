@@ -16,7 +16,7 @@
       <title>Tools</title>
       <parml>
         <plentry>
-          <pt><xref href="gpmt-analyze_session.xml" type="topic" format="dita"></xref></pt>
+          <pt><xref href="gpmt-analyze_session.xml" type="topic" format="dita">analyze_session</xref></pt>
           <pd>Collect information from a hung GPDB session for remote analysis.</pd>
         </plentry>
         <plentry>
@@ -24,7 +24,7 @@
           <pd>For VMware Support use only. Backup catalog prior to performing catalog repairs.</pd>
         </plentry>
         <plentry>
-          <pt><xref href="gpmt-gp_log_collector.xml" type="topic" format="dita"></xref>
+          <pt><xref href="gpmt-gp_log_collector.xml" type="topic" format="dita">gp_log_collector</xref>
           </pt>
           <pd>Basic GPDB log collection utility.</pd>
         </plentry>
@@ -37,11 +37,11 @@
           <pd>For VMware Support use only. GPDB Health Check.</pd>
         </plentry>
         <plentry>
-          <pt><xref href="gpmt-gpstatscheck.xml" type="topic" format="dita"></xref></pt>
+          <pt><xref href="gpmt-gpstatscheck.xml" type="topic" format="dita">gpstatscheck</xref></pt>
           <pd>Check for missing stats on objects used in a query.</pd>
         </plentry>
         <plentry>
-          <pt><xref href="gpmt-packcore.xml" type="topic" format="dita"></xref></pt>
+          <pt><xref href="gpmt-packcore.xml" type="topic" format="dita">packcore</xref></pt>
           <pd>Package core files into single tarball for remote analysis.</pd>
         </plentry>
         <plentry>
