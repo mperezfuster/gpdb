@@ -156,6 +156,32 @@ export POSTGIS_GDAL_ENABLED_DRIVERS=DISABLE_ALL</codeblock>
         <codeblock>SELECT short_name, long_name FROM ST_GDALDrivers();</codeblock>
       </body>
     </topic>
+    <topic id="topic_o4f_ptg_dpb">
+      <title>Migrating from PostGIS 2.0</title>
+      <body>
+        <p>If you are migrating from Greenplum Database 4.3.x and have configured PostGIS 2.0, you
+          must perform a hard upgrade to PostGIS 2.1. These versions are not compatible since the
+          underlying geospatial standards are different. The data must be migrated separately from
+          the rest of the database data.</p>
+        <p>During the data migration planning, check the PostGIS extension version and the objects
+          by running the following commands: </p>
+        <codeblock>pg_dump -s database_name > db.schema
+grep postgis-2.0 db.schema | wc -l</codeblock>
+        <p>If the above returns a non-null result, you need to perform the hard upgrade.</p>
+        <p>You must follow the below steps:</p>
+        <ol id="ol_lj5_kvg_dpb">
+          <li>Run <codeph>pg_dump</codeph> for the schema containing the PostGIS 2.0
+            objects:<codeblock>pg_dump -s database_name -n schema_name > postgis2.0.schema</codeblock></li>
+          <li>Install Greenplum Database 5.x and enable the PostGIS 2.1
+            extension:<codeblock>/usr/local/greenplum-db/share/postgresql/contrib/postgis-2.1/postgis_manager.sh db_name install</codeblock></li>
+          <li>Patch the PostGIS 2.0 schema and insert it to the newly installed Greenplum Database
+            5.x:<codeblock>postgis_restore.pl -v postgis2.0.schema | psql db_name</codeblock></li>
+          <li>Restore the database data.<p>Note: if you use <codeph>gpbackup</codeph> to migrate the
+              data, you must exclude the schema with spatial objects from your backup
+            dataset.</p></li>
+        </ol>
+      </body>
+    </topic>
     <topic id="topic_bgz_vcl_r1b">
       <title>Removing PostGIS Support</title>
       <body>
