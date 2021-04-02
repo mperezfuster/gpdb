@@ -21,7 +21,7 @@
         </plentry>
         <plentry>
           <pt><varname>catalogbackup</varname></pt>
-          <pd>For VMware Support use only. Backup catalog prior to performing catalog repairs.</pd>
+          <pd>For VMware Support use only. Back up catalog prior to performing catalog repairs.</pd>
         </plentry>
         <plentry>
           <pt><xref href="gpmt-gp_log_collector.xml" type="topic" format="dita">gp_log_collector</xref>
@@ -46,8 +46,8 @@
         </plentry>
         <plentry>
           <pt><varname>primarymirror_lengths</varname></pt>
-          <pd>For VMware Support use only. Check if primary and mirror AO and AOCO relfiles are the
-            correct lengths.</pd>
+          <pd>For VMware Support use only. Check whether primary and mirror AO and AOCO relfiles are
+            the correct lengths.</pd>
         </plentry>
         <plentry>
           <pt><varname>tablecollect</varname></pt>
@@ -65,7 +65,7 @@
         </plentry>
         <plentry>
           <pt><varname>replcheck</varname></pt>
-          <pd>Check if tool is replicated to all hosts.</pd>
+          <pd>Check whether tool is replicated to all hosts.</pd>
         </plentry>
         <plentry>
           <pt><varname>replicate</varname>
@@ -74,15 +74,15 @@
         </plentry>
         <plentry>
           <pt><varname>version</varname></pt>
-          <pd>Displays the GPMT version.</pd>
+          <pd>Display the GPMT version.</pd>
         </plentry>
         <plentry>
           <pt><varname>-hostfile</varname></pt>
-          <pd>Limits the hosts where the tool will be run.</pd>
+          <pd>Limit the hosts where the tool will be run.</pd>
         </plentry>
         <plentry>
           <pt><varname> -help</varname></pt>
-          <pd>Displays the online help.</pd>
+          <pd>Display the online help.</pd>
         </plentry>
         <plentry>
           <pt><varname> -verbose</varname></pt>
