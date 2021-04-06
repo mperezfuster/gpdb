@@ -4,11 +4,11 @@
 <topic id="topic1">
   <title id="oz137116">gpmt analyze_session</title>
   <body>
-    <p>This tool traces busy processes associated with a Greenplum database session. The information
-      collected will be used by VMware Support for root cause analysis on hung sessions.</p>
+    <p>This tool traces busy processes associated with a Greenplum Database session. The information
+      collected can be used by VMware Support for root cause analysis on hung sessions.</p>
     <section>
       <title>Usage</title>
-      <codeblock><b>gpmt</b> <b>analyze_session</b>[<varname>-session SESSION_ID </varname>] [<varname> -master-dir DIRECTORY</varname>] 
+      <codeblock><b>gpmt</b> <b>analyze_session</b> [<varname>-session SESSION_ID </varname>] [<varname>-master-dir DIRECTORY</varname>] 
 [<varname>-segment-dir DIRECTORY</varname>] </codeblock>
     </section>
     <section>
@@ -39,7 +39,7 @@
     </section>
     <section>
       <title>Examples</title>
-      <p>Collect process information for a given GPDB session id:</p>
+      <p>Collect process information for a given Greenplum Database session id:</p>
       <codeblock>gpmt analyze_session -session 12345</codeblock>
     </section>
     <p>The tool prompt  gives a high-level list of only the servers that are running busy processes
