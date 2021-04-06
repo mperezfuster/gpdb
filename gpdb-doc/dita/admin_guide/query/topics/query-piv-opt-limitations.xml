@@ -47,7 +47,7 @@
           <li>Aggregate functions that take set operators as input arguments.</li>
           <li>Multiple Distinct Qualified Aggregates, such as <codeph>SELECT count(DISTINCT a),
               sum(DISTINCT b) FROM foo</codeph>, are not supported by default. They can be enabled
-            with <codeph>optimizer_enable_multiple_distinct_aggs</codeph>
+            with the <codeph>optimizer_enable_multiple_distinct_aggs</codeph>
             <xref
               href="../../../ref_guide/config_params/guc-list.xml#optimizer_enable_multiple_distinct_aggs"
               >Configuration Parameter</xref>.</li>
