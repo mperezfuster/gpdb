@@ -363,8 +363,11 @@
               multiplied by 100, and</li>
             <li>The <codeph>gp_resource_group_cpu_limit</codeph> value.</li>
           </ul></p>
-        <p>There are two different ways of assigning CPU resources, determined by the value of the
-          configuration parameter <codeph>gp_resource_group_cpu_ceiling_enforcement</codeph>.</p>
+        <p>When you configure <codeph>CPU_RATE_LIMIT</codeph> for a resource group, Greenplum
+          Database disables <codeph>CPUSET</codeph> for the group and sets the value to -1.</p>
+        <p>There are two different ways of assigning CPU resources by percentage, determined by the
+          value of the configuration parameter
+            <codeph>gp_resource_group_cpu_ceiling_enforcement</codeph>:</p>
         <section>
           <title>Elastic mode</title>
           <p>This mode is active when <codeph>gp_resource_group_cpu_ceiling_enforcement</codeph> is
@@ -385,8 +388,6 @@
             resources than the defined value <codeph>CPU_RATE_LIMIT</codeph>, avoiding the use of
             the CPU burst feature.</p>
         </section>
-        <p>When you configure <codeph>CPU_RATE_LIMIT</codeph> for a resource group, Greenplum
-          Database disables <codeph>CPUSET</codeph> for the group and sets the value to -1.</p>
       </body>
     </topic>
   </topic>
