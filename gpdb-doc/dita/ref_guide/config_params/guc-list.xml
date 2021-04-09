@@ -4268,7 +4268,7 @@
   <topic id="gp_resource_group_cpu_ceiling_enforcement">
     <title>gp_resource_group_cpu_ceiling_enforcement</title>
     <body>
-      <p>Enables the Ceiling Performance mode when assigning CPU resources by Percentage. When
+      <p>Enables the Ceiling Enforcement mode when assigning CPU resources by Percentage. When
         disabled, the Elastic mode will be used. </p>
       <table id="table_wtb_y2g_fpb">
         <tgroup cols="3">
