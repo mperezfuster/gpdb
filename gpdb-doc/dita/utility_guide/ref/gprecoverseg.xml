@@ -180,12 +180,20 @@ newPort|newDataDirectory</codeblock>
         <plentry>
           <pt>-p <varname>new_recover_host</varname>[,...]</pt>
           <pd>Specifies a spare host outside of the currently configured Greenplum Database array on
-            which to recover invalid segments. In the case of multiple failed segment hosts, you can
-            specify a comma-separated list. The spare host must have the Greenplum Database software
-            installed and configured, and have the same hardware and OS configuration as the current
-            segment hosts (same OS version, locales, <codeph>gpadmin</codeph> user account, data
-            directory locations created, ssh keys exchanged, number of network interfaces, network
-            interface naming convention, and so on.).</pd>
+            which to recover invalid segments. Note that the hostname of the new node needs to match
+            the hostname being recovered.<p>The spare host must have the Greenplum Database software
+              installed and configured, and have the same hardware and OS configuration as the
+              current segment hosts (same hostname, OS version, locales, <codeph>gpadmin</codeph>
+              user account, data directory locations created, ssh keys exchanged, number of network
+              interfaces, network interface naming convention, and so on.). Specifically, the
+              Greenplum Database binaries must be installed, the host able to connect password-less
+              with all segments including the Greenplum coordinator, and any other Greenplum
+              Database specific OS configuration parameters applied.</p><p>It is strongly
+              recommended to recover one host at a time, and to make sure that the recovery has
+              successfully completed before recovering another host. However, multiple hosts can
+              also be specified as a comma-separated list. If multiple hosts are down, it is
+              critical to ensure a double fault scenario does not occur in which both the primaries
+              and corresponding mirrors are offline.</p></pd>
         </plentry>
         <plentry>
           <pt>-q (no screen output)</pt>
