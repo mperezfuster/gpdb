@@ -8,7 +8,7 @@
       enabled).</p>
     <section id="section2">
       <title>Synopsis</title>
-      <codeblock><b>gprecoverseg</b> [[<b>-p</b> <varname>new_recover_host</varname>[,...]] | <b>-i</b> <varname>recover_config_file</varname>] [<b>-d</b> <varname>coordinator_data_directory</varname>] 
+      <codeblock><b>gprecoverseg</b> [[<b>-p</b> <varname>new_recover_host</varname>[,...]] | <b>-i</b> <varname>recover_config_file</varname>] [<b>-d</b> <varname>master_data_directory</varname>] 
              [<b>-B</b> <varname>parallel_processes</varname>] [<b>-F</b> [<b>-s</b>]] [<b>-a</b>] [<b>-q</b>] 
 	      [<b>--hba-hostnames</b> <varname>boolean</varname>] 
              [<b>--no-progress</b>] [<b>-l</b> <varname>logfile_directory</varname>]
@@ -93,9 +93,9 @@
             recover.</pd>
         </plentry>
         <plentry>
-          <pt>-d <varname>coordinator_data_directory</varname></pt>
-          <pd>Optional. The coordinator host data directory. If not specified, the value set for
-              <codeph>$COORDINATOR_DATA_DIRECTORY</codeph> will be used.</pd>
+          <pt>-d <varname>master_data_directory</varname></pt>
+          <pd>Optional. The master host data directory. If not specified, the value set for
+              <codeph>$MASTER_DATA_DIRECTORY</codeph> will be used.</pd>
         </plentry>
         <plentry>
           <pt>-F (full recovery)</pt>
@@ -181,19 +181,20 @@ newPort|newDataDirectory</codeblock>
           <pt>-p <varname>new_recover_host</varname>[,...]</pt>
           <pd>Specifies a spare host outside of the currently configured Greenplum Database array on
             which to recover invalid segments. Note that the hostname of the new node needs to match
-            the hostname being recovered.<p>The spare host must have the Greenplum Database software
-              installed and configured, and have the same hardware and OS configuration as the
-              current segment hosts (same hostname, OS version, locales, <codeph>gpadmin</codeph>
-              user account, data directory locations created, ssh keys exchanged, number of network
-              interfaces, network interface naming convention, and so on.). Specifically, the
-              Greenplum Database binaries must be installed, the host able to connect password-less
-              with all segments including the Greenplum coordinator, and any other Greenplum
-              Database specific OS configuration parameters applied.</p><p>It is strongly
-              recommended to recover one host at a time, and to make sure that the recovery has
-              successfully completed before recovering another host. However, multiple hosts can
-              also be specified as a comma-separated list. If multiple hosts are down, it is
-              critical to ensure a double fault scenario does not occur in which both the primaries
-              and corresponding mirrors are offline.</p></pd>
+            the hostname being recovered.</pd>
+          <pd>The spare host must have the Greenplum Database software installed and configured, and
+            have the same hardware and OS configuration as the current segment hosts (same hostname,
+            OS version, locales, <codeph>gpadmin</codeph> user account, data directory locations
+            created, ssh keys exchanged, number of network interfaces, network interface naming
+            convention, and so on.). Specifically, the Greenplum Database binaries must be
+            installed, the host able to connect password-less with all segments including the
+            Greenplum master, and any other Greenplum Database specific OS configuration parameters
+            applied.</pd>
+          <pd>It is strongly recommended to recover one host at a time, and to make sure that the
+            recovery has successfully completed before recovering another host. However, multiple
+            hosts can also be specified as a comma-separated list. If multiple hosts are down, it is
+            critical to ensure a double fault scenario does not occur in which both the primaries
+            and corresponding mirrors are offline.</pd>
         </plentry>
         <plentry>
           <pt>-q (no screen output)</pt>
