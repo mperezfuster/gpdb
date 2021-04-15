@@ -22,28 +22,28 @@
 
 <b>gprecoverseg</b> <b>--version</b></codeblock>
     </section>
-    <section id="section3"><title>Description</title>-<p>In a system with mirrors enabled, the
-          <codeph>gprecoverseg</codeph> utility reactivates a failed segment instance and identifies
-        the changed database files that require resynchronization. Once
-          <codeph>gprecoverseg</codeph> completes this process, the system goes into
-          <i>resynchronizing</i> mode until the recovered segment is brought up to date. The system
-        is online and fully operational during resynchronization.</p><p>During an incremental
-        recovery (the <codeph>-F</codeph> option is not specified), if <codeph>gprecoverseg</codeph>
-        detects a segment instance with mirroring disabled in a system with mirrors enabled, the
-        utility reports that mirroring is disabled for the segment, does not attempt to recover that
-        segment instance, and continues the recovery process. </p><p>A segment instance can fail for
-        several reasons, such as a host failure, network failure, or disk failure. When a segment
-        instance fails, its status is marked as <i>down</i> in the Greenplum Database system
-        catalog, and its mirror is activated in <i>change tracking</i> mode. In order to bring the
-        failed segment instance back into operation again, you must first correct the problem that
-        made it fail in the first place, and then recover the segment instance in Greenplum Database
-        using <codeph>gprecoverseg</codeph>.</p><note otherprops="pivotal"> If incremental recovery
-        was not successful and the down segment instance data is not corrupted, contact VMware
-        Support. </note><p>Segment recovery using <codeph>gprecoverseg</codeph> requires that you
-        have an active mirror to recover from. For systems that do not have mirroring enabled, or in
-        the event of a double fault (a primary and mirror pair both down at the same time) — you
-        must take manual steps to recover the failed segment instances and then perform a system
-        restart to bring the segments back online. For example, this command restarts a
+    <section id="section3"><title>Description</title>In a system with mirrors enabled, the
+        <codeph>gprecoverseg</codeph> utility reactivates a failed segment instance and identifies
+      the changed database files that require resynchronization. Once <codeph>gprecoverseg</codeph>
+      completes this process, the system goes into <i>resynchronizing</i> mode until the recovered
+      segment is brought up to date. The system is online and fully operational during
+        resynchronization.<p>During an incremental recovery (the <codeph>-F</codeph> option is not
+        specified), if <codeph>gprecoverseg</codeph> detects a segment instance with mirroring
+        disabled in a system with mirrors enabled, the utility reports that mirroring is disabled
+        for the segment, does not attempt to recover that segment instance, and continues the
+        recovery process. </p><p>A segment instance can fail for several reasons, such as a host
+        failure, network failure, or disk failure. When a segment instance fails, its status is
+        marked as <i>down</i> in the Greenplum Database system catalog, and its mirror is activated
+        in <i>change tracking</i> mode. In order to bring the failed segment instance back into
+        operation again, you must first correct the problem that made it fail in the first place,
+        and then recover the segment instance in Greenplum Database using
+          <codeph>gprecoverseg</codeph>.</p><note otherprops="pivotal"> If incremental recovery was
+        not successful and the down segment instance data is not corrupted, contact VMware Support.
+        </note><p>Segment recovery using <codeph>gprecoverseg</codeph> requires that you have an
+        active mirror to recover from. For systems that do not have mirroring enabled, or in the
+        event of a double fault (a primary and mirror pair both down at the same time) — you must
+        take manual steps to recover the failed segment instances and then perform a system restart
+        to bring the segments back online. For example, this command restarts a
         system.</p><codeblock>gpstop -r</codeblock><p>By default, a failed segment is recovered in
         place, meaning that the system brings the segment back online on the same host and data
         directory location on which it was originally configured. In this case, use the following
@@ -182,10 +182,10 @@ newPort|newDataDirectory</codeblock>
             have the same hardware and OS configuration as the current segment hosts (same hostname,
             OS version, locales, <codeph>gpadmin</codeph> user account, data directory locations
             created, ssh keys exchanged, number of network interfaces, network interface naming
-            convention, and so on.). Specifically, the Greenplum Database binaries must be
-            installed, the spare host must able to connect password-less with all segments including
-            the Greenplum master, and any other Greenplum Database specific OS configuration
-            parameters must be applied.</pd>
+            convention, and so on). Specifically, the Greenplum Database binaries must be installed,
+            the spare host must be able to connect password-less with all segments including the
+            Greenplum master, and any other Greenplum Database specific OS configuration parameters
+            must be applied.</pd>
           <pd>
             <note>In the case of multiple failed segment hosts, you can specify the hosts to recover
               with a comma-separated list. However, it is strongly recommended to recover one host
