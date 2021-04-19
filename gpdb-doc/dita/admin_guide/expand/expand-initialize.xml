@@ -108,7 +108,7 @@
                 example:</p><codeblock>gpexpand_inputfile_yyyymmdd<i>_145134</i></codeblock><p>If
                 the Greenplum cluster is configured with tablespaces, the utility automatically
                 generates an additional tablespace mapping file. This file is required for later
-                parssing by the utility so make sure it is present before proceeding with the next
+                parsing by the utility so make sure it is present before proceeding with the next
                 step. For example:
               </p><codeblock>gpexpand_inputfile_yyyymmdd<i>_145134</i>.ts</codeblock></li>
           </ol>
