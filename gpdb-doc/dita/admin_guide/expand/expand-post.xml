@@ -55,8 +55,7 @@ gpadmin@gpmaster$ pxf cluster init</codeblock></li>
                 >install</xref></codeph> the same version on the new hosts.</li>
           <li>If you are using the PXF version included with your Greenplum Database distribution,
             no install action is required on your part.</li>
-          <li>Once PXF is installed on the new segment hosts, log into the Greenplum Master and run
-            the following commands:
+          <li>Log into the Greenplum Master and run the following commands:
             <codeblock>gpadmin@gpmaster$ pxf cluster register
 gpadmin@gpmaster$ pxf cluster sync</codeblock></li>
         </ul>
