@@ -297,7 +297,7 @@ export MASTER_DATA_DIRECTORY=/data/coordinator/gpseg-1</codeblock></li>
               <codeph>PGDATABASE</codeph> for convenience. For
             example:<codeblock>export PGPORT=5432
 export PGUSER=gpadmin
-export PGDATABASE=<varname>default_login_database_name</varname></codeblock></li>
+export PGDATABASE=gpadmin</codeblock></li>
           <li>(Optional) If you use RHEL 7 or CentOS 7, add the following line to the end of the
               <codeph>.bashrc</codeph> file to enable using the <codeph>ps</codeph> command in the
               <codeph>greenplum_path.sh</codeph>
