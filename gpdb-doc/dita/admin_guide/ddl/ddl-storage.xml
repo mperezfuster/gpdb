@@ -618,9 +618,16 @@
         <b>Adding Compression in a TYPE Command</b>
       </title>
       <body>
-        <p>When you create a new type, you can define default compression attributes for the type. For example,
-          the following <codeph>CREATE TYPE</codeph> command defines a type named <codeph>int33</codeph>
-          that specifies <codeph>quicklz</codeph> compression: </p>
+        <p>When you create a new type, you can define default compression attributes for the type.
+          For example, the following <codeph>CREATE TYPE</codeph> command defines a type named
+            <codeph>int33</codeph> that specifies <codeph>quicklz</codeph> compression.</p>
+        <p>First, you must define the <codeph>int33_in</codeph> and <codeph>int33_out</codeph>
+          functions:</p>
+        <codeblock>CREATE FUNCTION int33_in(cstring) returns int33
+  strict immutable language internal as 'int8in';
+CREATE FUNCTION int33_out(int33) returns cstring
+  strict immutable language internal as 'int8out';</codeblock>
+        <p>Next, you define the type named <codeph>int33</codeph>:</p>
         <codeblock>CREATE TYPE int33 (
    internallength = 4,
    input = int33_in,
