@@ -3,7 +3,7 @@
   PUBLIC "-//OASIS//DTD DITA Composite//EN" "ditabase.dtd">
 <topic id="expand-rm-schema" xml:lang="en">
   <title id="no163283">Post Expansion Tasks</title>
-  <shortdesc>Once the expansion is completed, you must perform different tasks depending on your
+  <shortdesc>After the expansion is completed, you must perform different tasks depending on your
     environment.</shortdesc>
   <body>
     <ul id="ul_fhs_yb2_hpb">
@@ -12,9 +12,10 @@
     </ul>
   </body>
   <topic id="topic_xvp_5p2_hpb">
-    <title>Removing the expansion schema</title>
+    <title>Removing the Expansion Schema</title>
     <body>
-      <p>To clean up after expanding the Greenplum cluster, remove the expansion schema.</p>
+      <p>You must remove the existing expansion schema before you can perform another expansion
+        operation on the Greenplum system.</p>
       <p>You can safely remove the expansion schema after the expansion operation is complete and
         verified. To run another expansion operation on a Greenplum system, first remove the
         existing expansion schema.</p>
@@ -30,8 +31,8 @@
   <topic id="topic_pxl_1q2_hpb">
     <title>Setting Up PXF on the New Host</title>
     <body>
-      <p>If you are using PXF in your Grenplum Database cluster, you must perform some configuration
-        steps on the new hosts.</p>
+      <p>If you are using PXF in your Greenplum Database cluster, you must perform some
+        configuration steps on the new hosts.</p>
       <p>There are different steps to follow depending on your PXF version and the type of
         installation.</p>
       <section>
