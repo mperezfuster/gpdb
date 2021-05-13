@@ -101,7 +101,7 @@
                 </plentry>
                 <plentry>
                     <pt>-M immediate</pt>
-                    <pd>Immediate shut down. Any transactions in progress are aborted.</pd>
+                    <pd>Immediate shut down. Any transactions in progress are cancelled.</pd>
                     <pd>This mode kills all <codeph>postgres</codeph> processes without allowing the
                         database server to complete transaction processing or clean up any temporary
                         or in-process work files.</pd>

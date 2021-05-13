@@ -377,7 +377,7 @@ $$ LANGUAGE plpythonu;</codeblock>
         </ul>
         <p>The message functions <codeph>plpy.error</codeph> and <codeph>plpy.fatal</codeph> raise a
           Python exception which, if uncaught, propagates out to the calling query, causing the
-          current transaction or subtransaction to be aborted. The functions <codeph>raise
+          current transaction or subtransaction to be cancelled. The functions <codeph>raise
             plpy.ERROR(msg)</codeph> and <codeph>raise plpy.FATAL(msg)</codeph> are equivalent to
           calling <codeph>plpy.error</codeph> and <codeph>plpy.fatal</codeph>, respectively. The
           other message functions only generate messages of different priority levels. </p>

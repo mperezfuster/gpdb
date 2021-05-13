@@ -1406,10 +1406,11 @@ bar</codeblock>
           </plentry>
           <plentry>
             <pt>ON_ERROR_ROLLBACK</pt>
-            <pd>When set to <codeph>on</codeph>, if a statement in a transaction block generates an error, the error is
-              ignored and the transaction continues. When set to <codeph>interactive</codeph>, such errors are only ignored
-              in interactive sessions, and not when reading script files. When unset or set to <codeph>off</codeph>, a
-              statement in a transaction block that generates an error aborts the entire
+            <pd>When set to <codeph>on</codeph>, if a statement in a transaction block generates an
+              error, the error is ignored and the transaction continues. When set to
+                <codeph>interactive</codeph>, such errors are only ignored in interactive sessions,
+              and not when reading script files. When unset or set to <codeph>off</codeph>, a
+              statement in a transaction block that generates an error cancels the entire
               transaction. The error rollback mode works by issuing an implicit
                 <codeph>SAVEPOINT</codeph> for you, just before each command that is in a
               transaction block, and rolls back to the savepoint on error.</pd>

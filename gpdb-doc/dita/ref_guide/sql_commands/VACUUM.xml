@@ -94,7 +94,7 @@ VACUUM [FULL] [FREEZE] [VERBOSE] ANALYZE
         </plentry>
         <plentry>
           <pt>ANALYZE</pt>
-          <pd>Updates statistics used by the planner to determine the most efficient way to execute
+          <pd>Updates statistics used by the planner to determine the most efficient way to run 
             a query.</pd>
         </plentry>
         <plentry>
@@ -115,14 +115,14 @@ VACUUM [FULL] [FREEZE] [VERBOSE] ANALYZE
     </section>
     <section id="section6">
       <title id="er144900">Notes</title>
-      <p><codeph>VACUUM</codeph> cannot be executed inside a transaction block.</p>
+      <p><codeph>VACUUM</codeph> cannot be run inside a transaction block.</p>
       <p>Vacuum active databases frequently (at least nightly), in order to remove expired rows.
         After adding or deleting a large number of rows, running the <codeph>VACUUM ANALYZE</codeph>
         command for the affected table might be useful. This updates the system catalogs with the
         results of all recent changes, and allows the Greenplum Database query optimizer to make
         better choices in planning queries.</p>
       <note type="important">PostgreSQL has a separate optional server process called the
-          <i>autovacuum daemon</i>, whose purpose is to automate the execution of
+          <i>autovacuum daemon</i>, whose purpose is to automate the run of
           <codeph>VACUUM</codeph> and <codeph>ANALYZE</codeph> commands. Greenplum Database enables
         the autovacuum daemon to perform <codeph>VACUUM</codeph> operations only on the Greenplum
         Database template database <codeph>template0</codeph>. Autovacuum is enabled for

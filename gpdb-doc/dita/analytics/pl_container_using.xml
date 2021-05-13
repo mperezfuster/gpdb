@@ -95,7 +95,7 @@
                     memory limit of a PL/Container resource group, queries executing in running
                     containers in the group may fail with an out of memory error. If you drop a
                     PL/Container resource group while there are running container instances,
-                    Greenplum Database kills the running containers.</p>
+                    Greenplum Database stops the running containers.</p>
             </section>
             <section id="topic_resgroupcfg">
                 <title>Configuring Resource Groups for PL/Container</title>

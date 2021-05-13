@@ -49,7 +49,7 @@
             inherited from the new parent table. In this case, <codeph>gpbackup</codeph> backs up
             conflicting <codeph>CREATE INDEX</codeph> statements, which causes an error when you
             restore the backup set.</li>
-          <li>You can execute multiple instances of <codeph>gpbackup</codeph>, but each execution
+          <li>You can run multiple instances of <codeph>gpbackup</codeph>, but each execution
             requires a distinct timestamp.</li>
           <li>Database object filtering is currently limited to schemas and tables.</li>
           <li>When backing up a partitioned table where some or all leaf partitions are in different
@@ -478,7 +478,7 @@ public.sales_1_prt_dec17 </codeblock></p><p>Then
           following restrictions:<ul id="ul_hts_clc_ccb">
             <li>The tables that you attempt to restore must not already exist in the database.</li>
             <li>If you attempt to restore a schema or table that does not exist in the backup set,
-              the <codeph>gprestore</codeph> does not execute.</li>
+              the <codeph>gprestore</codeph> does not run.</li>
             <li>If you use the <codeph>--include-schema</codeph> option, <codeph>gprestore</codeph>
               cannot restore objects that have dependencies on multiple schemas.</li>
             <li>If you use the <codeph>--include-table-file</codeph> option,

@@ -366,8 +366,8 @@
         <p>Spread mirroring has the least performance impact for a single failed host because each
           host's mirrors are spread across the maximum number of hosts. Load is increased by
             1/<i>Nth</i>, where <i>N</i> is the number of primaries per host. Spread mirroring is,
-          however, the most likely configuration to suffer catastrophic failure if two or more hosts
-          fail simultaneously. </p>
+          however, the most likely configuration to encounter a catastrophic failure if two or more
+          hosts fail simultaneously. </p>
       </section>
       <section>
         <title>Block Mirroring</title>

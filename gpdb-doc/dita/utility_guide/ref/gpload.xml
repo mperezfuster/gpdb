@@ -599,16 +599,16 @@
                                                 processing. If the error limit is not reached, all
                                                 good rows will be loaded and any error rows will
                                                 either be discarded or captured as part of error log
-                                                information. The default is to abort the load
+                                                information. The default is to cancel the load
                                                 operation on the first error encountered. Note that
                                                 single row error isolation only applies to data rows
                                                 with format errors; for example, extra or missing
                                                 attributes, attributes of a wrong data type, or
                                                 invalid client encoding sequences. Constraint
                                                 errors, such as primary key violations, will still
-                                                cause the load operation to abort if encountered.
-                                                For information about handling load errors, see
-                                                  <xref
+                                                cause the load operation to be cancelled if
+                                                encountered. For information about handling load
+                                                errors, see <xref
                                                   href="../../admin_guide/load/topics/g-loading-and-unloading-data.xml"
                                                 />.</pd>
                                         </plentry>
