@@ -4,7 +4,7 @@
 <topic id="topic1">
   <title id="af20941">DO</title>
   <body>
-    <p id="sql_command_desc">Executes an anonymous code block as a transient anonymous function.</p>
+    <p id="sql_command_desc">Runs anonymous code block as a transient anonymous function.</p>
     <section id="section2">
       <title>Synopsis</title>
       <codeblock id="sql_command_synopsis">DO [ LANGUAGE <varname>lang_name</varname> ] <varname>code</varname></codeblock>

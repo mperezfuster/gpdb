@@ -48,7 +48,7 @@
         Database provides resource queues and resource groups to help you manage these system
         resources.</p>
       <p>Resource queues and resource groups limit resource usage and the total number of
-        concurrent queries executing in the particular queue or group. By assigning database roles
+        concurrent queries runing in the particular queue or group. By assigning database roles
         to the appropriate queue or group, administrators can control concurrent user queries
          and prevent system overload. For more information about resource queues and resource
          groups, including selecting the appropriate scheme for your Greenplum Database environment,
@@ -81,7 +81,7 @@
         aggregations, so it takes the most conservative action and does these operations by reading
         and writing from disk. This is significantly slower than doing them in memory.
           <cmdname>ANALYZE</cmdname> collects statistics about the database that the query optimizer
-        needs.<note>When executing an SQL command with GPORCA, Greenplum Database issues a warning if the command performance could be improved by
+        needs.<note>When runing an SQL command with GPORCA, Greenplum Database issues a warning if the command performance could be improved by
           collecting statistics on a column or set of columns referenced by the command. The warning
           is issued on the command line and information is added to the Greenplum Database log file. For information about collecting statistics on table
           columns, see the <cmdname>ANALYZE</cmdname> command in the <cite>Greenplum Database Reference Guide</cite></note></p>

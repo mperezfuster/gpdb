@@ -170,7 +170,7 @@ UPDATE [ONLY] <varname>table</varname> [[AS] <varname>alias</varname>]
         will be used is not readily predictable.</p>
       <p>Because of this indeterminacy, referencing other tables only within sub-selects is safer,
         though often harder to read and slower than using a join.</p>
-      <p>Executing <codeph>UPDATE</codeph> and <codeph>DELETE</codeph> commands directly on a
+      <p>Runing <codeph>UPDATE</codeph> and <codeph>DELETE</codeph> commands directly on a
         specific partition (child table) of a partitioned table is not supported. Instead, run 
         these commands on the root partitioned table, the table created with the <codeph>CREATE
           TABLE</codeph> command.</p>

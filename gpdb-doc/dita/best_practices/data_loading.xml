@@ -125,11 +125,11 @@ Segment 12 - gpfdist 4</screen></p>
       <p>Beware of using <codeph>gpload</codeph> as it can cause catalog bloat by creating and
         dropping external tables. Use <codeph>gpfdist</codeph> instead, since it provides the best
         performance. </p>
-      <p><codeph>gpload</codeph> executes a load using a specification defined in a YAML-formatted
+      <p><codeph>gpload</codeph> runs a load using a specification defined in a YAML-formatted
         control file. It performs the following operations:<ul id="ul_zrl_dnp_y4">
           <li>Invokes <codeph>gpfdist</codeph> processes</li>
           <li>Creates a temporary external table definition based on the source data defined</li>
-          <li>Executes an <codeph>INSERT</codeph>, <codeph>UPDATE</codeph>, or
+          <li>Runs an <codeph>INSERT</codeph>, <codeph>UPDATE</codeph>, or
               <codeph>MERGE</codeph> operation to load the source data into the target table in the
             database</li>
           <li>Drops the temporary external table</li>
