@@ -23,7 +23,7 @@
         using <codeph>$1</codeph>, <codeph>$2</codeph>, etc. A corresponding list of parameter data
         types can optionally be specified. When a parameter's data type is not specified or is
         declared as unknown, the type is inferred from the context in which the parameter is first
-        used (if possible). When runing the statement, specify the actual values for these
+        used (if possible). When running the statement, specify the actual values for these
         parameters in the <codeph>EXECUTE</codeph> statement.</p>
       <p>Prepared statements only last for the duration of the current database session. When the
         session ends, the prepared statement is forgotten, so it must be recreated before being used

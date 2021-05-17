@@ -225,7 +225,7 @@ SELECT foo();</codeblock>
                 array (masters, segments, and mirrors).</p>
             <p>You can also create and run anonymous code blocks that are written in a Greenplum
                 Database procedural language such as PL/pgSQL. The anonymous blocks run as transient
-                anonymous functions. For information about creating and runing anonymous blocks,
+                anonymous functions. For information about creating and running anonymous blocks,
                 see the <xref href="../../../ref_guide/sql_commands/DO.xml#topic1"
                         ><codeph>DO</codeph></xref> command.</p>
         </body>

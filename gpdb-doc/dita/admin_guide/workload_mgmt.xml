@@ -195,7 +195,7 @@
         statement limit of 10, each query submitted through the queue is allotted 200MB of memory by
         default. The default memory allotment can be overridden on a per-query basis using the
           <codeph>statement_mem</codeph> server configuration parameter (up to the queue memory
-        limit). Once a query has started runing, it holds its allotted memory in the queue until
+        limit). Once a query has started running, it holds its allotted memory in the queue until
         it completes, even if during execution it actually consumes less than its allotted amount of
         memory.</p>
       <p>You can use the <codeph>statement_mem</codeph> server configuration parameter to override

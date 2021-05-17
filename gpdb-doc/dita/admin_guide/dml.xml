@@ -393,7 +393,7 @@
           <codeph>gp_dist_wait_status()</codeph> user-defined function. You can use the output of
         this function to determine which transactions are waiting on locks, which transactions are
         holding locks, the lock types and mode, the waiter and holder session identifiers, and
-        which segments are runing the transactions. Sample output of the
+        which segments are running the transactions. Sample output of the
           <codeph>gp_dist_wait_status()</codeph> function follows:</p>
       <codeblock>SELECT * FROM pg_catalog.gp_dist_wait_status();
 -[ RECORD 1 ]----+--------------

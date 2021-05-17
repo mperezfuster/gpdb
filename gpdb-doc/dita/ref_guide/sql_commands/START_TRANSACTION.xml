@@ -47,7 +47,7 @@
                             READ</codeph> isolation level must be prepared to retry transactions due
                         to serialization failures.</pd>
                     <pd>The <codeph>SERIALIZABLE</codeph> transaction isolation level guarantees
-                        that runing multiple concurrent transactions produces the same effects as
+                        that running multiple concurrent transactions produces the same effects as
                         running the same transactions one at a time. If you specify
                             <codeph>SERIALIZABLE</codeph>, Greenplum Database falls back to
                             <codeph>REPEATABLE READ</codeph>.</pd>

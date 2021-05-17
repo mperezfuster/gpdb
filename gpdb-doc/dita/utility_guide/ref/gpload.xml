@@ -39,7 +39,7 @@
                 runs a load by invoking the Greenplum Database parallel file server
                         (<codeph><xref href="gpfdist.xml" type="topic" format="dita"/></codeph>),
                 creating an external table definition based on the source data defined, and
-                runing an <codeph>INSERT</codeph>, <codeph>UPDATE</codeph> or
+                running an <codeph>INSERT</codeph>, <codeph>UPDATE</codeph> or
                     <codeph>MERGE</codeph> operation to load the source data into the target table
                 in the database.
                 <note><codeph>gpfdist</codeph> is compatible only with

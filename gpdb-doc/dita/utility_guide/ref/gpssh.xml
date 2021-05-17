@@ -93,7 +93,7 @@
                 </plentry>
                 <plentry>
                     <pt>-s</pt>
-                    <pd>Optional. If specified, before runing any commands on the target host,
+                    <pd>Optional. If specified, before running any commands on the target host,
                             <codeph>gpssh</codeph> sources the file
                             <codeph>greenplum_path.sh</codeph> in the directory specified by the
                             <codeph>$GPHOME</codeph> environment variable. </pd>

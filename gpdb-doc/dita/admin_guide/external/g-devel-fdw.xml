@@ -237,7 +237,7 @@ GetForeignPlan (PlannerInfo *root,
               <entry colname="col1"><codeblock>void
 BeginForeignScan (ForeignScanState *node,
                   int eflags)</codeblock></entry>
-              <entry colname="col2">Begin runing a foreign scan. Called during
+              <entry colname="col2">Begin running a foreign scan. Called during
                executor startup.</entry>
             </row>
             <row>

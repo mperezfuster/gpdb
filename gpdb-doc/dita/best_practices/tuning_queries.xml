@@ -2,7 +2,7 @@
 <!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA Topic//EN" "topic.dtd">
 <topic id="topic_tpt_bqw_r4">
   <title>Tuning SQL Queries</title>
-  <shortdesc>The Greenplum Database cost-based optimizer evaluates many strategies for runing a
+  <shortdesc>The Greenplum Database cost-based optimizer evaluates many strategies for running a
     query and chooses the least costly method. </shortdesc>
   <body>
     <p>Like other RDBMS optimizers, the Greenplum optimizer takes into account factors such as the

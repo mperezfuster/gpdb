@@ -39,7 +39,7 @@
         <plentry>
           <pt>OWNER <varname>username</varname></pt>
           <pd>The name of the user who will own the tablespace. If omitted, defaults to the user
-            runing the command. Only superusers can create tablespaces, but they can assign
+            running the command. Only superusers can create tablespaces, but they can assign
             ownership of tablespaces to non-superusers. </pd>
         </plentry>
         <plentry>

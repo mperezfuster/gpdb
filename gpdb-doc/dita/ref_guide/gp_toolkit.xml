@@ -290,7 +290,7 @@
             <tbody class="- topic/tbody ">
               <row class="- topic/row ">
                 <entry colname="col1" class="- topic/entry ">lorusename</entry>
-                <entry colname="col2" class="- topic/entry ">Name of the user runing the
+                <entry colname="col2" class="- topic/entry ">Name of the user running the
                   session.</entry>
               </row>
               <row class="- topic/row ">
@@ -1645,7 +1645,7 @@
               <row class="- topic/row ">
                 <entry colname="col1" class="- topic/entry ">num_running</entry>
                 <entry colname="col2" class="- topic/entry ">The number of transactions currently
-                  runing in the resource group.</entry>
+                  running in the resource group.</entry>
               </row>
               <row class="- topic/row ">
                 <entry colname="col1" class="- topic/entry ">num_queueing</entry>

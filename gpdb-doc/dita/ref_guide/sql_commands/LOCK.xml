@@ -37,7 +37,7 @@
                 furthermore none can begin until you release the lock.</p>
             <p>To achieve a similar effect when running a transaction at the <codeph>REPEATABLE
                     READ</codeph> or <codeph>SERIALIZABLE</codeph> isolation level, you have to
-                run the <codeph>LOCK TABLE</codeph> statement before runing any
+                run the <codeph>LOCK TABLE</codeph> statement before running any
                     <codeph>SELECT</codeph> or data modification statement. A <codeph>REPEATABLE
                     READ</codeph> or <codeph>SERIALIZABLE</codeph> transaction's view of data will
                 be frozen when its first <codeph>SELECT</codeph> or data modification statement

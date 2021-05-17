@@ -224,7 +224,7 @@ FROM (SELECT count(*) c, gp_segment_id FROM facts GROUP BY 2) AS a;</codeblock>
         <p>Processing skew results when a disproportionate amount of data flows to, and is processed
           by, one or a few segments. It is often the culprit behind Greenplum Database performance
           and stability issues. It can happen with operations such join, sort, aggregation, and
-          various OLAP operations. Processing skew happens in flight while a query is runing and
+          various OLAP operations. Processing skew happens in flight while a query is running and
           is not as easy to detect as data skew, which is caused by uneven data distribution due to
           the wrong choice of distribution keys. Data skew is present at the table level, so it can
           be easily detected and avoided by choosing optimal distribution keys. </p>

@@ -281,7 +281,7 @@ select greet('hello');
       </body>
     </topic>
     <topic id="topic8" xml:lang="en">
-      <title>Runing and Preparing SQL Queries </title>
+      <title>Running and Preparing SQL Queries </title>
       <body>
         <p>The PL/Python <codeph>plpy</codeph> module provides two Python functions to run an
           SQL query and prepare an execution plan for a query, <codeph>plpy.execute</codeph> and

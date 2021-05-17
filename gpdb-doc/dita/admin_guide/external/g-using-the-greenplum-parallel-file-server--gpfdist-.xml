@@ -146,7 +146,7 @@ $ gpfdist -d /var/load_files2 -p 8082 -l /home/<codeph>gpadmin</codeph>/log2 &am
          <p>
             <codeblock>$ ps -ef | grep gpfdist</codeblock>
          </p>
-         <p>Then stops the process, for example (where 3456 is the process ID in this example):</p>
+         <p>Then stop the process, for example (where 3456 is the process ID in this example):</p>
          <p>
             <codeblock>$ kill 3456
 </codeblock>

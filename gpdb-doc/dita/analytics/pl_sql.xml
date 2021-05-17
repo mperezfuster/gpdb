@@ -130,7 +130,7 @@ END;
 $$ LANGUAGE plpgsql;</codeblock>
       </body>
       <topic id="topic5" xml:lang="en">
-        <title>Runing SQL Commands</title>
+        <title>Running SQL Commands</title>
         <body>
           <p>You can run SQL commands with PL/pgSQL statements such as <codeph>EXECUTE</codeph>,
               <codeph>PERFORM</codeph>, and <codeph>SELECT ... INTO</codeph>. For information about

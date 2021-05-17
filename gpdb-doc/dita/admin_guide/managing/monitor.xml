@@ -271,7 +271,7 @@ Distributed by: (sale_id)
           column in a query on a replicated table.</p>
           <section>
             <title>Avoiding an Extreme Skew Warning</title>
-            <p>You may receive the following warning message while runing a query that performs a
+            <p>You may receive the following warning message while running a query that performs a
               hash join operation:</p>
             <p>
               <codeph>Extreme skew in the innerside of Hashjoin</codeph>

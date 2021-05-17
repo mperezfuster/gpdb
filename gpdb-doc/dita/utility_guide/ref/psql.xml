@@ -319,7 +319,7 @@ testdb=#</codeblock>
             <codeph>options=-csearch_path=</codeph> to the connection string or issue
             <codeph>SELECT pg_catalog.set_config('search_path', '', false)</codeph> before other
           SQL commands. This consideration is not specific to <codeph>psql</codeph>; it
-          applies to every interface for runing arbitrary SQL commands. </p>
+          applies to every interface for running arbitrary SQL commands. </p>
       </sectiondiv>
     </section>
     <section id="section10">
@@ -385,7 +385,7 @@ testdb=#</codeblock>
             to omitting that parameter. </pd>
           <pd> If the new connection is successfully made, the previous connection is closed. 
             If the connection attempt failed, the previous connection
-            will only be kept if <codeph>psql</codeph> is in interactive mode. When runing a
+            will only be kept if <codeph>psql</codeph> is in interactive mode. When running a
             non-interactive script, processing will immediately stop with an error. This distinction
             was chosen as a user convenience against typos, and a safety mechanism that scripts are
             not accidentally acting on the wrong database.</pd>
@@ -845,7 +845,7 @@ hello 10</codeblock></pd>
         <plentry>
           <pt>\ir | \include_relative <varname>filename</varname></pt>
           <pd>The <codeph>\ir</codeph> command is similar to <codeph>\i</codeph>, but resolves
-            relative file names differently. When runing in interactive mode, the two commands
+            relative file names differently. When running in interactive mode, the two commands
             behave identically. However, when invoked from a script, <codeph>\ir</codeph> interprets
             file names relative to the directory in which the script is located, rather than the
             current working directory.</pd>

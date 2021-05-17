@@ -227,7 +227,7 @@ COMMIT;
         space it occupied can be reused. The <codeph>VACUUM</codeph> command marks the space
         used by expired rows for reuse.</p>
       <p>When expired rows accumulate in a table, the disk files must be extended to accommodate new
-        rows. Performance decreases due to the increased disk I/O required to run queries. This
+        rows. Performance degrades due to the increased disk I/O required to run queries. This
         condition is called <i>bloat</i> and it should be managed by regularly vacuuming tables. </p>
       <p>The <codeph>VACUUM</codeph> command (without <codeph>FULL</codeph>) can run concurrently
         with other queries. It marks the space previously used by the expired rows as free,

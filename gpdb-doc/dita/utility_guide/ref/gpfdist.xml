@@ -139,7 +139,7 @@
         </plentry>
         <plentry>
           <pt>--ssl <varname>certificate_path</varname></pt>
-          <pd>Adds SSL encryption to data transferred with <codeph>gpfdist</codeph>. After runing
+          <pd>Adds SSL encryption to data transferred with <codeph>gpfdist</codeph>. After running
               <codeph>gpfdist</codeph> with the <codeph>--ssl
               <varname>certificate_path</varname></codeph> option, the only way to load data from
             this file server is with the <codeph>gpfdist://</codeph> protocol. <ph>For information

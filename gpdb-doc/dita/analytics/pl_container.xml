@@ -5,7 +5,7 @@
   <title id="pz212122">PL/Container Language</title>
   <body>
     <p>Pl/Container enables users to run Greenplum procedural language functions inside a Docker
-      container, to avoid security risks associated with runing Python or R code on Greenplum
+      container, to avoid security risks associated with running Python or R code on Greenplum
       segment hosts. This topic covers information about the architecture, installation, and setup
       of PL/Container:</p>
     <ul>
@@ -83,7 +83,7 @@
             <li>Supports the <codeph>DO</codeph> command (anonymous code block). </li>
           </ul></p>
         <p>PL/Container 3 is currently a Beta feature, and provides only an Beta R Docker image for
-          runing functions; Python images are not yet available. Save and uninstall any existing
+          running functions; Python images are not yet available. Save and uninstall any existing
           PL/Container software before you install PL/Container 3 Beta.</p>
       </section>
     </body>

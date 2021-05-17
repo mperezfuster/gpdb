@@ -42,7 +42,7 @@
             <tbody>
                <row>
                   <entry colname="col1">$GP_CID</entry>
-                  <entry colname="col2">Command count of the transaction runing the external
+                  <entry colname="col2">Command count of the transaction running the external
                      table statement.</entry>
                </row>
                <row>
@@ -72,16 +72,16 @@
                <row>
                   <entry colname="col1">$GP_SEG_DATADIR</entry>
                   <entry colname="col2">The location of the data directory of the segment instance
-                     runing the external table command.</entry>
+                     running the external table command.</entry>
                </row>
                <row>
                   <entry colname="col1">$GP_SEG_PG_CONF</entry>
                   <entry colname="col2">The location of the <codeph>postgresql.conf</codeph> file of
-                     the segment instance runing the external table command.</entry>
+                     the segment instance running the external table command.</entry>
                </row>
                <row>
                   <entry colname="col1">$GP_SEG_PORT</entry>
-                  <entry colname="col2">The port number of the segment instance runing the
+                  <entry colname="col2">The port number of the segment instance running the
                      external table command.</entry>
                </row>
                <row>
@@ -91,7 +91,7 @@
                </row>
                <row>
                   <entry colname="col1">$GP_SEGMENT_ID</entry>
-                  <entry colname="col2">The ID number of the segment instance runing the external
+                  <entry colname="col2">The ID number of the segment instance running the external
                      table command (same as <codeph>content</codeph> in
                         <codeph>gp_segment_configuration</codeph>).</entry>
                </row>
@@ -111,7 +111,7 @@
                </row>
                <row>
                   <entry colname="col1">$GP_USER </entry>
-                  <entry colname="col2">The database user runing the external table
+                  <entry colname="col2">The database user running the external table
                      statement.</entry>
                </row>
                <row>

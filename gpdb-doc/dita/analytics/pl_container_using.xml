@@ -30,7 +30,7 @@
                     container's CPU usage compared to other containers. See <xref
                         href="../utility_guide/ref/plcontainer-configuration.xml" format="dita"/> for further
                     details.</p>
-                <p>You cannot, by default, restrict the number of runing PL/Container container
+                <p>You cannot, by default, restrict the number of running PL/Container container
                     instances, nor can you restrict the total amount of memory or CPU resources that
                     they consume.</p>
             </section>
@@ -92,7 +92,7 @@
                 <p>After you assign a resource group to a PL/Container runtime, all container
                     instances that share the same runtime configuration are subject to the memory
                     limit and the CPU limit that you configured for the group. If you decrease the
-                    memory limit of a PL/Container resource group, queries runing in running
+                    memory limit of a PL/Container resource group, queries running in running
                     containers in the group may fail with an out of memory error. If you drop a
                     PL/Container resource group while there are running container instances,
                     Greenplum Database stops the running containers.</p>
@@ -212,7 +212,7 @@ plcontainer runtime-replace -r r_run1 -i pivotaldata/plcontainer_r_shared:devel 
                             <codeph>status()</codeph> are not supported.</li>
                     <li>The PL/Python function <codeph>plpy.SPIError()</codeph> is not
                         supported.</li>
-                    <li>Runing the <codeph>SAVEPOINT</codeph> command with
+                    <li>Running the <codeph>SAVEPOINT</codeph> command with
                         <codeph>plpy.execute()</codeph> is not supported.</li>
                     <li>The <codeph>DO</codeph> command (anonymous code block) is supported only
                         with PL/Container 3 (currently a Beta feature). </li>

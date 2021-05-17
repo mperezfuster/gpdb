@@ -49,7 +49,7 @@ CREATE [ OR REPLACE ] [ TRUSTED ] [ PROCEDURAL ] LANGUAGE <varname>name</varname
                 has been modified since the language was created.
             </p>
             <p><codeph>CREATE LANGUAGE</codeph> effectively associates the language name with
-                handler function(s) that are responsible for runing functions written in that language. For a
+                handler function(s) that are responsible for running functions written in that language. For a
                 function written in a procedural language (a language other than C or SQL), the
                 database server has no built-in knowledge about how to interpret the function's
                 source code. The task is passed to a special handler that knows the details of the

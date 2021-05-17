@@ -137,7 +137,7 @@
         (or <codeph>ROLLBACK</codeph>) to define a transaction block.</p>
       <p>If <codeph>WITH HOLD</codeph> is specified and the transaction that created the cursor
         successfully commits, the cursor can continue to be accessed by subsequent transactions in
-        the same session. (But if the creating transaction is ended prematurely, the cursor is
+        the same session. (But if the creating transaction is ends prematurely, the cursor is
         removed.) A cursor created with <codeph>WITH HOLD</codeph> is closed when an explicit
           <codeph>CLOSE</codeph> command is issued on it, or the session ends. In the current
         implementation, the rows represented by a held cursor are copied into a temporary file or
