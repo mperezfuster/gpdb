@@ -7,7 +7,7 @@
 
 <b>createdb</b> <b>-V | --version</b></codeblock></section><section id="section3"><title>Description</title><p><codeph>createdb</codeph> creates a new database in a Greenplum Database system. </p><p>Normally, the database user who runs this command becomes the
 owner of the new database. However, a different owner can be specified
-via the <codeph>-O</codeph> option, if the running user has appropriate
+via the <codeph>-O</codeph> option, if the executing user has appropriate
 privileges.</p><p><codeph>createdb</codeph> is a wrapper around the SQL command <codeph><xref
               href="../../ref_guide/sql_commands/CREATE_DATABASE.xml#topic1"/>
 </codeph>.</p></section><section id="section4"><title>Options</title><parml><plentry><pt><varname>dbname</varname></pt><pd>The name of the database to be created. The name must be unique among all other databases in the

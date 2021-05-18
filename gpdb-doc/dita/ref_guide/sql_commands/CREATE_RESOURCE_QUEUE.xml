@@ -67,7 +67,7 @@
       <p>Resource queues with an optional <codeph>MEMORY_LIMIT</codeph> threshold set a maximum
         limit on the amount of memory that all queries submitted through a resource queue can
         consume on a segment host. This determines the total amount of memory that all worker
-        processes of a query can consume on a segment host during query running time. Greenplum
+        processes of a query can consume on a segment host during query execution time. Greenplum
         recommends that <codeph>MEMORY_LIMIT</codeph> be used in conjunction with
           <codeph>ACTIVE_STATEMENTS</codeph> rather than with <codeph>MAX_COST</codeph>. The default
         amount of memory allotted per query on statement-based queues is: <codeph>MEMORY_LIMIT /
