@@ -522,8 +522,8 @@ Hostssl testdb all 192.168.0.0/16 cert map=gpuser
         <title>OpenSSL Configuration</title>
         <p>You can make changes to the OpenSSL configuration by updating the
             <codeph>openssl.cnf</codeph> file under your OpenSSL installation directory, or the file
-          referenced by <codeph>OPENSSL_CONF</codeph>, if present, and then restarting the Greenplum
-          Database server.</p>
+          referenced by <codeph>$OPENSSL_CONF</codeph>, if present, and then restarting the
+          Greenplum Database server.</p>
       </section>
       <section id="create_a_cert">
         <title>Creating a Self-Signed Certificate</title>
