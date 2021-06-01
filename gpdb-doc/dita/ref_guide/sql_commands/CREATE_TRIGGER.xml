@@ -60,7 +60,7 @@ TRIGGER ... ON tablename REFERENCING OLD ROW AS somename NEW ROW AS othername
 ...</codeph>). Since Greenplum Database allows trigger procedures to
 be written in any number of user-defined languages, access to the data
 is handled in a language-specific way.</li><li id="cg152852">Greenplum Database only allows the execution of a user-defined function
-for the triggered action. The standard allows running a number
+for the triggered action. The standard allows the execution of a number
 of other SQL commands, such as <codeph>CREATE TABLE</codeph> as the triggered
 action. This limitation is not hard to work around by creating a user-defined
 function that runs the desired commands.</li><li id="cg152865">SQL specifies that multiple triggers should be fired in time-of-creation

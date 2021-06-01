@@ -19,7 +19,7 @@ SET [SESSION | LOCAL] TIME ZONE {<varname>timezone</varname> | LOCAL | DEFAULT}<
         with <codeph>SET</codeph>. <codeph>SET</codeph> affects only the value used by the current
         session. </p>
       <p>If <codeph>SET</codeph> or <codeph>SET SESSION</codeph> is issued within a transaction that
-        is later ended prematurely, the effects of the <codeph>SET</codeph> command disappear when
+        is later cancelled, the effects of the <codeph>SET</codeph> command disappear when
         the transaction is rolled back. Once the surrounding transaction is committed, the effects
         will persist until the end of the session, unless overridden by another
         <codeph>SET</codeph>. </p>

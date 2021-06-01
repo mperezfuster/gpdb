@@ -505,7 +505,7 @@ CREATE [ [GLOBAL | LOCAL] {TEMPORARY | TEMP} | UNLOGGED ] TABLE [IF NOT EXISTS]
             default and enables CRC checksum validation for append-optimized tables. The checksum is
             calculated during block creation and is stored on disk. Checksum validation is performed
             during block reads. If the checksum calculated during the read does not match the stored
-            checksum, the transaction is stopped prematurely. If you set the value to
+            checksum, the transaction is cancelled. If you set the value to
               <codeph>FALSE</codeph> to disable checksum validation, checking the table data for
             on-disk corruption will not be performed.</pd>
           <pd><b>compresstype</b> — Set to <codeph>ZLIB</codeph> (the default),

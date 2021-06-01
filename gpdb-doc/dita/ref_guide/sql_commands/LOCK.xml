@@ -159,8 +159,8 @@
                     <pt>NOWAIT</pt>
                     <pd>Specifies that <codeph>LOCK TABLE</codeph> should not wait for any
                         conflicting locks to be released: if the specified lock(s) cannot be
-                        acquired immediately without waiting, the transaction is ended
-                        prematurely.</pd>
+                        acquired immediately without waiting, the transaction is cancelled.
+                    </pd>
                 </plentry>
             </parml>
         </section>

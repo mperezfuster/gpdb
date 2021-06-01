@@ -518,7 +518,7 @@ CREATE TABLE t AS SELECT * FROM get_data() DISTRIBUTED RANDOMLY;</codeblock></p>
                         db</codeph>. The query plan of a simple CTAS command without the function
                     does not have an InitPlan node or an <codeph>entry db</codeph> slice.</p><p>If
                     the function did not contain the <codeph>EXECUTE ON INITPLAN</codeph> attribute,
-                    the CTAS command returns the error <codeph>function cannot run on a QE
+                    the CTAS command returns the error <codeph>function cannot execute on a QE
                         slice</codeph>.</p><p>When a function uses the <codeph>EXECUTE ON
                         INITPLAN</codeph> attribute, a command that uses the function such as
                         <codeph>CREATE TABLE t AS SELECT * FROM get_data()</codeph> gathers the
