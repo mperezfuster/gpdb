@@ -92,7 +92,7 @@
                 <p>After you assign a resource group to a PL/Container runtime, all container
                     instances that share the same runtime configuration are subject to the memory
                     limit and the CPU limit that you configured for the group. If you decrease the
-                    memory limit of a PL/Container resource group, queries running in running
+                    memory limit of a PL/Container resource group, queries executing in running
                     containers in the group may fail with an out of memory error. If you drop a
                     PL/Container resource group while there are running container instances,
                     Greenplum Database stops the running containers.</p>
@@ -253,7 +253,7 @@ plcontainer runtime-replace -r r_run1 -i pivotaldata/plcontainer_r_shared:devel 
                     this <codeph>SELECT</codeph> command forces the configuration file to be
                     read.</p>
                 <codeblock>SELECT * FROM plcontainer_refresh_config;</codeblock>
-                <p>Running the command runs a PL/Container function that updates the
+                <p>Running the command executes a PL/Container function that updates the
                     configuration on the master and segment instances and returns the status of the
                     refresh.<codeblock> gp_segment_id | plcontainer_refresh_local_config
  ---------------+----------------------------------
@@ -266,7 +266,7 @@ plcontainer runtime-replace -r r_run1 -i pivotaldata/plcontainer_r_shared:devel 
                         <codeph>plcontainer_show_config</codeph>. For example, this
                         <codeph>SELECT</codeph> command returns the PL/Container configurations. </p>
                 <codeblock>SELECT * FROM plcontainer_show_config;</codeblock>
-                <p>Running the command runs a PL/Container function that displays configuration
+                <p>Running the command executes a PL/Container function that displays configuration
                     information from the master and segment instances. This is an example of the
                     start and end of the view
                     output.<codeblock>INFO:  plcontainer: Container 'plc_py_test' configuration
@@ -461,7 +461,7 @@ $$ LANGUAGE plcontainer;</codeblock></p>
                     <li><codeph>pg.spi.prepare(stmt[, argtypes])</codeph> - Prepares the execution
                         plan for a query. It is called with a query string and a list of parameter
                         types if you have parameter references in the query.</li>
-                    <li><codeph>pg.spi.execp(plan[, argtypes])</codeph> - Run a prepared
+                    <li><codeph>pg.spi.execp(plan[, argtypes])</codeph> - Runs a prepared
                         plan.</li>
                     <li><codeph>pg.spi.debug(msg)</codeph> - Sends a DEBUG2 message to the Greenplum
                         Database log.</li>

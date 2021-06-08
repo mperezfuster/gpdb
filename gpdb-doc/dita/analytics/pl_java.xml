@@ -652,8 +652,8 @@ public class Bar
             <codeph>org.postgresql.pljava.ResultSetHandle</codeph>. The reason for having two
           interfaces is that they cater for optimal handling of two distinct use cases. The former
           is for cases when you want to dynamically create each row that is to be returned from the
-          SETOF function. The latter makes is in cases where you want to return the result of an
-          run query. </p>
+          SETOF function. The latter makes sense in cases where you want to return the result of a
+          query after it runs. </p>
       </body>
       <topic id="topic22" xml:lang="en">
         <title>Using the ResultSetProvider Interface</title>
@@ -907,7 +907,7 @@ Date(System.currentTimeMillis()));</codeblock>
       <body>
         <p>Only a database superuser can install PL/Java. The PL/Java utility functions are
           installed using SECURITY DEFINER so that they run with the access permissions that
-          where granted to the creator of the functions.</p>
+          were granted to the creator of the functions.</p>
       </body>
     </topic>
     <topic id="topic30" xml:lang="en">

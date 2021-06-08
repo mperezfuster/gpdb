@@ -8,7 +8,7 @@
       using GPORCA or is falling back to the Postgres Planner. </shortdesc>
   </abstract>
   <body>
-    <p>You can examine the <codeph>EXPLAIN</codeph> query plan for the query determine which query
+    <p>You can examine the <codeph>EXPLAIN</codeph> query plan for the query to determine which query
       optimizer was used by Greenplum Database to run the query:<ul
         id="ul_vc2_xbh_1t">
         <li>When GPORCA generates the query plan, the setting

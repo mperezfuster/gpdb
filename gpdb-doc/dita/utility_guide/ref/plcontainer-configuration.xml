@@ -307,7 +307,7 @@
                         existed during session start up. To update the PL/Container configuration in
                         a running session, run this command in the session.</p>
                     <codeblock>SELECT * FROM plcontainer_refresh_config;</codeblock>
-                    <p>Running the command runs a PL/Container function that updates the session
+                    <p>The command runs a PL/Container function that updates the session
                         configuration on the coordinator and segment instances.</p>
                 </section>
         

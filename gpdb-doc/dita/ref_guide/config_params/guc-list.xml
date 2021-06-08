@@ -1244,7 +1244,7 @@
   <topic id="debug_print_parse">
     <title>debug_print_parse</title>
     <body>
-      <p>For each run query, prints the resulting parse tree. <i>client_min_messages</i> or
+      <p>For each query run, prints the resulting parse tree. <i>client_min_messages</i> or
           <i>log_min_messages</i> must be DEBUG1 or lower.</p>
       <table id="debug_print_parse_table">
         <tgroup cols="3">
@@ -1272,7 +1272,7 @@
   <topic id="debug_print_plan">
     <title>debug_print_plan</title>
     <body>
-      <p>For each run query, prints the Greenplum parallel query execution plan.
+      <p>For each query run, prints the Greenplum parallel query execution plan.
           <i>client_min_messages</i> or <i>log_min_messages</i> must be DEBUG1 or lower.</p>
       <table id="debug_print_plan_table">
         <tgroup cols="3">
@@ -1300,7 +1300,7 @@
   <topic id="debug_print_prelim_plan">
     <title>debug_print_prelim_plan</title>
     <body>
-      <p>For each run query, prints the preliminary query plan. <i>client_min_messages</i> or
+      <p>For each query run, prints the preliminary query plan. <i>client_min_messages</i> or
           <i>log_min_messages</i> must be DEBUG1 or lower.</p>
       <table id="debug_print_prelim_plan_table">
         <tgroup cols="3">
@@ -1328,7 +1328,7 @@
   <topic id="debug_print_rewritten">
     <title>debug_print_rewritten</title>
     <body>
-      <p>For each run query, prints the query rewriter output. <i>client_min_messages</i> or
+      <p>For each query run, prints the query rewriter output. <i>client_min_messages</i> or
           <i>log_min_messages</i> must be DEBUG1 or lower.</p>
       <table id="debug_print_rewritten_table">
         <tgroup cols="3">
@@ -1356,7 +1356,7 @@
   <topic id="debug_print_slice_table">
     <title>debug_print_slice_table</title>
     <body>
-      <p>For each run query, prints the Greenplum query slice plan. <i>client_min_messages</i>
+      <p>For each query run, prints the Greenplum query slice plan. <i>client_min_messages</i>
         or <i>log_min_messages</i> must be DEBUG1 or lower.</p>
       <table id="debug_print_slice_table_table">
         <tgroup cols="3">
@@ -9035,7 +9035,7 @@ statement_mem = rg_perseg_mem / max_expected_concurrent_queries</codeblock></li>
   <topic id="track_activities">
     <title>track_activities</title>
     <body>
-      <p>Enables the collection of information on the currently running command of each session,
+      <p>Enables the collection of information on the currently executing command of each session,
         along with the time when that command began execution. This parameter is
           <codeph>true</codeph> by default. Only superusers can change this setting. See the
           <codeph>pg_stat_activity</codeph> view.</p>
@@ -9095,8 +9095,8 @@ statement_mem = rg_perseg_mem / max_expected_concurrent_queries</codeblock></li>
   <topic id="track_counts">
     <title>track_counts</title>
     <body>
-      <p>Collects information about running commands. Enables the collection of information on the
-        currently running command of each session, along with the time at which that command began
+      <p>Collects information about executing commands. Enables the collection of information on the
+        currently executing command of each session, along with the time at which that command began
         execution.</p>
       <table id="table_e5c_fwm_vlb">
         <tgroup cols="3">

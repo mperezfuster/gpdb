@@ -223,7 +223,7 @@
             <codeph>YYYYMMDDHH24MISS</codeph> format in conversion functions such as
             <codeph>to_timestamp</codeph> and <codeph>to_char</codeph> for compatibility with other
           database systems. You can use input formats for converting text to date or timestamp
-          values to avoid unexpected results or query running failures. For example, this
+          values to avoid unexpected results or query execution failures. For example, this
             <codeph>SELECT</codeph> command returns a timestamp in Greenplum Database 5 and fails in
             6.<codeblock>SELECT to_timestamp('20190905140000');</codeblock><p>To convert the string
             to a timestamp in Greenplum Database 6, you must use a valid format. Both of these
@@ -328,7 +328,7 @@ SELECT '20190905 140000'::timestamp ;</codeblock></p></li>
         <li>To use the new Greenplum 6 default hash operator classes, use the command <codeph>ALTER
             TABLE &lt;table> SET DISTRIBUTED BY (&lt;key>)</codeph> to redistribute tables restored
           from Greenplum 4.3 or 5 backups. The <codeph>gp_use_legacy_hashops</codeph> parameter must
-          be set to <codeph>off</codeph> when your run the command. See <xref
+          be set to <codeph>off</codeph> when you run the command. See <xref
             href="#redistribute" format="dita"/> for more information about hash operator classes.
         </li>
       </ul>

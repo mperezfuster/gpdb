@@ -49,7 +49,7 @@
             inherited from the new parent table. In this case, <codeph>gpbackup</codeph> backs up
             conflicting <codeph>CREATE INDEX</codeph> statements, which causes an error when you
             restore the backup set.</li>
-          <li>You can run multiple instances of <codeph>gpbackup</codeph>, but each execution
+          <li>You can execute multiple instances of <codeph>gpbackup</codeph>, but each execution
             requires a distinct timestamp.</li>
           <li>Database object filtering is currently limited to schemas and tables.</li>
           <li>When backing up a partitioned table where some or all leaf partitions are in different

@@ -1187,7 +1187,7 @@ testdb=> \setenv LESS -imx4F</codeblock></pd>
         </plentry>
         <plentry>
           <pt>\watch [<varname>seconds</varname>]</pt>
-          <pd>Repeatedly run the current query buffer (like <codeph>\g</codeph>) until
+          <pd>Repeatedly runs the current query buffer (like <codeph>\g</codeph>) until
             interrupted or the query fails. Wait the specified number of seconds (default 2) between
             executions.</pd>
         </plentry>

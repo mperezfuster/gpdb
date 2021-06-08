@@ -188,7 +188,7 @@
           <codeph>READ COMMITTED</codeph> mode. </p>
       <p><codeph>SERIALIZABLE</codeph> mode, which Greenplum Database does not fully support,
         guarantees that a set of transactions run concurrently produces the same result as if
-        the transactions run sequentially one after the other. If <codeph>SERIALIZABLE</codeph>
+        the transactions ran sequentially one after the other. If <codeph>SERIALIZABLE</codeph>
         is specified, Greenplum Database falls back to <codeph>REPEATABLE READ</codeph>. The MVCC
         Snapshot Isolation (SI) model prevents dirty reads, non-repeatable reads, and phantom reads
         without expensive locking, but there are other interactions that can occur between some

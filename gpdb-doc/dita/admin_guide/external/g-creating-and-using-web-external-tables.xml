@@ -27,7 +27,7 @@
             limit the number of segment instances that run the web table command. All segments
             included in the web table definition in the <codeph>ON</codeph> clause run the command
             in parallel.</p>
-         <p>The command that you specify in the external table definition runs from the database
+         <p>The command that you specify in the external table definition is run from the database
             and cannot access environment variables from <codeph>.bashrc</codeph> or
                <codeph>.profile</codeph>. Set environment variables in the <codeph>EXECUTE</codeph>
             clause. For example:</p>

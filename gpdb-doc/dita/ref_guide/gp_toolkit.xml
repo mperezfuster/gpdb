@@ -1660,8 +1660,8 @@
               </row>
               <row class="- topic/row ">
                 <entry colname="col1" class="- topic/entry ">num_executed</entry>
-                <entry colname="col2" class="- topic/entry ">The total number of run 
-                  transactions in the resource group since the Greenplum Database cluster was last
+                <entry colname="col2" class="- topic/entry ">The total number of transactions 
+                  run in the resource group since the Greenplum Database cluster was last
                   started, excluding the num_running.</entry>
               </row>
               <row class="- topic/row ">

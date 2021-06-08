@@ -39,7 +39,7 @@
         to during query optimization.</li>
       <li><codeph>optimizer_parallel_union</codeph> controls the amount of parallelization that
         occurs for queries that contain a <codeph>UNION</codeph> or <codeph>UNION ALL</codeph>
-        clause. When the value is <codeph>on</codeph>, GPORCA can generate a query plan the child
+        clause. When the value is <codeph>on</codeph>, GPORCA can generate a query plan of  the child
         operations of a <codeph>UNION</codeph> or <codeph>UNION ALL</codeph> operation run in
         parallel on segment instances. </li>
       <li><codeph>optimizer_sort_factor</codeph> controls the cost factor that GPORCA applies to

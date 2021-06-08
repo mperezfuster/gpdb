@@ -82,7 +82,7 @@
             <li>Includes improved log messages to help diagnose problems.</li>
             <li>Supports the <codeph>DO</codeph> command (anonymous code block). </li>
           </ul></p>
-        <p>PL/Container 3 is currently a Beta feature, and provides only an Beta R Docker image for
+        <p>PL/Container 3 is currently a Beta feature, and provides only a Beta R Docker image for
           running functions; Python images are not yet available. Save and uninstall any existing
           PL/Container software before you install PL/Container 3 Beta.</p>
       </section>
