@@ -16,8 +16,9 @@
       from any database if you have appropriate privileges.</p>
     <note>Greenplum Database does not support different tablespace locations for a primary-mirror
       pair with the same content ID. It is only possible to configure different locations for
-      different content IDs. Symbolic links pointing to different file locations for a
-      primary-mirror pair must not be used.</note>
+      different content IDs. Modifying tablespace symbolic links under the directory
+        <codeph>pg_tblspc</codeph> for a primary-mirror pair so they point to different file
+      locations will lead to erroneous behavior.</note>
   </body>
   <topic id="topic13" xml:lang="en">
     <title>Creating a Tablespace</title>
