@@ -110,7 +110,7 @@ RESET ALL</codeblock></section>
           <pt>EXECUTE ON ALL SEGMENTS</pt>
           <pt>EXECUTE ON INITPLAN</pt>
           <pd>The <codeph>EXECUTE ON</codeph> attributes specify where (master or segment instance)
-            a function runs when it is invoked during the query runtime process.</pd>
+            a function runs when it is invoked during the query execution process.</pd>
           <pd><codeph>EXECUTE ON ANY</codeph> (the default) indicates that the function can be
             run on the master, or any segment instance, and it returns the same result
             regardless of where it is run. Greenplum Database determines where the function

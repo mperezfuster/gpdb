@@ -92,10 +92,10 @@
                 <p>After you assign a resource group to a PL/Container runtime, all container
                     instances that share the same runtime configuration are subject to the memory
                     limit and the CPU limit that you configured for the group. If you decrease the
-                    memory limit of a PL/Container resource group, queries executing in running
+                    memory limit of a PL/Container resource group, queries running in
                     containers in the group may fail with an out of memory error. If you drop a
                     PL/Container resource group while there are running container instances,
-                    Greenplum Database stops the running containers.</p>
+                    Greenplum Database terminates the running containers.</p>
             </section>
             <section id="topic_resgroupcfg">
                 <title>Configuring Resource Groups for PL/Container</title>
@@ -253,7 +253,7 @@ plcontainer runtime-replace -r r_run1 -i pivotaldata/plcontainer_r_shared:devel 
                     this <codeph>SELECT</codeph> command forces the configuration file to be
                     read.</p>
                 <codeblock>SELECT * FROM plcontainer_refresh_config;</codeblock>
-                <p>Running the command executes a PL/Container function that updates the
+                <p>The command runs a PL/Container function that updates the
                     configuration on the master and segment instances and returns the status of the
                     refresh.<codeblock> gp_segment_id | plcontainer_refresh_local_config
  ---------------+----------------------------------

@@ -847,7 +847,7 @@ gpstart
             type="topic" format="dita"/></codeph> command drops a resource group. To drop a resource
         group for a role, the group cannot be assigned to any role, nor can there be any
         transactions active or waiting in the resource group. Dropping a resource group for an
-        external component in which there are running instances stops the running instances.</p>
+        external component in which there are running instances terminates the running instances.</p>
       <p>To drop a resource group:</p>
       <p>
         <codeblock>=# DROP RESOURCE GROUP <i>exec</i>; </codeblock>

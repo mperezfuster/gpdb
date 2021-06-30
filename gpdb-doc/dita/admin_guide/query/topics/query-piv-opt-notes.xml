@@ -3,7 +3,7 @@
 <topic id="topic1">
   <title>Considerations when Using GPORCA</title>
   <abstract>
-    <shortdesc> To run queries optimally with GPORCA, query criteria to consider. </shortdesc>
+    <shortdesc> To run queries optimally with GPORCA, consider the query criteria closely. </shortdesc>
   </abstract>
   <body>
     <p>Ensure the following criteria are met:<ul id="ul_bpd_4rb_kr">

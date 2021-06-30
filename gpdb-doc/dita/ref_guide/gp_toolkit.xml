@@ -902,7 +902,7 @@
       <title id="ie192312" class="- topic/title ">gp_log_command_timings</title>
       <body class="- topic/body ">
         <p>This view uses an external table to read the log files on the master and report the
-          run time of SQL commands run in a database session. The use of this view
+          run time of SQL commands in a database session. The use of this view
           requires superuser permissions.</p>
         <table id="ie176169" class="- topic/table ">
           <title class="- topic/title ">gp_log_command_timings view</title>

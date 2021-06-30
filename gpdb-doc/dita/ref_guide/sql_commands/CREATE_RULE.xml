@@ -67,7 +67,7 @@ row being inserted or updated. <codeph>OLD</codeph> is valid in <codeph>ON
 UPDATE</codeph> and <codeph>ON DELETE</codeph> rules to refer to the
 existing row being updated or deleted.</pd></plentry></parml></section><section id="section5"><title>Notes</title><p>You must be the owner of a table to create or change rules for it.</p><p>It is very important to take care to avoid circular rules. Recursive
 rules are not validated at rule create time, but will report an error
-at runtime.</p></section><section id="section6"><title>Examples</title><p>Create a rule that inserts rows into the child table <codeph>b2001</codeph> when a user tries to
+at execution time.</p></section><section id="section6"><title>Examples</title><p>Create a rule that inserts rows into the child table <codeph>b2001</codeph> when a user tries to
         insert into the partitioned parent table <codeph>rank</codeph>:</p><codeblock>CREATE RULE b2001 AS ON INSERT TO rank WHERE gender='M' and 
 year='2001' DO INSTEAD INSERT INTO b2001 VALUES (NEW.id, 
 NEW.rank, NEW.year, NEW.gender, NEW.count);</codeblock></section><section id="section7"><title>Compatibility</title><p><codeph>CREATE RULE</codeph> is a Greenplum Database language extension,

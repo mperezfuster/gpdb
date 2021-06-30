@@ -110,7 +110,7 @@
           <pd>Sets the total memory quota for all statements submitted from users in this resource
             queue. Memory units can be specified in kB, MB or GB. The minimum memory quota for a
             resource queue is 10MB. There is no maximum, however the upper boundary at query
-            runtime is limited by the physical memory of a segment host. The default is no
+            execution time is limited by the physical memory of a segment host. The default is no
             limit (<codeph>-1</codeph>).</pd>
         </plentry>
         <plentry>
@@ -165,14 +165,14 @@
           <codeph>stats_queue_level</codeph> server configuration parameter. See "Managing Workload
         and Resources" in the <i>Greenplum Database Administrator Guide</i> for more information
         about using resource queues.</p><p><codeph>CREATE RESOURCE QUEUE</codeph> cannot be run
-        within a transaction.</p>Also, an SQL statement that is run during the runtime of an
+        within a transaction.</p>Also, an SQL statement that is run during the execution time of an
         <codeph>EXPLAIN ANALYZE</codeph> command is excluded from resource queues.</section>
     <section id="section6">
       <title>Examples</title>
       <p>Create a resource queue with an active query limit of 20: </p>
       <codeblock>CREATE RESOURCE QUEUE myqueue WITH (ACTIVE_STATEMENTS=20);</codeblock>
       <p>Create a resource queue with an active query limit of 20 and a total memory limit of 2000MB
-        (each query will be allocated 100MB of segment host memory at runtime): </p>
+        (each query will be allocated 100MB of segment host memory at execution time): </p>
       <codeblock>CREATE RESOURCE QUEUE myqueue WITH (ACTIVE_STATEMENTS=20, 
   MEMORY_LIMIT='2000MB');</codeblock>
       <p>Create a resource queue with a query cost limit of 3000.0: </p>

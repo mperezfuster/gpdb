@@ -60,7 +60,7 @@
           <pd>Sets the total memory quota for all statements submitted from users in this resource
             queue. Memory units can be specified in kB, MB or GB. The minimum memory quota for a
             resource queue is 10MB. There is no maximum; however the upper boundary at query
-            runtime is limited by the physical memory of a segment host. The default value is
+            execution time is limited by the physical memory of a segment host. The default value is
             no limit (<codeph>-1</codeph>).</pd>
         </plentry>
         <plentry>
