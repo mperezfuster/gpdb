@@ -9227,7 +9227,7 @@ statement_mem = rg_perseg_mem / max_expected_concurrent_queries</codeblock></li>
           <tbody>
             <row>
               <entry colname="col1">directory path</entry>
-              <entry colname="col2">unset</entry>
+              <entry colname="col2">0777</entry>
               <entry colname="col3">local<p>system</p><p>restart</p></entry>
             </row>
           </tbody>
