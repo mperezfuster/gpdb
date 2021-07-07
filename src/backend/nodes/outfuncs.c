@@ -3096,6 +3096,8 @@ _outCreateStmtInfo(StringInfo str, const CreateStmt *node)
 	WRITE_BOOL_FIELD(buildAoBlkdir);
 	WRITE_NODE_FIELD(attr_encodings);
 	WRITE_BOOL_FIELD(isCtas);
+	WRITE_NODE_FIELD(intoQuery);
+	WRITE_NODE_FIELD(intoPolicy);
 
 	WRITE_NODE_FIELD(part_idx_oids);
 	WRITE_NODE_FIELD(part_idx_names);
@@ -3624,6 +3626,7 @@ _outCreateDomainStmt(StringInfo str, const CreateDomainStmt *node)
 	WRITE_NODE_TYPE("CREATEDOMAINSTMT");
 	WRITE_NODE_FIELD(domainname);
 	WRITE_NODE_FIELD_AS(typeName, typename);
+	WRITE_NODE_FIELD(collClause);
 	WRITE_NODE_FIELD(constraints);
 }
 #endif /* COMPILING_BINARY_FUNCS */
@@ -4777,7 +4780,6 @@ _outSortBy(StringInfo str, const SortBy *node)
 	WRITE_ENUM_FIELD(sortby_dir, SortByDir);
 	WRITE_ENUM_FIELD(sortby_nulls, SortByNulls);
 	WRITE_NODE_FIELD(useOp);
-	WRITE_NODE_FIELD(node);
 	WRITE_LOCATION_FIELD(location);
 }
 

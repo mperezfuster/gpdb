@@ -897,7 +897,7 @@ static void checkTimeLineSwitch(XLogRecPtr lsn, TimeLineID newTLI,
 static void LocalSetXLogInsertAllowed(void);
 static void CreateEndOfRecoveryRecord(void);
 static void CheckPointGuts(XLogRecPtr checkPointRedo, int flags);
-static void KeepLogSeg(XLogRecPtr recptr, XLogSegNo *logSegNo);
+static void KeepLogSeg(XLogRecPtr recptr, XLogSegNo *logSegNo, XLogRecPtr PriorRedoPtr);
 static XLogRecPtr XLogGetReplicationSlotMinimumLSN(void);
 
 static void AdvanceXLInsertBuffer(XLogRecPtr upto, bool opportunistic);
@@ -6482,18 +6482,37 @@ StartupXLOG(void)
 	 * in the near future might cause earlier unflushed writes to be lost,
 	 * even though more recent data written to disk from here on would be
 	 * persisted.  To avoid that, fsync the entire data directory.
+	 *
+	 * GPDB: We don't force to fsync the whole pgdata directory as upstream
+	 * code since that could be very slow in cases that the pgdata
+	 * directory has a lot of (e.g. millions of) files. See below for details.
 	 *---------
 	 */
 	if (ControlFile->state != DB_SHUTDOWNED &&
 		ControlFile->state != DB_SHUTDOWNED_IN_RECOVERY)
 	{
 		RemoveTempXlogFiles();
-		ereport(LOG,
-				(errmsg("force synchronization of the data directory since the"
-						" database system was uncleanly shut down.")));
-		SyncDataDirectory();
-		ereport(LOG,
-				(errmsg("synchronization of the data directory is finished.")));
+		/*
+		 * 1. If the backup_label file exists, we assume the pgdata has already
+		 * been synchronized. This is true on gpdb since we do force fsync
+		 * during pg_basebackup and pg_rewind.
+		 *
+		 * 2. else for the crash recovery case.
+		 *
+		 *    2.1. if full page writes is enabled, we do synchronize the wal
+		 *    files only. wal files must be synchronized here, else if xlog
+		 *    redo writes some buffer pages and those pages are partly
+		 *    synchronized, and then system crashes and some xlogs are lost,
+		 *    those table file pages might be broken.
+		 *
+		 *    2.2. else, simply synchronize the whole pgdata directory though
+		 *    there might be room for optimization but we would mostly not run
+		 *    into this code branch. Since we can not get
+		 *    checkPoint.fullPageWrites here so we do pgdata fsync later (
+		 *    i.e. call SyncDataDirectory()) after reading the checkpoint.
+		 */
+		if (access(BACKUP_LABEL_FILE, F_OK) != 0)
+				SyncAllXLogFiles();
 		if (Gp_role == GP_ROLE_DISPATCH)
 			*shmCleanupBackends = true;
 	}
@@ -6744,6 +6763,17 @@ StartupXLOG(void)
 		memcpy(&checkPoint, XLogRecGetData(xlogreader), sizeof(CheckPoint));
 		wasShutdown = ((record->xl_info & ~XLR_INFO_MASK) == XLOG_CHECKPOINT_SHUTDOWN);
 	}
+
+	/*
+	 * gpdb specific: Do pgdata fsync for the case that is almost not possible
+	 * on real production scenarios. See previous code that calls
+	 * SyncAllXLogFiles() for details.
+	 */
+	if (!checkPoint.fullPageWrites &&
+		!haveBackupLabel &&
+		ControlFile->state != DB_SHUTDOWNED &&
+		ControlFile->state != DB_SHUTDOWNED_IN_RECOVERY)
+		SyncDataDirectory();
 
 	/*
 	 * Clear out any old relcache cache files.  This is *necessary* if we do
@@ -9033,32 +9063,6 @@ CreateCheckPoint(int flags)
 	TRACE_POSTGRESQL_CHECKPOINT_START(flags);
 
 	/*
-	 * When the crash happens, we need to handle the transactions that have
-	 * already inserted 'commit' record and haven't inserted 'forget' record.
-	 *
-	 * If the 'commit' record is logically before the checkpoint REDO pointer,
-	 * we save the transactions in checkpoint record, and these transactions
-	 * will be load into shared memory and mark as 'crash committed' during
-	 * redo checkpoint.
-	 * If the 'commit' record is logically after the checkpoint REDO pointer,
-	 * the transactions will be added to shared memory and mark as 'crash
-	 * committed' during redo xact.
-	 * All these transactions will be stored in the shutdown checkpoint record
-	 * after recovery, and they will be finally recovered in recoverTM().
-	 *
-	 * So if it's a shutdown checkpoint here, we should include all 'crash
-	 * committed' transactions, and if it's a normal checkpoint should include
-	 * all transactions whose 'commit' record is logically before checkpoint
-	 * REDO pointer.
-	 *
-	 * We don't hold the WALInsertLock, so there's a time window that allows
-	 * transactions insert 'commit' record and/or 'forget' record after
-	 * checkpoint REDO pointer. That's fine, resend 'commit prepared' to already
-	 * finished transactions is handled.
-	 */
-	getDtxCheckPointInfo(&dtxCheckPointInfo, &dtxCheckPointInfoSize);
-
-	/*
 	 * Get the other info we need for the checkpoint record.
 	 *
 	 * We don't need to save oldestClogXid in the checkpoint, it only matters
@@ -9128,6 +9132,8 @@ CreateCheckPoint(int flags)
 	 */
 	END_CRIT_SECTION();
 
+	SIMPLE_FAULT_INJECTOR("before_wait_VirtualXIDsDelayingChkpt");
+
 	/*
 	 * In some cases there are groups of actions that must all occur on one
 	 * side or the other of a checkpoint record. Before flushing the
@@ -9166,6 +9172,39 @@ CreateCheckPoint(int flags)
 		} while (HaveVirtualXIDsDelayingChkpt(vxids, nvxids));
 	}
 	pfree(vxids);
+
+	/*
+	 * When the crash happens, we need to handle the transactions that have
+	 * already inserted 'commit' record and haven't inserted 'forget' record.
+	 *
+	 * If the 'commit' record is logically before the checkpoint REDO pointer,
+	 * we save the transactions in checkpoint record, and these transactions
+	 * will be load into shared memory and mark as 'crash committed' during
+	 * redo checkpoint.
+	 * If the 'commit' record is logically after the checkpoint REDO pointer,
+	 * the transactions will be added to shared memory and mark as 'crash
+	 * committed' during redo xact.
+	 * All these transactions will be stored in the shutdown checkpoint record
+	 * after recovery, and they will be finally recovered in recoverTM().
+	 *
+	 * So if it's a shutdown checkpoint here, we should include all 'crash
+	 * committed' transactions, and if it's a normal checkpoint should include
+	 * all transactions whose 'commit' record is logically before checkpoint
+	 * REDO pointer.
+	 *
+	 * We don't hold the WALInsertLock, so there's a time window that allows
+	 * transactions insert 'commit' record and/or 'forget' record after
+	 * checkpoint REDO pointer. That's fine, resend 'commit prepared' to already
+	 * finished transactions is handled.
+	 *
+	 * Currently `MyTmGxact->includeInCkpt = true` and `XLogInsert(RM_XACT_ID, XLOG_XACT_DISTRIBUTED_COMMIT)`
+	 * is already protected by delayChkpt, so these are an atomic operation
+	 * from the outside perspective. getDtxCheckPointInfo() should be called
+	 * after HaveVirtualXIDsDelayingChkpt() otherwise some distributed transactions
+	 * with a state of DTX_STATE_INSERTED_COMMITTED may not be included in the
+	 * checkpoint record.
+	 */
+	getDtxCheckPointInfo(&dtxCheckPointInfo, &dtxCheckPointInfoSize);
 
 	CheckPointGuts(checkPoint.redo, flags);
 
@@ -9284,7 +9323,7 @@ CreateCheckPoint(int flags)
 	 * prevent the disk holding the xlog from growing full.
 	 */
 	XLByteToSeg(RedoRecPtr, _logSegNo, wal_segment_size);
-	KeepLogSeg(recptr, &_logSegNo);
+	KeepLogSeg(recptr, &_logSegNo, PriorRedoPtr);
 	_logSegNo--;
 	RemoveOldXlogFiles(_logSegNo, RedoRecPtr, recptr);
 
@@ -9621,7 +9660,7 @@ CreateRestartPoint(int flags)
 	receivePtr = GetWalRcvWriteRecPtr(NULL, NULL);
 	replayPtr = GetXLogReplayRecPtr(&replayTLI);
 	endptr = (receivePtr < replayPtr) ? replayPtr : receivePtr;
-	KeepLogSeg(endptr, &_logSegNo);
+	KeepLogSeg(endptr, &_logSegNo, InvalidXLogRecPtr);
 	_logSegNo--;
 
 	/*
@@ -9699,24 +9738,27 @@ CreateRestartPoint(int flags)
  * requirement of replication slots.
  */
 static void
-KeepLogSeg(XLogRecPtr recptr, XLogSegNo *logSegNo)
+KeepLogSeg(XLogRecPtr recptr, XLogSegNo *logSegNo, XLogRecPtr PriorRedoPtr)
 {
 	XLogSegNo	segno;
 	XLogRecPtr	keep;
 	bool setvalue = false;
+	static XLogRecPtr CkptRedoBeforeMinLSN = InvalidXLogRecPtr;
 
 	XLByteToSeg(recptr, segno, wal_segment_size);
 	keep = XLogGetReplicationSlotMinimumLSN();
 
 #ifdef FAULT_INJECTOR
 	/*
-	 * Ignore the replication slot's LSN and let the WAL still needed by the
-	 * replication slot to be removed.  This is used to test if WAL sender can
-	 * recognize that an incremental recovery has failed when the WAL
+	 * Let the WAL still needed be removed.  This is used to test if WAL sender
+	 * can recognize that an incremental recovery has failed when the WAL
 	 * requested by a mirror no longer exists.
 	 */
 	if (SIMPLE_FAULT_INJECTOR("keep_log_seg") == FaultInjectorTypeSkip)
+	{
 		keep = GetXLogWriteRecPtr();
+		XLByteToSeg(keep, *logSegNo, wal_segment_size);
+	}
 #endif
 
 	/* compute limit for wal_keep_segments first */
@@ -9734,6 +9776,22 @@ KeepLogSeg(XLogRecPtr recptr, XLogSegNo *logSegNo)
 	if (max_replication_slots > 0 && keep != InvalidXLogRecPtr)
 	{
 		XLogSegNo	slotSegNo;
+
+		/*
+		 * GPDB never uses restart_lsn as lowest cut-off point. Instead always
+		 * will use Checkpoint redo location prior to restart_lsn as cut-off
+		 * point.
+		 */
+		if (!XLogRecPtrIsInvalid(PriorRedoPtr))
+		{
+			if (PriorRedoPtr < keep)
+			{
+				keep = PriorRedoPtr;
+				CkptRedoBeforeMinLSN = PriorRedoPtr;
+			}
+			else if (!XLogRecPtrIsInvalid(CkptRedoBeforeMinLSN))
+				keep = CkptRedoBeforeMinLSN;
+		}
 
 		XLByteToSeg(keep, slotSegNo, wal_segment_size);
 

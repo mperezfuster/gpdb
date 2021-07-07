@@ -2216,10 +2216,10 @@ _readSortBy(void)
 {
 	READ_LOCALS(SortBy);
 
-	READ_INT_FIELD(sortby_dir);
-	READ_INT_FIELD(sortby_nulls);
-	READ_NODE_FIELD(useOp);
 	READ_NODE_FIELD(node);
+	READ_ENUM_FIELD(sortby_dir, SortByDir);
+	READ_ENUM_FIELD(sortby_nulls, SortByNulls);
+	READ_NODE_FIELD(useOp);
 	READ_LOCATION_FIELD(location);
 
 	READ_DONE();
@@ -3719,6 +3719,7 @@ _readCreateDomainStmt(void)
 
 	READ_NODE_FIELD(domainname);
 	READ_NODE_FIELD(typeName);
+	READ_NODE_FIELD(collClause);
 	READ_NODE_FIELD(constraints);
 
 	READ_DONE();
