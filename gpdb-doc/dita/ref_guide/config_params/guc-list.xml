@@ -5896,7 +5896,7 @@
               <entry colname="col1">numeric UNIX file permission mode (as accepted by the
                   <i>chmod</i> or <i>umask</i> commands)</entry>
               <entry colname="col2">0600</entry>
-              <entry colname="col3">local<p>system</p><p>restart</p></entry>
+              <entry colname="col3">local<p>system</p><p>reload</p></entry>
             </row>
           </tbody>
         </tgroup>
