@@ -916,14 +916,15 @@ Date(System.currentTimeMillis()));</codeblock>
         <p>PL/Java is a <i>trusted</i> language. The trusted PL/Java language has no access to the
           file system as stipulated by PostgreSQL definition of a trusted language. Any database
           user can create and access functions in a trusted language.</p>
-        <p>If you enable PL/Java by running the <codeph>'CREATE EXTENSION pljava'</codeph> command
-          when <xref href="#topic6" type="topic" format="dita"/>, PL/Java also installs a language
-          handler for the language <codeph>javau</codeph>. This version is <i>not trusted</i> and
-          only a superuser can create new functions that use it. Any user can call the
-          functions.</p>
-        <p>You may install only the trusted language <codeph>pljava</codeph> by running the command
-            <codeph>'CREATE EXTENSION pljavat'</codeph> instead, which does not contain the
-          untrusted language <codeph>pljavau</codeph>.</p>
+        <p>PL/Java also installs a language handler for the language <codeph>javau</codeph>. This
+          version is <i>not trusted</i> and only a superuser can create new functions that use it.
+          Any user can call the functions.</p>
+        <p>To install both the trusted and untrusted languages, register the extension by running
+          the <codeph>'CREATE EXTENSION pljava'</codeph> command when <xref href="#topic6"
+            type="topic" format="dita"/>. </p>
+        <p>To install only the trusted language, register the extension by running the
+            <codeph>'CREATE EXTENSION pljavat'</codeph> command when <xref href="#topic6"
+            type="topic" format="dita"/>.</p>
       </body>
     </topic>
   </topic>
