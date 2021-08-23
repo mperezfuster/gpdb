@@ -141,11 +141,14 @@ kernel.shmall = 197951838</codeblock>
         amount of memory that all active postgres processes for a single segment can consume at any
         given time. Queries that exceed this amount will fail. Use the following calculations to
         estimate a safe value for <codeph>gp_vmem_protect_limit</codeph>.<ol id="ol_osx_srq_kv">
-          <li>Calculate <codeph>gp_vmem</codeph>, the host memory available to Greenplum Database,
-            using this
-            formula:<codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.7</codeblock>where
-              <codeph>SWAP</codeph> is the host's swap space in GB and <codeph>RAM</codeph> is the
-            RAM installed on the host in GB.</li>
+          <li>Calculate <codeph>gp_vmem</codeph>, the host memory available to Greenplum
+              Database.<ul id="ul_ftf_yw5_rqb">
+              <li>If the total sytem memory is less than 256 GB, use this
+                formula:<codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.7</codeblock></li>
+              <li>If the total system memory is equal to or higher than 256 GB, use this formula:
+                <codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.17</codeblock></li>
+            </ul>where <codeph>SWAP</codeph> is the host's swap space in GB and <codeph>RAM</codeph>
+            is the RAM installed on the host in GB.</li>
           <li>Calculate <codeph>max_acting_primary_segments</codeph>. This is the maximum number of
             primary segments that can be running on a host when mirror segments are activated due to
             a segment or host failure on another host in the cluster. With mirrors arranged in a

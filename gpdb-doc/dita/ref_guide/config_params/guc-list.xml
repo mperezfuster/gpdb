@@ -4964,9 +4964,13 @@
           <codeph>4096</codeph>. Do not add the units <codeph>MB</codeph> to the value.</p>
       <p>To prevent over-allocation of memory, these calculations can estimate a safe
           <codeph>gp_vmem_protect_limit</codeph> value.</p>
-      <p>First calculate the value <varname>gp_vmem</varname>. This is the Greenplum Database memory
-        available on a
-        host<codeblock><varname>gp_vmem</varname> = ((<varname>SWAP</varname> + <varname>RAM</varname>) – (7.5GB + 0.05 * <varname>RAM</varname>)) / 1.7</codeblock></p>
+      <p>First calculate the value of <varname>gp_vmem</varname>. This is the Greenplum Database
+        memory available on a host.<ul id="ul_ftf_yw5_rqb">
+          <li>If the total sytem memory is less than 256 GB, use this
+            formula:<codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.7</codeblock></li>
+          <li>If the total system memory is equal to or higher than 256 GB, use this formula:
+            <codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.17</codeblock></li>
+        </ul></p>
       <p>where <varname>SWAP</varname> is the host swap space and <varname>RAM</varname> is the RAM
         on the host in GB.</p>
       <p>Next, calculate the <varname>max_acting_primary_segments</varname>. This is the maximum
