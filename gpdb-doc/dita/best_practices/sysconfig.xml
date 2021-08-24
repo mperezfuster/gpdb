@@ -164,8 +164,13 @@ kernel.shmall = 197951838</codeblock>
         </ol>
       </p>
       <p dir="ltr">For scenarios where a large number of workfiles are generated, adjust the
-        calculation for <codeph>gp_vmem</codeph> to account for the
-        workfiles:<codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM - (300KB * <varname>total_#_workfiles</varname>))) / 1.7</codeblock></p>
+        calculation for <codeph>gp_vmem</codeph> to account for the workfiles.<ul
+          id="ul_v54_ymb_sqb">
+          <li>If the total sytem memory is less than 256
+            GB:<codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM - (300KB * <varname>total_#_workfiles</varname>))) / 1.7</codeblock></li>
+          <li>If the total system memory is equal to or higher than 256
+            GB:<codeblock>gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM - (300KB * <varname>total_#_workfiles</varname>))) / 1.17</codeblock></li>
+        </ul></p>
       <p dir="ltr">For information about monitoring and managing workfile usage, see the
           <i>Greenplum Database Administrator Guide</i>.</p>
       <p dir="ltr">You can calculate the value of the <codeph>vm.overcommit_ratio</codeph> operating
