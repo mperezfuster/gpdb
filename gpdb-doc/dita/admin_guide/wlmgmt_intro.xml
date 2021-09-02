@@ -88,9 +88,9 @@
         <p>To calculate a safe value for <codeph>vm.overcommit_ratio</codeph> when resource
           queue-based resource management is active, first determine the total memory available to
           Greenplum Database processes, <codeph>gp_vmem_rq</codeph>.<ul id="ul_kpv_hkb_sqb">
-            <li>If the total sytem memory is less than 256 GB, use this
+            <li>If the total system memory is less than 256 GB, use this
               formula:<codeblock>gp_vmem_rq = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.7</codeblock></li>
-            <li>If the total system memory is equal to or higher than 256 GB, use this
+            <li>If the total system memory is equal to or greater than 256 GB, use this
               formula:<codeblock>gp_vmem_rq = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.17</codeblock></li>
           </ul></p>
         <p>where <codeph>SWAP</codeph> is the swap space on the host in GB, and <codeph>RAM</codeph>
