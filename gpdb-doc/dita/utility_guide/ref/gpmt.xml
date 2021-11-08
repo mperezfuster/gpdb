@@ -9,8 +9,11 @@
     <section>
       <title>Synopsis</title>
       <codeblock><b>gpmt </b> <varname>tool</varname> [<varname>tool_options</varname> ...] 
+
 <b>gpmt -hostfile</b> <varname>FILE</varname>
+
 <b>gpmt -help</b>
+
 <b>gpmt -verbose</b>
 </codeblock>
     </section>
