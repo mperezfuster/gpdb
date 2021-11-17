@@ -1649,7 +1649,7 @@
           <tbody>
             <row>
               <entry colname="col1">1 - INT_MAX <i>or</i> number and unit</entry>
-              <entry colname="col2">524288 (16GB)</entry>
+              <entry colname="col2">16GB</entry>
               <entry colname="col3">master<p>session</p><p>reload</p></entry>
             </row>
           </tbody>
