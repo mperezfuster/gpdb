@@ -67,6 +67,12 @@
             <entry colname="col4">Operation start timestamp. </entry>
           </row>
           <row>
+            <entry><codeph>backend_xmin</codeph></entry>
+            <entry>xid</entry>
+            <entry/>
+            <entry>The current backend's <codeph>xmin</codeph> horizon.</entry>
+          </row>
+          <row>
             <entry colname="col1"><codeph>state</codeph></entry>
             <entry colname="col2">text</entry>
             <entry colname="col3"/>
