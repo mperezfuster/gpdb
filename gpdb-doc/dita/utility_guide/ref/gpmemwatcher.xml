@@ -19,17 +19,23 @@
       <title>Description</title>
       <p>The <codeph>gpmemwatcher</codeph> utility is a daemon that runs on all servers of a
         Greenplum Database cluster. It tracks the memory usage of each process by collecting the
-        output of the <codeph>ps</codeph> command every 60 seconds. </p>
-      <p>It is a low impact process that only consumes 4 MB of memory. It will generate
-        approximately 30 MB of data over a 24-hour period.</p>
+        output of the <codeph>ps</codeph> command every 60 seconds. It is a low impact process that
+        only consumes 4 MB of memory. It will generate approximately 30 MB of data over a 24-hour
+        period. </p>
+      <p>You may use this utility when Greenplum Database is reporting <codeph>Out of
+          memory</codeph> errors and causing segments to go down or queries to fail. You collect the
+        memory usage information of one or multiple servers within the Greenplum Database cluster
+        with <codeph>gpmemwatcher</codeph> and then use <codeph><xref
+            href="./gpmemreport.xml#topic1" type="topic" format="dita"/></codeph> to analyze the
+        files collected.</p>
     </section>
     <section id="section4">
       <title>Options</title>
       <parml>
         <plentry>
-          <pt>-f  | --host_file<varname>HOSTFILE</varname></pt>
+          <pt>-f | --host_file <varname>HOSTFILE</varname></pt>
           <pd>Indicates the <varname>hostfile</varname> input file that lists the hosts that the
-            utility needs to collect the memory usage information from. The file must include the
+            utility will collect the memory usage information from. The file must include the
             hostnames and a working directory that must exist in these hosts. For
             example:<codeblock>mdw:/home/gpadmin/gpmemwatcher_dir/working
 sdw1:/home/gpadmin/gpmemwatcher_dir/working
@@ -65,13 +71,17 @@ sdw4:/home/gpadmin/gpmemwatcher_dir/working</codeblock>
       <p>Make sure that the path <codeph>/home/gpadmin/gpmemwatcher_dir/working</codeph> exists in
         all hosts.</p>
       <p>Start the utility:</p>
-      <codeblock>$ gpmemwatcher -f home/gpadmin/hostmap.txt</codeblock>
+      <codeblock>$ gpmemwatcher -f /home/gpadmin/hostmap.txt</codeblock>
       <p><b>Example 2: Stop utility and dump the results into a <codeph>.gz</codeph> file</b></p>
       <p>Stop the utility you started in Example 1:</p>
       <codeblock>$ gpmemwatcher -f /home/gpadmin/hostmap.txt --stop</codeblock>
-      <p>The results <codeph>.gz</codeph> file will be dumped into the directory where the command
-        was run:</p><codeblock>$ [gpadmin@gpdb-m]$ ls -thrl
--rw-rw-r--. 1 gpadmin gpadmin 2.8K Nov 19 15:17 gpdb-m.ps.out.gz</codeblock>
+      <p>The results <codeph>.gz</codeph> files will be dumped into the directory where you are
+        running the command:</p><codeblock>$ [gpadmin@gpdb-m]$ ls -thrl
+-rw-rw-r--. 1 gpadmin gpadmin 2.8K Nov 19 15:17 mdw.ps.out.gz
+-rw-rw-r--. 1 gpadmin gpadmin 2.8K Nov 19 15:17 sdw1.ps.out.gz
+-rw-rw-r--. 1 gpadmin gpadmin 2.8K Nov 19 15:17 sdw2.ps.out.gz
+-rw-rw-r--. 1 gpadmin gpadmin 2.8K Nov 19 15:17 sdw3.ps.out.gz
+-rw-rw-r--. 1 gpadmin gpadmin 2.8K Nov 19 15:17 sdw4.ps.out.gz</codeblock>
     </section>
     <section id="section6">
       <title>See Also</title>
