@@ -2682,8 +2682,8 @@
   <topic id="gp_dispatch_keepalives_count">
     <title>gp_dispatch_keepalives_count</title>
     <body>
-      <p>Maximum number of TCP keepalive retransmits from Greenplum Query Dispatcher to its Query
-        Executors QD. It controls the number of consecutive keepalive retransmits that can be lost
+      <p>Maximum number of TCP keepalive retransmits from a Greenplum Query Dispatcher to its Query
+        Executors. It controls the number of consecutive keepalive retransmits that can be lost
         before a connection between a Query Dispatcher and a Query Executor is considered dead.</p>
       <table id="table_orj_wng_rrb">
         <tgroup cols="3">
@@ -2701,7 +2701,7 @@
             <row>
               <entry colname="col1">0 to 127</entry>
               <entry colname="col2">0 (it uses the system default)</entry>
-              <entry colname="col3">master<p>session</p><p>reload</p></entry>
+              <entry colname="col3">local<p>system</p><p>restart</p></entry>
             </row>
           </tbody>
         </tgroup>
@@ -2711,8 +2711,8 @@
   <topic id="gp_dispatch_keepalives_idle">
     <title>gp_dispatch_keepalives_idle</title>
     <body>
-      <p>Time in seconds between issuing TCP keepalives from Greenplum Query Dispatcher to its Query
-        Executors.</p>
+      <p>Time in seconds between issuing TCP keepalives from a Greenplum Query Dispatcher to its
+        Query Executors.</p>
       <table id="table_pwn_wng_rrb">
         <tgroup cols="3">
           <colspec colnum="1" colname="col1" colwidth="1*"/>
@@ -2729,7 +2729,7 @@
             <row>
               <entry colname="col1">0 to 32767</entry>
               <entry colname="col2">0  (it uses the system default)</entry>
-              <entry colname="col3">master<p>session</p><p>reload</p></entry>
+              <entry colname="col3">local<p>system</p><p>restart</p></entry>
             </row>
           </tbody>
         </tgroup>
@@ -2739,7 +2739,7 @@
   <topic id="gp_dispatch_keepalives_interval">
     <title>gp_dispatch_keepalives_interval</title>
     <body>
-      <p>Time in seconds between TCP keepalive retransmits from Greenplum Query Dispatcher to its
+      <p>Time in seconds between TCP keepalive retransmits from a Greenplum Query Dispatcher to its
         Query Executors.</p>
       <table id="table_jpq_wng_rrb">
         <tgroup cols="3">
@@ -2757,7 +2757,7 @@
             <row>
               <entry colname="col1">0 to 32767</entry>
               <entry colname="col2">0  (it uses the system default)</entry>
-              <entry colname="col3">master<p>session</p><p>reload</p></entry>
+              <entry colname="col3">local<p>system</p><p>restart</p></entry>
             </row>
           </tbody>
         </tgroup>
