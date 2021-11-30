@@ -36,7 +36,7 @@
           <pt>-f | --host_file <varname>HOSTFILE</varname></pt>
           <pd>Indicates the <varname>hostfile</varname> input file that lists the hosts that the
             utility will collect the memory usage information from. The file must include the
-            hostnames and a working directory that must exist in these hosts. For
+            hostnames and a working directory that exists on each one of the hosts. For
             example:<codeblock>mdw:/home/gpadmin/gpmemwatcher_dir/working
 sdw1:/home/gpadmin/gpmemwatcher_dir/working
 sdw2:/home/gpadmin/gpmemwatcher_dir/working
@@ -60,19 +60,19 @@ sdw4:/home/gpadmin/gpmemwatcher_dir/working</codeblock></pd>
       </parml>
     </section>
     <section id="section5"><title>Examples</title>
-      <p><b>Example 1: Start the utility specifying the list of hosts to collect the information
-          from</b></p>
+      <p><b>Example 1: Start the utility specifying the list of hosts from which to collect the
+          information</b></p>
       <p>Create the file <codeph>/home/gpadmin/hostmap.txt</codeph> that contains the following:</p>
       <codeblock>mdw:/home/gpadmin/gpmemwatcher_dir/working
 sdw1:/home/gpadmin/gpmemwatcher_dir/working
 sdw2:/home/gpadmin/gpmemwatcher_dir/working
 sdw3:/home/gpadmin/gpmemwatcher_dir/working
 sdw4:/home/gpadmin/gpmemwatcher_dir/working</codeblock>
-      <p>Make sure that the path <codeph>/home/gpadmin/gpmemwatcher_dir/working</codeph> exists in
+      <p>Make sure that the path <codeph>/home/gpadmin/gpmemwatcher_dir/working</codeph> exists on
         all hosts.</p>
       <p>Start the utility:</p>
       <codeblock>$ gpmemwatcher -f /home/gpadmin/hostmap.txt</codeblock>
-      <p><b>Example 2: Stop utility and dump the results into a <codeph>.gz</codeph> file</b></p>
+      <p><b>Example 2: Stop utility and dump the resulting into a <codeph>.gz</codeph> file</b></p>
       <p>Stop the utility you started in Example 1:</p>
       <codeblock>$ gpmemwatcher -f /home/gpadmin/hostmap.txt --stop</codeblock>
       <p>The results <codeph>.gz</codeph> files will be dumped into the directory where you are
