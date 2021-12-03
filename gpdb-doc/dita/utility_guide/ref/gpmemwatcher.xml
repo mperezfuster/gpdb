@@ -22,7 +22,7 @@
         output of the <codeph>ps</codeph> command every 60 seconds. It is a low impact process that
         only consumes 4 MB of memory. It will generate approximately 30 MB of data over a 24-hour
         period. </p>
-      <p>You may use this utility when Greenplum Database is reporting <codeph>Out of
+      <p>You may use this utility if Greenplum Database is reporting <codeph>Out of
           memory</codeph> errors and causing segments to go down or queries to fail. You collect the
         memory usage information of one or multiple servers within the Greenplum Database cluster
         with <codeph>gpmemwatcher</codeph> and then use <codeph><xref
@@ -34,8 +34,8 @@
       <parml>
         <plentry>
           <pt>-f | --host_file <varname>hostfile</varname></pt>
-          <pd>Indicates the <varname>hostfile</varname> input file that lists the hosts that the
-            utility will collect the memory usage information from. The file must include the
+          <pd>Indicates the <varname>hostfile</varname> input file that lists the hosts from which the
+            utility should collect memory usage information. The file must include the
             hostnames and a working directory that exists on each one of the hosts. For
             example:<codeblock>mdw:/home/gpadmin/gpmemwatcher_dir/working
 sdw1:/home/gpadmin/gpmemwatcher_dir/working
