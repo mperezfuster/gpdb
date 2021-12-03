@@ -7,9 +7,9 @@
     <p>Tracks the memory usage of each process in a Greenplum Database cluster.</p>
     <section id="section2">
       <title>Synopsis</title>
-      <codeblock><b>gpmemwatcher</b> [<b>-f</b> | <b>--host_file</b> <varname>HOSTFILE</varname>]   
+      <codeblock><b>gpmemwatcher</b> [<b>-f</b> | <b>--host_file</b> <varname>hostfile</varname>]   
         
-<b>gpmemwatcher</b> <b>--stop</b> [<b>-f</b> | <b>--host_file</b> <varname>HOSTFILE</varname>]  
+<b>gpmemwatcher</b> <b>--stop</b> [<b>-f</b> | <b>--host_file</b> <varname>hostfile</varname>]  
 
 <b>gpmemwatcher</b> <b>--version</b>
 
@@ -33,7 +33,7 @@
       <title>Options</title>
       <parml>
         <plentry>
-          <pt>-f | --host_file <varname>HOSTFILE</varname></pt>
+          <pt>-f | --host_file <varname>hostfile</varname></pt>
           <pd>Indicates the <varname>hostfile</varname> input file that lists the hosts that the
             utility will collect the memory usage information from. The file must include the
             hostnames and a working directory that exists on each one of the hosts. For
