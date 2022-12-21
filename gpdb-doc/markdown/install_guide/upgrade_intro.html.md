@@ -6,7 +6,7 @@ This topic identifies the upgrade paths for upgrading a Greenplum Database 6.x r
 
 Greenplum Database 6 supports upgrading from a Greenplum 6.x release to a newer 6.x release. Direct upgrade from VMware Greenplum 5.28 and later to VMware Greenplum 6.9 and later is provided via gpupgrade; for more information, see the [gpupgrade documentation](https://docs.vmware.com/en/VMware-Tanzu-Greenplum-Upgrade/index.html). Direct upgrade from Greenplum Database 4.3, or from Greenplum 5.27 and earlier, to Greenplum 6 is not supported; you must migrate the data to Greenplum 6.
 
-This a second test. Mireia.
+This a second test. Mireia Perez Fuster.
 
 -   **[Upgrading from an Earlier Greenplum 6 Release](upgrading.html)**  
 The upgrade path supported for this release is Greenplum Database 6.x to a newer Greenplum Database 6.x release.
