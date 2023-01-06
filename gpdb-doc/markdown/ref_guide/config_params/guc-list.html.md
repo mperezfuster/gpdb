@@ -828,7 +828,7 @@ Enable `LIMIT` operation to be performed while sorting. Sorts more efficiently w
 
 ## <a id="gp_explain_jit"></a>gp\_explain\_jit
 
-Prints summarized JIT information from all query executions.
+Prints summarized JIT information from all query executions when JIT compilation is enabled.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -1638,7 +1638,7 @@ Sets the query cost above which JIT compilation attempts to inline functions and
 |-----------|-------|-------------------|
 |floating point|500000||
 
-## <a id="jit_optimize_above_cost"></a>jit\_optimize\_above_\cost
+## <a id="jit_optimize_above_cost"></a>jit\_optimize\_above\_cost
 
 Sets the query cost above which JIT compilation applies expensive optimizations. Such optimization adds planning time, but can improve execution speed. It is not meaningful to set this to less than `jit_above_cost`, and it is unlikely to be beneficial to set it to more than `jit_inline_above_cost`. Setting this to -1 disables expensive optimizations.
 
