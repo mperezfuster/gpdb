@@ -826,6 +826,14 @@ Enable `LIMIT` operation to be performed while sorting. Sorts more efficiently w
 |-----------|-------|-------------------|
 |Boolean|on|master, system, restart|
 
+## <a id="gp_explain_jit"></a>gp\_explain\_jit
+
+Prints summarized JIT information from all query executions.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|boolean|on||
+
 ## <a id="gp_external_max_segs"></a>gp\_external\_max\_segs 
 
 Sets the number of segments that will scan external table data during an external table operation, the purpose being not to overload the system with scanning data and take away resources from other concurrent operations. This only applies to external tables that use the `gpfdist://` protocol to access external table data.
@@ -1605,6 +1613,38 @@ The value *iso\_8601* will produce output matching the time interval *format wit
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
 |postgres, postgres\_verbose, sql\_standard, iso\_8601|postgres|master, session, reload|
+
+## <a id="jit"></a>jit
+
+Determines whether JIT compilation may be used by Greenplum Database.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|boolean|on||
+
+## <a id="jit_above_cost"></a>jit\_above\_cost
+
+Sets the query cost above which JIT compilation is activated, if enabled. Performing JIT costs planning time but can accelerate query execution. Setting this to -1 disables JIT compilation.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|floating point|100000||
+
+## <a id="jit_inline_above_cost"></a>jit\_inline\_above\_cost
+
+Sets the query cost above which JIT compilation attempts to inline functions and operators. Inlining adds planning time, but can improve execution speed. It is not meaningful to set this to less than `jit_above_cost`. Setting this to -1 disables inlining.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|floating point|500000||
+
+## <a id="jit_optimize_above_cost"></a>jit\_optimize\_above_\cost
+
+Sets the query cost above which JIT compilation applies expensive optimizations. Such optimization adds planning time, but can improve execution speed. It is not meaningful to set this to less than `jit_above_cost`, and it is unlikely to be beneficial to set it to more than `jit_inline_above_cost`. Setting this to -1 disables expensive optimizations.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|floating point|500000||
 
 ## <a id="join_collapse_limit"></a>join\_collapse\_limit 
 
