@@ -16,7 +16,7 @@ The library file name is typically given as just a bare file name, which is soug
 
 Note that in Greenplum Database the shared library file \(`.so` file\) must reside in the same path location on every host in the Greenplum Database array \(coordinators, segments, and mirrors\).
 
-Non-superusers can only apply `LOAD` to library files located in `$libdir/plugins/` — the specified `filename` must begin with exactly that string. You must to ensure that only “safe” libraries are installed there.
+Non-superusers can only apply `LOAD` to library files located in `$libdir/plugins/` — the specified `filename` must begin with exactly that string. You must ensure that only “safe” libraries are installed there.
 
 ## <a id="section4"></a>Parameters 
 
