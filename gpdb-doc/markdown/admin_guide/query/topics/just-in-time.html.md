@@ -9,9 +9,9 @@ This topic provides an explanation of what Just-in-Time compilation is and how i
 ## <a id="topic2"></a>What is JIT compilation?
 
 Just-in-Time (JIT) compilation is the process of turning some form of interpreted program evaluation into a native program, and doing so at run time.
-For example, instead of using general-purpose code that can evaluate arbitrary SQL expressiones to evaluate a particular SQL predicate like WHERE a.col=3, it is possible to generate a function that is specific to that expression and can be natively executed by the CPU, yielding a speedup.
+For example, instead of using general-purpose code that can evaluate arbitrary SQL expressiones to evaluate a particular SQL predicate like `WHERE a.col=3`, it is possible to generate a function that is specific to that expression and can be natively executed by the CPU, yielding a speedup.
 
-Greenplum Database has builtin support to perform JIT compilation using LLVM when Greenplum Database is built with --with-llvm.
+Greenplum Database has builtin support to perform JIT compilation using LLVM when Greenplum Database is built with `--with-llvm`. If you installed Greenplum Database using the `rpm` installation file, the install option `--with-llvm` is not necessary.
 
 ### <a id="topic21"></a>JIT accelerated operations
 
