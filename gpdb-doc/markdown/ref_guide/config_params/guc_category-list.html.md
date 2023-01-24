@@ -225,6 +225,14 @@ Control the query plan execution.
 - [gp_max_slices](guc-list.html#gp_max_slices)
 - [plan_cache_mode](guc-list.html#plan_cache_mode)
 
+### <a id="topic_jit"></a>JIT Configuration Parameters
+
+- [gp_explain_jit](guc-list.html#gp_explain_jit)
+- [jit](guc-list.html#jit)
+- [jit_above_cost](guc-list.html#jit_above_cost)
+- [jit_inline_above_cost](guc-list.html#jit_inline_above_cost)
+- [jit_optimize_above_cost](guc-list.html#jit_optimize_above_cost)
+
 ## <a id="topic29"></a>Error Reporting and Logging Parameters 
 
 These configuration parameters control Greenplum Database logging.

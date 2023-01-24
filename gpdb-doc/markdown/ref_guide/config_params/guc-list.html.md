@@ -832,7 +832,7 @@ Prints summarized JIT information from all query executions when JIT compilation
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-|boolean|on||
+|boolean|on|local, session, reload |
 
 ## <a id="gp_external_max_segs"></a>gp\_external\_max\_segs 
 
@@ -1620,7 +1620,7 @@ Determines whether JIT compilation may be used by Greenplum Database.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-|boolean|on||
+|boolean|off|master, session, reload|
 
 ## <a id="jit_above_cost"></a>jit\_above\_cost
 
@@ -1628,7 +1628,7 @@ Sets the query cost above which JIT compilation is activated, if enabled. Perfor
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-|floating point|100000||
+|floating point|100000|master, session, reload|
 
 ## <a id="jit_inline_above_cost"></a>jit\_inline\_above\_cost
 
@@ -1636,7 +1636,7 @@ Sets the query cost above which JIT compilation attempts to inline functions and
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-|floating point|500000||
+|floating point|500000|master, session, reload|
 
 ## <a id="jit_optimize_above_cost"></a>jit\_optimize\_above\_cost
 
@@ -1644,7 +1644,7 @@ Sets the query cost above which JIT compilation applies expensive optimizations.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-|floating point|500000||
+|floating point|500000|master, session, reload|
 
 ## <a id="join_collapse_limit"></a>join\_collapse\_limit 
 
