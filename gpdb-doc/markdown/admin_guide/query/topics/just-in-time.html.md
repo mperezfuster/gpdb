@@ -88,7 +88,7 @@ In the above examples, the configuration parameter `jit_above_cost` was modified
 
 ## <a id="topic4"></a>Configuration
 
-The configuration parameter [jit]((../../../ref_guide/config_params/guc-list.html#jit)) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether to use or not JIT is cost-based is controlled by the GUCs:
+The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether to use or not JIT is cost-based is controlled by the GUCs:
 
 - [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost): All queries with a higher total cost get JITed, *without* optimization (expensive part), corresponding to -O0. This commonly already results in significant speedups if expression/deforming is a bottleneck (removing dynamic branches mostly).
 - [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost): all queries with a higher total cost get JITed, *with* optimization (expensive part).

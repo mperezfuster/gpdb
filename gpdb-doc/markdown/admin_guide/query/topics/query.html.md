@@ -32,5 +32,7 @@ Greenplum Database creates spill files, also known as workfiles, on disk if it d
 Examine the query plans of poorly performing queries to identify possible performance tuning opportunities.
 -   **[Just-in-Time Compilation (JIT)](../../query/topics/just-in-time.html)**
 Greenplum Database supports Just-in-Time compilation for long-running CPU-bound queries.
+
+
 **Parent topic:** [Greenplum Database Administrator Guide](../../admin_guide.html)
 
