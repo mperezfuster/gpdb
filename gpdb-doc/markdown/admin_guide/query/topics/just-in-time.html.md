@@ -12,7 +12,7 @@ Just-in-Time (JIT) compilation is the process of turning some form of interprete
 
 Greenplum Database has builtin support to perform JIT compilation using LLVM when Greenplum Database is built with `--with-llvm`. If you installed Greenplum Database using the `rpm` installation file, the install option `--with-llvm` is not necessary.
 
-It is possible to use JIT with both Postgres Optimizer and GPORCA. Since GPORCA and Postgres Optimizer use different models and the relation of their costs varies, you must tune the JIT thresholds according to your practical usage.
+It is possible to use JIT with both Postgres Optimizer and GPORCA. Since GPORCA and Postgres Optimizer use different models and the relation of their costs varies, you must tune the JIT thresholds according to your practical usage. See [Configuration](#topic4) for more information.
 
 ### <a id="topic21"></a>JIT accelerated operations
 
@@ -32,13 +32,13 @@ LLVM has support for optimizing generated code. Some of the optimizations are ch
 
 ## <a id="topic3"></a>When to JIT? 
 
-JIT compilation is beneficial primarily for long-running CPU-bound queries. Frequently these will be analytical queries. For short queries the added overhead of performing JIT compilation will often be higher than the time it can save.
+JIT compilation is beneficial primarily for long-running CPU-bound queries. Frequently these are analytical queries. For short queries the added overhead of performing JIT compilation will often be higher than the time it can save.
 
-To determine whether JIT compilation should be used, the total estimated cost of a query is used. The estimated cost of the query will be compared with the setting of `jit_above_cost`. If the cost is higher, JIT compilation will be performed. Two further decisions are then needed. Firstly, if the estimated cost is more than the setting of `jit_inline_above_cost`, short functions and operators used in the query will be inlined. Secondly, if the estimated cost is more than the setting of `jit_optimize_above_cost`, expensive optimizations are applied to improve the generated code. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
+To determine whether JIT compilation should be used, the total estimated cost of a query is used. The estimated cost of the query is compared with the setting of `jit_above_cost`. If the cost is higher, JIT compilation is performed. Two further decisions are then needed. Firstly, if the estimated cost is more than the setting of `jit_inline_above_cost`, short functions and operators used in the query are inlined. Secondly, if the estimated cost is more than the setting of `jit_optimize_above_cost`, expensive optimizations are applied to improve the generated code. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
 
-These cost-based decisions will be made at plan time, not execution time. This means that when prepared statements are in use, and a generic plan is used (see [PREPARE](../../../ref_guide/sql_commands/PREPARE.html)), the values of the configuration parameters in effect at prepare time control the decisions, not the settings at execution time.
+These cost-based decisions are made at plan time, not execution time. This means that when prepared statements are in use, and a generic plan is used (see [PREPARE](../../../ref_guide/sql_commands/PREPARE.html)), the values of the configuration parameters in effect at prepare time control the decisions, not the settings at execution time.
 
-The Greenplum configuration parameter `gp_explain_jit` enables the display of summarized JIT information from all query executions when JIT compilation is enabled. `EXPLAIN` can be used to see whether JIT is used or not. Examples:
+The Greenplum Database configuration parameter [gp_explain_jit](../../../ref_guide/config_params/guc-list.html#gp_explain_jit) enables the display of summarized JIT information from all query executions when JIT compilation is enabled. `EXPLAIN` can be used to see whether JIT is used or not. For example:
 
 With Postgres Optimizer:
 
@@ -88,17 +88,15 @@ In the above examples, the configuration parameter `jit_above_cost` was modified
 
 ## <a id="topic4"></a>Configuration
 
-The configuration variable `jit` determines whether JIT compilation is enabled or disabled. If it is enabled, the configuration variables `jit_above_cost`, `jit_inline_above_cost`, and `jit_optimize_above_cost` determine whether JIT compilation is performed for a query, and how much effort is spent doing so.
-
-The decision whether to use or not JIT is cost-based is controlled by the GUCs:
+The configuration parameter [jit]((../../../ref_guide/config_params/guc-list.html#jit)) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether to use or not JIT is cost-based is controlled by the GUCs:
 
 - [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost): All queries with a higher total cost get JITed, *without* optimization (expensive part), corresponding to -O0. This commonly already results in significant speedups if expression/deforming is a bottleneck (removing dynamic branches mostly).
 - [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost): all queries with a higher total cost get JITed, *with* optimization (expensive part).
 - [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost): inlining is tried if query has higher cost.
 
-Whenever the total cost of a query is above these limits, JITing is performed.
+Whenever the total cost of a query is above these limits, JIT is performed.
 
 Note that setting the JIT cost parameters to ‘0’ will force all queries to be JIT-compiled and as a result slowing down all your queries.
 
-Since GPORCA and Postgres Optimizer use different models and the relation of their costs varies, you must tune these JIT threshold according to your practical usage. The configuration parameters should be tuned when GPORCA is enabled or disabled, as the meaning of cost is different for ORCA and legacy optimizer.
+You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Optimizer.
 
