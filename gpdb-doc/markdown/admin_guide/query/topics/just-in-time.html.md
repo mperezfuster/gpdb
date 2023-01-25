@@ -12,7 +12,7 @@ Just-in-Time (JIT) compilation is the process of turning some form of interprete
 
 JIT compilation support is enabled with all RPM distributions of Greenplum Database. If you build Greenplum Database from source, you must include the `--with-llvm` build option to include JIT compilation support.
 
-It is possible to use JIT with both Postgres Planner and GPORCA. Since GPORCA and Postgres Planner use different models and the relation of their costs varies, you must tune the JIT thresholds according to your usage. See [Configuration](#topic4) for more information.
+It is possible to use JIT with both Postgres Planner and GPORCA. Since GPORCA and Postgres Planner use different algorithms and the values for the calculated costs are different, you must tune the JIT thresholds according to your usage. See [Configuration](#topic4) for more information.
 
 ### <a id="topic21"></a>JIT accelerated operations
 
