@@ -1624,7 +1624,7 @@ Determines whether JIT compilation may be used by Greenplum Database.
 
 ## <a id="jit_above_cost"></a>jit\_above\_cost
 
-Sets the query cost above which JIT compilation is activated, if enabled. Performing JIT costs planning time but can accelerate query execution. Setting this to -1 disables JIT compilation.
+Sets the query cost above which JIT compilation is activated when JIT is enabled. Performing JIT compilation costs planning time but can accelerate query execution. Setting this to -1 disables JIT compilation.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|

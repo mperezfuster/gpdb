@@ -2,29 +2,29 @@
 title: Just-in-Time Compilation (JIT)
 ---
 
-This topic provides an explanation of what Just-in-Time compilation is and how it can be configured in Greenplum Database.
+This topic provides an explanation of what Just-in-Time compilation is and how to configure it in Greenplum Database.
 
 **Parent topic:** [Querying Data](../../query/topics/query.html)
 
 ## <a id="topic2"></a>What is JIT compilation?
 
-Just-in-Time (JIT) compilation is the process of turning some form of interpreted program evaluation into a native program, and doing so at run time. For example, instead of using general-purpose code that can evaluate arbitrary SQL expressiones to evaluate a particular SQL predicate like `WHERE a.col=3`, it is possible to generate a function that is specific to that expression and can be natively executed by the CPU, yielding a speedup.
+Just-in-Time (JIT) compilation is the process of turning some form of interpreted program evaluation into a native program, and doing so at run time. For example, instead of using general-purpose code that can evaluate arbitrary SQL expressiones to evaluate a particular SQL predicate like `WHERE a.col=3`, it is possible to generate a function that is specific to that expression and can be natively executed by the CPU, resulting in faster execution.
 
-Greenplum Database has builtin support to perform JIT compilation using LLVM when Greenplum Database is built with `--with-llvm`. If you installed Greenplum Database using the `rpm` installation file, the install option `--with-llvm` is not necessary.
+JIT compilation support is enabled with all RPM distributions of Greenplum Database. If you build Greenplum Database from source, you must include the `--with-llvm` build option to include JIT compilation support.
 
-It is possible to use JIT with both Postgres Optimizer and GPORCA. Since GPORCA and Postgres Optimizer use different models and the relation of their costs varies, you must tune the JIT thresholds according to your practical usage. See [Configuration](#topic4) for more information.
+It is possible to use JIT with both Postgres Planner and GPORCA. Since GPORCA and Postgres Planner use different models and the relation of their costs varies, you must tune the JIT thresholds according to your usage. See [Configuration](#topic4) for more information.
 
 ### <a id="topic21"></a>JIT accelerated operations
 
-Currently Greenplum Database's JIT implementation has support for accelerating expression evaluation and tuple deforming. Several other operations could be accelerated in the future.
+Currently Greenplum Database's JIT implementation supports for accelerating expression evaluation and tuple deforming.
 
 Expression evaluation is used to evaluate `WHERE` clauses, target lists, aggregates and projections. It can be accelerated by generating code specific to each case.
 
 Tuple deforming is the process of transforming an on-disk tuple into its in-memory representation. It can be accelerated by creating a function specific to the table layout and the number of columns to be extracted.
 
-### <a id="topic22"></a>Inlining
+### <a id="topic22"></a>In-line compilation (inlining)
 
-Greenplum Database is very extensible and allows new data types, functions, operators and other database objects to be defined. In fact, the built-in objects are implemented using nearly the same mechanisms. This extensibility implies some overhead, for example due to function calls. To reduce that overhead, JIT compilation can inline the bodies of small functions into the expressions using them. That allows a significant percentage of the overhead to be optimized away.
+Greenplum Database is very extensible and allows new data types, functions, operators and other database objects to be defined. In fact, the built-in objects are implemented using nearly the same mechanisms. This extensibility implies some overhead, for example due to function calls. To reduce that overhead, JIT can use in-line compilation to fit the bodies of small functions into the expressions using them. That allows a significant percentage of the overhead to be optimized away.
 
 ### <a id="topic23"></a>Optimization
 
@@ -34,13 +34,13 @@ LLVM has support for optimizing generated code. Some of the optimizations are ch
 
 JIT compilation is beneficial primarily for long-running CPU-bound queries. Frequently these are analytical queries. For short queries the added overhead of performing JIT compilation will often be higher than the time it can save.
 
-To determine whether JIT compilation should be used, the total estimated cost of a query is used. The estimated cost of the query is compared with the setting of `jit_above_cost`. If the cost is higher, JIT compilation is performed. Two further decisions are then needed. Firstly, if the estimated cost is more than the setting of `jit_inline_above_cost`, short functions and operators used in the query are inlined. Secondly, if the estimated cost is more than the setting of `jit_optimize_above_cost`, expensive optimizations are applied to improve the generated code. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
+To determine whether Greenplum Database should use JIT compilation, it uses the total estimated cost of a query. It compares the estimated cost of the query with the setting of `jit_above_cost`. If the cost is higher, it performs JIT compilation. Two further decisions remain. Firstly, if the estimated cost is more than the setting of `jit_inline_above_cost`, it compiles short functions and operators used in the query using in-line compilation. Secondly, if the estimated cost is more than the setting of `jit_optimize_above_cost`, it applies expensive optimizations to improve the generated code. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
 
-These cost-based decisions are made at plan time, not execution time. This means that when prepared statements are in use, and a generic plan is used (see [PREPARE](../../../ref_guide/sql_commands/PREPARE.html)), the values of the configuration parameters in effect at prepare time control the decisions, not the settings at execution time.
+JIT compilation makes these cost-based decisions at plan time, not execution time. This means that when it is using prepared statements, and a generic plan (see [PREPARE](../../../ref_guide/sql_commands/PREPARE.html)), the values of the configuration parameters in effect at prepare time control the decisions, not the settings at execution time.
 
 The Greenplum Database configuration parameter [gp_explain_jit](../../../ref_guide/config_params/guc-list.html#gp_explain_jit) enables the display of summarized JIT information from all query executions when JIT compilation is enabled. `EXPLAIN` can be used to see whether JIT is used or not. For example:
 
-With Postgres Optimizer:
+With Postgres Planner:
 
 ```
 EXPLAIN (ANALYZE) SELECT * FROM jit_explain_output LIMIT 10;
@@ -88,15 +88,15 @@ In the above examples, the configuration parameter `jit_above_cost` was modified
 
 ## <a id="topic4"></a>Configuration
 
-The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether to use or not JIT is cost-based is controlled by the GUCs:
+The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether to use or not JIT is cost-based is controlled by the configuration parameters:
 
-- [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost): All queries with a higher total cost get JITed, *without* optimization (expensive part), corresponding to -O0. This commonly already results in significant speedups if expression/deforming is a bottleneck (removing dynamic branches mostly).
-- [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost): all queries with a higher total cost get JITed, *with* optimization (expensive part).
-- [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost): inlining is tried if query has higher cost.
+- [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost): All queries with a higher total cost trigger JIT compilation, *without* optimization (expensive part). This commonly already results in significant speedups if expression/deforming is a bottleneck (removing dynamic branches mostly).
+- [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost): all queries with a higher total cost trigger JIT, *with* optimization (expensive part).
+- [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost): inlining is tried if the query has higher cost.
 
-Whenever the total cost of a query is above these limits, JIT is performed.
+Whenever the total cost of a query is above these limits, JIT compilation takes place.
 
-Note that setting the JIT cost parameters to ‘0’ will force all queries to be JIT-compiled and as a result slowing down all your queries.
+Note that setting the JIT cost parameters to ‘0’ will force all queries to be JIT-compiled and, as a result, slow down queries.
 
-You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Optimizer.
+You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Planner.
 
