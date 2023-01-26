@@ -323,6 +323,7 @@ These configuration parameters set defaults that are used for client connections
 - [statement_timeout](guc-list.html#statement_timeout)
 - [temp_tablespaces](guc-list.html#temp_tablespaces)
 - [vacuum_freeze_min_age](guc-list.html#vacuum_freeze_min_age)
+- [vacuum_cleanup_index_scale_factor](guc-list.html#vacuum_cleanup_index_scale_factor)
 
 ### <a id="topic41"></a>Locale and Formatting Parameters 
 

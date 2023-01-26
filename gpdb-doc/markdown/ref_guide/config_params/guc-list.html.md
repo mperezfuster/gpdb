@@ -2946,6 +2946,14 @@ Enables updating of the process title every time a new SQL command is received b
 |-----------|-------|-------------------|
 |Boolean|on|local, session, reload|
 
+## <a id="vacuum_cleanup_index_scale_factor"></a>vacuum_cleanup_index_scale_factor
+
+Specifies the fraction of the total number of heap tuples counted in the previous statistics collection that can be inserted without incurring an index scan at the `VACUUM` cleanup stage. The purpose of this parameter is to minimize unnecessary vacuum index scans. This setting currently applies to B-tree indexes only.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|floating point 0 to 10000000000|0.1|local, session, reload|
+
 ## <a id="vacuum_cost_delay"></a>vacuum\_cost\_delay 
 
 The length of time that the process will sleep when the cost limit has been exceeded. 0 deactivates the cost-based vacuum delay feature.
