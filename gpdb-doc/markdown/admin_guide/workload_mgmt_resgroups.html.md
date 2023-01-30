@@ -284,7 +284,7 @@ If you use RedHat 6 and the performance with resource groups is acceptable for y
 
 Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources. Greenplum Database also uses cgroups to manage memory for resource groups for external components. With cgroups, Greenplum isolates the CPU and external component memory usage of your Greenplum processes from other processes on the node. This allows Greenplum to support CPU and external component memory usage restrictions on a per-resource-group basis.
 
-> **Note** Greenplum Database only supports cgroup v1. Follow the steps below to make sure that your system is mounting the `cgroups- v1` filesystem at startup.
+> **Note** There are two versions of cgroups in Linux: cgroup v1 and cgroup v2. Greenplum Database only supports cgroup v1. Follow the steps below to make sure that your system is mounting the `cgroups- v1` filesystem at startup.
 
 For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
 
