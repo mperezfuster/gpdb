@@ -7,7 +7,10 @@ The `pg_appendonly` table contains information about the storage options and oth
 |`relid`|oid| |The table object identifier \(OID\) of the compressed table.|
 |`majorversion`|smallint| |The major version number of the pg\_appendonly table.|
 |`minorversion`|smallint| |The minor version number of the pg\_appendonly table.|
+|`segrelid`|oid| |Table on-disk segment file id.|
 |`segidxid`|oid| |Index on-disk segment file id.|
+|`blkdirrelid`|oid| |Block used for on-disk column-oriented table file.|
+|`blkdiridxid`|oid| |Block used for on-disk column-oriented index file.|
 |`visimaprelid`|oid| |Visibility map for the table.|
 |`visimapidxid`|oid| |B-tree index on the visibility map.|
 
