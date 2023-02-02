@@ -515,6 +515,18 @@ The following built-in window functions are Greenplum extensions to the PostgreS
                                 each row.</td>
                         </tr>
                         <tr class="row">
+                            <td class="entry" headers="topic30__in164369__entry__1"><code class="ph codeph">ntile(<em class="ph i">expr</em>)</code>
+                            </td>
+                            <td class="entry" headers="topic30__in164369__entry__2"><code class="ph codeph">bigint</code></td>
+                            <td class="entry" headers="topic30__in164369__entry__3">
+                                <code class="ph codeph">NTILE(<em class="ph i">expr</em>) OVER ( [PARTITION BY <em class="ph i">expr</em>] ORDER
+                                    BY <em class="ph i">expr</em> )</code>
+                            </td>
+                            <td class="entry" headers="topic30__in164369__entry__4">Divides an ordered data set into a number of
+                                buckets (as defined by <em class="ph i">expr</em>) and assigns a bucket number to
+                                each row.</td>
+                        </tr>
+                        <tr class="row">
                             <td class="entry" headers="topic30__in164369__entry__1"><code class="ph codeph">percent_rank()</code></td>
                             <td class="entry" headers="topic30__in164369__entry__2">
                                 <code class="ph codeph">double precision</code>
