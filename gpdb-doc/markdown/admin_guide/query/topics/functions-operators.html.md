@@ -505,7 +505,7 @@ The following built-in window functions are Greenplum extensions to the PostgreS
                             <td class="entry" headers="topic30__in164369__entry__1">
                                 <code class="ph codeph">nth_value(<em class="ph i">expr</em>)</code>
                             </td>
-                            <td class="entry" headers="topic30__in164369__entry__2">same as input <em class="ph i">expr/em> type</td>
+                            <td class="entry" headers="topic30__in164369__entry__2">same as input <em class="ph i">expr</em> type</td>
                             <td class="entry" headers="topic30__in164369__entry__3">
                                 <code class="ph codeph">NTH_VALUE(<em class="ph i">expr</em>) OVER ( [PARTITION BY <em class="ph i">expr</em>] ORDER
                                     BY <em class="ph i">expr</em> [ROWS|RANGE <em class="ph i">frame_expr</em>] )</code>
