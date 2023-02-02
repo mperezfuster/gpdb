@@ -322,8 +322,8 @@ These configuration parameters set defaults that are used for client connections
 - [default_transaction_read_only](guc-list.html)[search_path](guc-list.html#default_transaction_read_only](guc-list.html)[search_path)
 - [statement_timeout](guc-list.html#statement_timeout)
 - [temp_tablespaces](guc-list.html#temp_tablespaces)
-- [vacuum_freeze_min_age](guc-list.html#vacuum_freeze_min_age)
 - [vacuum_cleanup_index_scale_factor](guc-list.html#vacuum_cleanup_index_scale_factor)
+- [vacuum_freeze_min_age](guc-list.html#vacuum_freeze_min_age)
 
 ### <a id="topic41"></a>Locale and Formatting Parameters 
 
