@@ -248,21 +248,33 @@ Where *`window_function`* is one of the functions listed in [Table 4](functions-
 [window_name]
 [PARTITION BY expression [, ...]]
 [[ORDER BY expression [ASC | DESC | USING operator] [NULLS {FIRST | LAST}] [, ...]
-    [{RANGE | ROWS} 
-       { UNBOUNDED PRECEDING
-       | expression PRECEDING
-       | CURRENT ROW
-       | BETWEEN window_frame_bound AND window_frame_bound }]]
+[ frame_clause ]
 ```
 
-    and where `window_frame_bound` can be one of:
+The optional `frame_clause` can be one of the following:
 
 ```
-    UNBOUNDED PRECEDING
-    expression PRECEDING
-    CURRENT ROW
-    expression FOLLOWING
-    UNBOUNDED FOLLOWING
+{ RANGE | ROWS | GROUPS } frame_start [ frame_exclusion ]
+{ RANGE | ROWS | GROUPS } BETWEEN frame_start AND frame_end [ frame_exclusion ]
+```
+
+Where `frame_start` and `frame_end` can be one of the following:
+
+```
+UNBOUNDED PRECEDING
+offset PRECEDING
+CURRENT ROW
+offset FOLLOWING
+UNBOUNDED FOLLOWING
+```
+
+and `frame_exclusion` can be one of the following:
+
+```
+EXCLUDE CURRENT ROW
+EXCLUDE GROUP
+EXCLUDE TIES
+EXCLUDE NO OTHERS
 ```
 
 A window expression can appear only in the select list of a `SELECT` command. For example:
@@ -272,7 +284,7 @@ SELECT count(*) OVER(PARTITION BY customer_id), * FROM sales;
 
 ```
 
-If `FILTER` is specified, then only the input rows for which the filter\_clause evaluates to true are fed to the window function; other rows are discarded. In a window expression, a `FILTER` clause can be used only with a window\_function that is an aggregate function.
+If `FILTER` is specified, then only the input rows for which the `filter_clause` evaluates to true are fed to the window function; other rows are discarded. In a window expression, a `FILTER` clause can be used only with a `window_function` that is an aggregate function.
 
 In a window expression, the expression must contain an `OVER` clause. The `OVER` clause specifies the window frame—the rows to be processed by the window function. This syntactically distinguishes the function from a regular or aggregate function.
 
@@ -281,11 +293,33 @@ In a window aggregate function that is used in a window expression, Greenplum Da
 A window specification has the following characteristics:
 
 -   The `PARTITION BY` clause defines the window partitions to which the window function is applied. If omitted, the entire result set is treated as one partition.
--   The `ORDER BY` clause defines the expression\(s\) for sorting rows within a window partition. The `ORDER BY` clause of a window specification is separate and distinct from the `ORDER BY` clause of a regular query expression. The `ORDER BY` clause is required for the window functions that calculate rankings, as it identifies the measure\(s\) for the ranking values. For OLAP aggregations, the `ORDER BY` clause is required to use window frames \(the `ROWS` or `RANGE` clause\).
+-   The `ORDER BY` clause defines the expression\(s\) for sorting rows within a window partition. The `ORDER BY` clause of a window specification is separate and distinct from the `ORDER BY` clause of a regular query expression. The `ORDER BY` clause is required for the window functions that calculate rankings, as it identifies the measure\(s\) for the ranking values. For OLAP aggregations, the `ORDER BY` clause is required to use window frames \(the `ROWS`, `RANGE` or `GROUPS` clause\).
 
 > **Note** Columns of data types without a coherent ordering, such as `time`, are not good candidates for use in the `ORDER BY` clause of a window specification. `Time`, with or without a specified time zone, lacks a coherent ordering because addition and subtraction do not have the expected effects. For example, the following is not generally true: `x::time < x::time + '2 hour'::interval`
 
--   The `ROWS` or `RANGE` clause defines a window frame for aggregate \(non-ranking\) window functions. A window frame defines a set of rows within a window partition. When a window frame is defined, the window function computes on the contents of this moving frame rather than the fixed contents of the entire window partition. Window frames are row-based \(`ROWS`\) or value-based \(`RANGE`\).
+- The `frame_clause` specifies the set of rows constituting the *window frame*, which is a subset of the current partition, for those window functions that act on the frame instead of the whole partition. The set of rows in the frame can vary depending on which row is the current row. The frame can be specified in `RANGE`, `ROWS` or `GROUPS` mode; in each case, it runs from the `frame_start` to the `frame_end`. If `frame_end` is omitted, the end defaults to `CURRENT ROW`.
+
+- A `frame_start` of `UNBOUNDED PRECEDING` means that the frame starts with the first row of the partition, and similarly a `frame_end` of `UNBOUNDED FOLLOWING` means that the frame ends with the last row of the partition.
+
+- In `RANGE` or `GROUPS` mode, a `frame_start` of `CURRENT ROW` means the frame starts with the current row's first peer row (a row that the window's `ORDER BY` clause sorts as equivalent to the current row), while a `frame_end` of `CURRENT ROW` means the frame ends with the current row's last peer row. In `ROWS` mode, `CURRENT ROW` simply means the current row.
+
+- In the `offset PRECEDING` and `offset FOLLOWING` frame options, the `offset` must be an expression not containing any variables, aggregate functions, or window functions. The meaning of the `offset` depends on the frame mode:
+
+    - In `ROWS` mode, the `offset` must yield a non-null, non-negative integer, and the option means that the frame starts or ends the specified number of rows before or after the current row.
+
+    - In `GROUPS` mode, the `offset` again must yield a non-null, non-negative integer, and the option means that the frame starts or ends the specified number of peer groups before or after the current row's peer group, where a peer group is a set of rows that are equivalent in the `ORDER BY` ordering. (There must be an `ORDER BY` clause in the window definition to use `GROUPS` mode).
+
+    - In `RANGE` mode, these options require that the `ORDER BY` clause specifies exactly one column. The `offset` specifies the maximum difference between the value of that column in the current row and its value in preceding or following rows of the frame. The data type of the `offset` expression varies depending on the data type of the ordering column. For numeric ordering columns it is typically of the same type as the ordering column, but for datetime ordering columns it is an `interval`. For example, if the ordering column is of type `date` or `timestamp`, one could write `RANGE BETWEEN '1 day' PRECEDING AND '10 days' FOLLOWING`. The `offset` is still required to be non-null and non-negative, though the meaning of “non-negative” depends on its data type.
+
+    In any case, the distance to the end of the frame is limited by the distance to the end of the partition, so that for rows near the partition ends the frame might contain fewer rows than elsewhere.
+
+- Notice that in both `ROWS` and `GROUPS` mode, `0 PRECEDING` and `0 FOLLOWING` are equivalent to `CURRENT ROW`. This normally holds in `RANGE` mode as well, for an appropriate data-type-specific meaning of “zero”.
+
+- The `frame_exclusion` option allows rows around the current row to be excluded from the frame, even if they would be included according to the frame start and frame end options. `EXCLUDE CURRENT ROW` excludes the current row from the frame. `EXCLUDE GROUP` excludes the current row and its ordering peers from the frame. `EXCLUDE TIES` excludes any peers of the current row from the frame, but not the current row itself. `EXCLUDE NO OTHERS` simply specifies explicitly the default behavior of not excluding the current row or its peers.
+
+- The default framing option is `RANGE UNBOUNDED PRECEDING`, which is the same as `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`. With `ORDER BY`, this sets the frame to be all rows from the partition start up through the current row's last `ORDER BY` peer. Without `ORDER BY`, this means all rows of the partition are included in the window frame, since all rows become peers of the current row.
+
+- Restrictions are that `frame_start` cannot be `UNBOUNDED FOLLOWING`, `frame_end` cannot be `UNBOUNDED PRECEDING`, and the `frame_end` choice cannot appear earlier in the above list than the `frame_start` choice. for example `RANGE BETWEEN CURRENT ROW AND value PRECEDING` is not allowed.
 
 #### <a id="topic_qck_12r_2gb"></a>Window Examples 
 
@@ -353,7 +387,7 @@ FROM empsalary;
 
 ##### <a id="ex3"></a>Example 3 – Aggregate Function over a Row Window Frame 
 
-A `RANGE` or `ROWS` clause defines the window frame—a set of rows within a partition—that the window function includes in the calculation. `ROWS` specifies a physical set of rows to process, for example all rows from the beginning of the partition to the current row.
+A `RANGE`, `ROWS` or `GROUPS` clause defines the window frame—a set of rows within a partition—that the window function includes in the calculation. `ROWS` specifies a physical set of rows to process, for example all rows from the beginning of the partition to the current row.
 
 This example calculates a running total of employee's salaries by department using the `sum()` function to total rows from the start of the partition to the current row:
 

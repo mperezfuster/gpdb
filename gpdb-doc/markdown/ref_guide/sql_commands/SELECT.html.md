@@ -56,28 +56,41 @@ where grouping\_element can be one of:
   GROUPING SETS ((<grouping_element> [, ...]))
 ```
 
-where window\_definition is:
+where window_definition is:
 
 ```
   [<existing_window_name>]
   [PARTITION BY <expression> [, ...]]
-  [ORDER BY <expression> [ASC | DESC | USING <operator>] 
-    [NULLS {FIRST | LAST}] [, ...]]
-  [{ RANGE | ROWS} <frame_start> 
-     | {RANGE | ROWS} BETWEEN <frame_start> AND <frame_end>
-
+  [ORDER BY <expression> [ASC | DESC | USING <operator>] [NULLS {FIRST | LAST}] [, ...]]
+  [ frame_clause ]
 ```
 
-where frame\_start and frame\_end can be one of:
+The optional frame_clause defines the window frame for window functions that depend on the frame (not all do). The window frame is a set of related rows for each row of the query (called the current row). The frame_clause can be one of the following:
+
+```
+{ RANGE | ROWS | GROUPS } frame_start [ frame_exclusion ]
+{ RANGE | ROWS | GROUPS } BETWEEN frame_start AND frame_end [ frame_exclusion ]
+```
+
+where frame_start and frame_end can be one of:
 
 ```
   UNBOUNDED PRECEDING
-  <value> PRECEDING
+  offset PRECEDING
   CURRENT ROW
-  <value> FOLLOWING
+  offset FOLLOWING
   UNBOUNDED FOLLOWING
+```
+
+and frame_exclusion can be one of the following:
 
 ```
+EXCLUDE CURRENT ROW
+EXCLUDE GROUP
+EXCLUDE TIES
+EXCLUDE NO OTHERS
+```
+
 
 <sup>2</sup>When a locking clause is specified \(the `FOR` clause\), the Global Deadlock Detector affects how table rows are locked. See item [12](#eg138885) in Description and see "The Locking Clause" later in this section.
 
@@ -343,7 +356,7 @@ A `WINDOW` clause has this general form:
 WINDOW <window_name> AS (<window_definition>)
 ```
 
-where window\_name is a name that can be referenced from `OVER` clauses or subsequent window definitions, and window\_definition is:
+where window_name is a name that can be referenced from `OVER` clauses or subsequent window definitions, and window_definition is:
 
 ```
 [<existing_window_name>]
@@ -352,8 +365,8 @@ where window\_name is a name that can be referenced from `OVER` clauses or subse
 [<frame_clause>] 
 ```
 
-existing\_window\_name
-:   If an `existing\_window\_name` is specified it must refer to an earlier entry in the `WINDOW` list; the new window copies its partitioning clause from that entry, as well as its ordering clause if any. The new window cannot specify its own `PARTITION BY` clause, and it can specify `ORDER BY` only if the copied window does not have one. The new window always uses its own frame clause; the copied window must not specify a frame clause.
+existing_window_name
+:   If an `existing_window_name` is specified it must refer to an earlier entry in the `WINDOW` list; the new window copies its partitioning clause from that entry, as well as its ordering clause if any. The new window cannot specify its own `PARTITION BY` clause, and it can specify `ORDER BY` only if the copied window does not have one. The new window always uses its own frame clause; the copied window must not specify a frame clause.
 
 PARTITION BY
 :   The `PARTITION BY` clause organizes the result set into logical groups based on the unique values of the specified expression. The elements of the `PARTITION BY` clause are interpreted in much the same fashion as elements of a `GROUP BY` clause, except that they are always simple expressions and never the name or number of an output column. Another difference is that these expressions can contain aggregate function calls, which are not allowed in a regular `GROUP BY` clause. They are allowed here because windowing occurs after grouping and aggregation. When used with window functions, the functions are applied to each partition independently. For example, if you follow `PARTITION BY` with a column name, the result set is partitioned by the distinct values of that column. If omitted, the entire result set is considered one partition.
@@ -361,39 +374,51 @@ PARTITION BY
 :   Similarly, the elements of the `ORDER BY` list are interpreted in much the same fashion as elements of an `ORDER BY` clause, except that the expressions are always taken as simple expressions and never the name or number of an output column.
 
 ORDER BY
-:   The elements of the `ORDER BY` clause define how to sort the rows in each partition of the result set. If omitted, rows are returned in whatever order is most efficient and may vary. > **Note** Columns of data types that lack a coherent ordering, such as `time`, are not good candidates for use in the `ORDER BY` clause of a window specification. Time, with or without time zone, lacks a coherent ordering because addition and subtraction do not have the expected effects. For example, the following is not generally true: `x::time < x::time + '2 hour'::interval`
+:   The elements of the `ORDER BY` clause define how to sort the rows in each partition of the result set. If omitted, rows are returned in whatever order is most efficient and may vary. > **Note** Columns of data types that lack a coherent ordering, such as `time`, are not good candidates for use in the `ORDER BY` clause of a window specification. Time, with or without time zone, lacks a coherent ordering because addition and subtraction do not have the expected effects. For example, the following is not generally true: `x::time < x::time + '2 hour'::interval`.
 
-frame\_clause
-:   The optional `frame\_clause` defines the *window frame* for window functions that depend on the frame \(not all do\). The window frame is a set of related rows for each row of the query \(called the *current row*\). The `frame\_clause` can be one of
+frame_clause
+:   The optional `frame_clause` defines the *window frame* for window functions that depend on the frame (not all do). The window frame is a set of related rows for each row of the query (called the *current row*). The `frame_clause` can be one of
 
     ```
-    { RANGE | ROWS } <frame_start>
-    { RANGE | ROWS } BETWEEN <frame_start> AND <frame_end>
+    { RANGE | ROWS | GROUPS } <frame_start> [ frame_exclusion ]
+    { RANGE | ROWS | GROUPS } BETWEEN <frame_start> AND <frame_end> [ frame_exclusion ]
     ```
 
-    where `frame\_start` and `frame\_end` can be one of
+    where `frame_start` and `frame_end` can be one of
 
-    -   `UNBOUNDED PRECEDING`
-    -   `value PRECEDING`
-    -   `CURRENT ROW`
-    -   `value FOLLOWING`
-    -   `UNBOUNDED FOLLOWING`
+    ```
+    UNBOUNDED PRECEDING
+    offset PRECEDING
+    CURRENT ROW
+    offset FOLLOWING
+    UNBOUNDED FOLLOWING
+    ```
+    and `frame_exclusion` can be one of
 
-:   If `frame\_end` is omitted it defaults to `CURRENT ROW`. Restrictions are that `frame\_start` cannot be `UNBOUNDED FOLLOWING`, `frame\_end` cannot be `UNBOUNDED PRECEDING`, and the `frame\_end` choice cannot appear earlier in the above list than the `frame\_start` choice — for example `RANGE BETWEEN CURRENT ROW AND value PRECEDING` is not allowed.
+    ```
+    EXCLUDE CURRENT ROW
+    EXCLUDE GROUP
+    EXCLUDE TIES
+    EXCLUDE NO OTHERS
+    ```
 
-:   The default framing option is `RANGE UNBOUNDED PRECEDING`, which is the same as `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`; it sets the frame to be all rows from the partition start up through the current row's last peer \(a row that `ORDER BY` considers equivalent to the current row, or all rows if there is no `ORDER BY`\). In general, `UNBOUNDED PRECEDING` means that the frame starts with the first row of the partition, and similarly `UNBOUNDED FOLLOWING` means that the frame ends with the last row of the partition \(regardless of `RANGE` or `ROWS` mode\). In `ROWS` mode, `CURRENT ROW` means that the frame starts or ends with the current row; but in `RANGE` mode it means that the frame starts or ends with the current row's first or last peer in the `ORDER BY` ordering. The value `PRECEDING` and value `FOLLOWING` cases are currently only allowed in `ROWS` mode. They indicate that the frame starts or ends with the row that many rows before or after the current row. value must be an integer expression not containing any variables, aggregate functions, or window functions. The value must not be null or negative; but it can be zero, which selects the current row itself.
+:   If `frame_end` is omitted it defaults to `CURRENT ROW`. Restrictions are that `frame_start` cannot be `UNBOUNDED FOLLOWING`, `frame_end` cannot be `UNBOUNDED PRECEDING`, and the `frame_end` choice cannot appear earlier in the above list than the `frame_start` choice — for example `RANGE BETWEEN CURRENT ROW AND offset PRECEDING` is not allowed.
 
-:   Beware that the `ROWS` options can produce unpredictable results if the `ORDER BY` ordering does not order the rows uniquely. The `RANGE` options are designed to ensure that rows that are peers in the `ORDER BY` ordering are treated alike; all peer rows will be in the same frame.
+:   The default framing option is `RANGE UNBOUNDED PRECEDING`, which is the same as `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`; it sets the frame to be all rows from the partition start up through the current row's last peer (a row that the window's `ORDER BY` clause considers equivalent to the current row; all rows are peers if there is no `ORDER BY`). In general, `UNBOUNDED PRECEDING` means that the frame starts with the first row of the partition, and similarly `UNBOUNDED FOLLOWING` means that the frame ends with the last row of the partition, regardless of `RANGE`, `ROWS` or `GROUPS` mode. In `ROWS` mode, `CURRENT ROW` means that the frame starts or ends with the current row; but in `RANGE` or `GROUPS` mode it means that the frame starts or ends with the current row's first or last peer in the `ORDER BY` ordering. The `offset PRECEDING` and `offset FOLLOWING` options vary in meaning depending on the frame mode. In `ROWS` mode, the `offset` is an integer indicating that the frame starts or ends that many rows before or after the current row. In `GROUPS` mode, the `offset` is an integer indicating that the frame starts or ends that many peer groups before or after the current row's peer group, where a peer group is a group of rows that are equivalent according to the window's `ORDER BY` clause. In `RANGE` mode, use of an `offset` option requires that there be exactly one `ORDER BY` column in the window definition. Then the frame contains those rows whose ordering column value is no more than `offset` less than (for `PRECEDING`) or more than (for `FOLLOWING`) the current row's ordering column value. In these cases the data type of the `offset` expression depends on the data type of the ordering column. For numeric ordering columns it is typically of the same type as the ordering column, but for datetime ordering columns it is an interval. In all these cases, the value of the `offset` must be non-null and non-negative. Also, while the offset does not have to be a simple constant, it cannot contain variables, aggregate functions, or window functions.
 
-:   Use either a `ROWS` or `RANGE` clause to express the bounds of the window. The window bound can be one, many, or all rows of a partition. You can express the bound of the window either in terms of a range of data values offset from the value in the current row \(`RANGE`\), or in terms of the number of rows offset from the current row \(`ROWS`\). When using the `RANGE` clause, you must also use an `ORDER BY` clause. This is because the calculation performed to produce the window requires that the values be sorted. Additionally, the `ORDER BY` clause cannot contain more than one expression, and the expression must result in either a date or a numeric value. When using the `ROWS` or `RANGE` clauses, if you specify only a starting row, the current row is used as the last row in the window.
+:   The `frame_exclusion` option allows rows around the current row to be excluded from the frame, even if they would be included according to the frame start and frame end options. `EXCLUDE CURRENT ROW` excludes the current row from the frame. `EXCLUDE GROUP` excludes the current row and its ordering peers from the frame. `EXCLUDE TIES` excludes any peers of the current row from the frame, but not the current row itself. `EXCLUDE NO OTHERS` simply specifies explicitly the default behavior of not excluding the current row or its peers.
+
+:   Beware that the `ROWS` mode can produce unpredictable results if the `ORDER BY` ordering does not order the rows uniquely. The `RANGE` and `GROUPS` modes are designed to ensure that rows that are peers in the `ORDER BY` ordering are treated alike: all rows of a given peer group will be in the frame or excluded from it.
+
+:   Use either a `ROWS`, `RANGE` or `GROUPS` clause to express the bounds of the window. The window bound can be one, many, or all rows of a partition. You can express the bound of the window either in terms of a range of data values offset from the value in the current row (`RANGE`), in terms of the number of rows offset from the current row (`ROWS`), or in terms of the number of peer groups (`GROUPS`). When using the `RANGE` or the `GROUPS` clause, you must also use an `ORDER BY` clause. This is because the calculation performed to produce the window requires that the values be sorted. Additionally, the `ORDER BY` clause cannot contain more than one expression, and the expression must result in either a date or a numeric value. When using the `ROWS`, `RANGE` or `GROUPS` clauses, if you specify only a starting row, the current row is used as the last row in the window.
 
 :   **PRECEDING** — The `PRECEDING` clause defines the first row of the window using the current row as a reference point. The starting row is expressed in terms of the number of rows preceding the current row. For example, in the case of `ROWS` framing, `5 PRECEDING` sets the window to start with the fifth row preceding the current row. In the case of `RANGE` framing, it sets the window to start with the first row whose ordering column value precedes that of the current row by 5 in the given order. If the specified order is ascending by date, this will be the first row within 5 days before the current row. `UNBOUNDED PRECEDING` sets the first row in the window to be the first row in the partition.
 
-:   **BETWEEN** — The `BETWEEN` clause defines the first and last row of the window, using the current row as a reference point. First and last rows are expressed in terms of the number of rows preceding and following the current row, respectively. For example, `BETWEEN 3 PRECEDING AND 5 FOLLOWING` sets the window to start with the third row preceding the current row, and end with the fifth row following the current row. Use `BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` to set the first and last rows in the window to be the first and last row in the partition, respectively. This is equivalent to the default behavior if no `ROW` or `RANGE` clause is specified.
+:   **BETWEEN** — The `BETWEEN` clause defines the first and last row of the window, using the current row as a reference point. First and last rows are expressed in terms of the number of rows preceding and following the current row, respectively. For example, `BETWEEN 3 PRECEDING AND 5 FOLLOWING` sets the window to start with the third row preceding the current row, and end with the fifth row following the current row. Use `BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` to set the first and last rows in the window to be the first and last row in the partition, respectively. This is equivalent to the default behavior if no `ROWs`, `RANGE` or `GROUPS` clause is specified.
 
 :   **FOLLOWING** — The `FOLLOWING` clause defines the last row of the window using the current row as a reference point. The last row is expressed in terms of the number of rows following the current row. For example, in the case of `ROWS` framing, `5 FOLLOWING` sets the window to end with the fifth row following the current row. In the case of `RANGE` framing, it sets the window to end with the last row whose ordering column value follows that of the current row by 5 in the given order. If the specified order is ascending by date, this will be the last row within 5 days after the current row. Use `UNBOUNDED FOLLOWING` to set the last row in the window to be the last row in the partition.
 
-:   If you do not specify a `ROW` or a `RANGE` clause, the window bound starts with the first row in the partition \(`UNBOUNDED PRECEDING`\) and ends with the current row \(`CURRENT ROW`\) if `ORDER BY` is used. If an `ORDER BY` is not specified, the window starts with the first row in the partition \(`UNBOUNDED PRECEDING`\) and ends with last row in the partition \(`UNBOUNDED FOLLOWING`\).
+:   If you do not specify a `ROWS`, a `RANGE` or a `GROUPS` clause, the window bound starts with the first row in the partition (`UNBOUNDED PRECEDING`) and ends with the current row (`CURRENT ROW`) if `ORDER BY` is used. If an `ORDER BY` is not specified, the window starts with the first row in the partition (`UNBOUNDED PRECEDING`) and ends with last row in the partition (`UNBOUNDED FOLLOWING`).
 
 **The HAVING Clause**
 
