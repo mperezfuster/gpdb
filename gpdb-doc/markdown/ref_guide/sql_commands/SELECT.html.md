@@ -18,7 +18,7 @@ SELECT [ALL | DISTINCT [ON (<expression> [, ...])]]
   [LIMIT {<count> | ALL}]
   [OFFSET <start> [ ROW | ROWS ] ]
   [FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY]
-  [FOR2 {UPDATE | NO KEY UPDATE | SHARE | KEY SHARE} [OF <table_name> [, ...]] [NOWAIT] [...]]
+  [FOR<sup>2</sup> {UPDATE | NO KEY UPDATE | SHARE | KEY SHARE} [OF <table_name> [, ...]] [NOWAIT] [...]]
 
 TABLE { [ ONLY ] <table_name> [ * ] | <with_query_name> }
 
@@ -76,9 +76,9 @@ where frame_start and frame_end can be one of:
 
 ```
   UNBOUNDED PRECEDING
-  offset PRECEDING
+  <offset> PRECEDING
   CURRENT ROW
-  offset FOLLOWING
+  <offset> FOLLOWING
   UNBOUNDED FOLLOWING
 ```
 
@@ -388,9 +388,9 @@ frame_clause
 
     ```
     UNBOUNDED PRECEDING
-    offset PRECEDING
+    <offset> PRECEDING
     CURRENT ROW
-    offset FOLLOWING
+    <offset> FOLLOWING
     UNBOUNDED FOLLOWING
     ```
     and `frame_exclusion` can be one of
@@ -402,9 +402,9 @@ frame_clause
     EXCLUDE NO OTHERS
     ```
 
-:   If `frame_end` is omitted it defaults to `CURRENT ROW`. Restrictions are that `frame_start` cannot be `UNBOUNDED FOLLOWING`, `frame_end` cannot be `UNBOUNDED PRECEDING`, and the `frame_end` choice cannot appear earlier in the above list than the `frame_start` choice — for example `RANGE BETWEEN CURRENT ROW AND offset PRECEDING` is not allowed.
+:   If `frame_end` is omitted it defaults to `CURRENT ROW`. Restrictions are that `frame_start` cannot be `UNBOUNDED FOLLOWING`, `frame_end` cannot be `UNBOUNDED PRECEDING`, and the `frame_end` choice cannot appear earlier in the above list than the `frame_start` choice — for example `RANGE BETWEEN CURRENT ROW AND <offset> PRECEDING` is not allowed.
 
-:   The default framing option is `RANGE UNBOUNDED PRECEDING`, which is the same as `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`; it sets the frame to be all rows from the partition start up through the current row's last peer (a row that the window's `ORDER BY` clause considers equivalent to the current row; all rows are peers if there is no `ORDER BY`). In general, `UNBOUNDED PRECEDING` means that the frame starts with the first row of the partition, and similarly `UNBOUNDED FOLLOWING` means that the frame ends with the last row of the partition, regardless of `RANGE`, `ROWS` or `GROUPS` mode. In `ROWS` mode, `CURRENT ROW` means that the frame starts or ends with the current row; but in `RANGE` or `GROUPS` mode it means that the frame starts or ends with the current row's first or last peer in the `ORDER BY` ordering. The `offset PRECEDING` and `offset FOLLOWING` options vary in meaning depending on the frame mode. In `ROWS` mode, the `offset` is an integer indicating that the frame starts or ends that many rows before or after the current row. In `GROUPS` mode, the `offset` is an integer indicating that the frame starts or ends that many peer groups before or after the current row's peer group, where a peer group is a group of rows that are equivalent according to the window's `ORDER BY` clause. In `RANGE` mode, use of an `offset` option requires that there be exactly one `ORDER BY` column in the window definition. Then the frame contains those rows whose ordering column value is no more than `offset` less than (for `PRECEDING`) or more than (for `FOLLOWING`) the current row's ordering column value. In these cases the data type of the `offset` expression depends on the data type of the ordering column. For numeric ordering columns it is typically of the same type as the ordering column, but for datetime ordering columns it is an interval. In all these cases, the value of the `offset` must be non-null and non-negative. Also, while the offset does not have to be a simple constant, it cannot contain variables, aggregate functions, or window functions.
+:   The default framing option is `RANGE UNBOUNDED PRECEDING`, which is the same as `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`; it sets the frame to be all rows from the partition start up through the current row's last peer (a row that the window's `ORDER BY` clause considers equivalent to the current row; all rows are peers if there is no `ORDER BY`). In general, `UNBOUNDED PRECEDING` means that the frame starts with the first row of the partition, and similarly `UNBOUNDED FOLLOWING` means that the frame ends with the last row of the partition, regardless of `RANGE`, `ROWS` or `GROUPS` mode. In `ROWS` mode, `CURRENT ROW` means that the frame starts or ends with the current row; but in `RANGE` or `GROUPS` mode it means that the frame starts or ends with the current row's first or last peer in the `ORDER BY` ordering. The `<offset> PRECEDING` and `<offset> FOLLOWING` options vary in meaning depending on the frame mode. In `ROWS` mode, the `offset` is an integer indicating that the frame starts or ends that many rows before or after the current row. In `GROUPS` mode, the `offset` is an integer indicating that the frame starts or ends that many peer groups before or after the current row's peer group, where a peer group is a group of rows that are equivalent according to the window's `ORDER BY` clause. In `RANGE` mode, use of an `offset` option requires that there be exactly one `ORDER BY` column in the window definition. Then the frame contains those rows whose ordering column value is no more than `offset` less than (for `PRECEDING`) or more than (for `FOLLOWING`) the current row's ordering column value. In these cases the data type of the `offset` expression depends on the data type of the ordering column. For numeric ordering columns it is typically of the same type as the ordering column, but for datetime ordering columns it is an interval. In all these cases, the value of the `offset` must be non-null and non-negative. Also, while the offset does not have to be a simple constant, it cannot contain variables, aggregate functions, or window functions.
 
 :   The `frame_exclusion` option allows rows around the current row to be excluded from the frame, even if they would be included according to the frame start and frame end options. `EXCLUDE CURRENT ROW` excludes the current row from the frame. `EXCLUDE GROUP` excludes the current row and its ordering peers from the frame. `EXCLUDE TIES` excludes any peers of the current row from the frame, but not the current row itself. `EXCLUDE NO OTHERS` simply specifies explicitly the default behavior of not excluding the current row or its peers.
 
