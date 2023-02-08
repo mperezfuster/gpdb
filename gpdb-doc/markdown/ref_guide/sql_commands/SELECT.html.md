@@ -18,7 +18,7 @@ SELECT [ALL | DISTINCT [ON (<expression> [, ...])]]
   [LIMIT {<count> | ALL}]
   [OFFSET <start> [ ROW | ROWS ] ]
   [FETCH { FIRST | NEXT } [ <count> ] { ROW | ROWS } ONLY]
-  [FOR<sup>2</sup> {UPDATE | NO KEY UPDATE | SHARE | KEY SHARE} [OF <table_name> [, ...]] [NOWAIT] [...]]
+  [FOR2 {UPDATE | NO KEY UPDATE | SHARE | KEY SHARE} [OF <table_name> [, ...]] [NOWAIT] [...]]
 
 TABLE { [ ONLY ] <table_name> [ * ] | <with_query_name> }
 
@@ -374,10 +374,13 @@ PARTITION BY
 :   Similarly, the elements of the `ORDER BY` list are interpreted in much the same fashion as elements of an `ORDER BY` clause, except that the expressions are always taken as simple expressions and never the name or number of an output column.
 
 ORDER BY
-:   The elements of the `ORDER BY` clause define how to sort the rows in each partition of the result set. If omitted, rows are returned in whatever order is most efficient and may vary. > **Note** Columns of data types that lack a coherent ordering, such as `time`, are not good candidates for use in the `ORDER BY` clause of a window specification. Time, with or without time zone, lacks a coherent ordering because addition and subtraction do not have the expected effects. For example, the following is not generally true: `x::time < x::time + '2 hour'::interval`.
+:   The elements of the `ORDER BY` clause define how to sort the rows in each partition of the result set. If omitted, rows are returned in whatever order is most efficient and may vary. 
+
+> **Note** Columns of data types that lack a coherent ordering, such as `time`, are not good candidates for use in the `ORDER BY` clause of a window specification. Time, with or without time zone, lacks a coherent ordering because addition and subtraction do not have the expected effects. For example, the following is not generally true: `x::time < x::time + '2 hour'::interval`.
 
 frame_clause
 :   The optional `frame_clause` defines the *window frame* for window functions that depend on the frame (not all do). The window frame is a set of related rows for each row of the query (called the *current row*). The `frame_clause` can be one of
+
 
     ```
     { RANGE | ROWS | GROUPS } <frame_start> [ frame_exclusion ]

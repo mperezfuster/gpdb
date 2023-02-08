@@ -242,7 +242,7 @@ The syntax of a window expression is:
 window_function ( [expression [, ...]] ) [ FILTER ( WHERE filter_clause ) ] OVER ( window_specification )
 ```
 
-Where *`window_function`* is one of the functions listed in [Table 4](functions-operators.html#in164369) or a user-defined window function, *`expression`* is any value expression that does not contain a window expression, and *`window_specification`* is:
+Where *`window_function`* is one of the functions listed in [Table 4](functions-operators.html#topic30) or a user-defined window function, *`expression`* is any value expression that does not contain a window expression, and *`window_specification`* is:
 
 ```
 [window_name]
@@ -262,9 +262,9 @@ Where `frame_start` and `frame_end` can be one of the following:
 
 ```
 UNBOUNDED PRECEDING
-offset PRECEDING
+<offset> PRECEDING
 CURRENT ROW
-offset FOLLOWING
+<offset> FOLLOWING
 UNBOUNDED FOLLOWING
 ```
 
@@ -281,7 +281,6 @@ A window expression can appear only in the select list of a `SELECT` command. Fo
 
 ```
 SELECT count(*) OVER(PARTITION BY customer_id), * FROM sales;
-
 ```
 
 If `FILTER` is specified, then only the input rows for which the `filter_clause` evaluates to true are fed to the window function; other rows are discarded. In a window expression, a `FILTER` clause can be used only with a `window_function` that is an aggregate function.
@@ -303,7 +302,7 @@ A window specification has the following characteristics:
 
 - In `RANGE` or `GROUPS` mode, a `frame_start` of `CURRENT ROW` means the frame starts with the current row's first peer row (a row that the window's `ORDER BY` clause sorts as equivalent to the current row), while a `frame_end` of `CURRENT ROW` means the frame ends with the current row's last peer row. In `ROWS` mode, `CURRENT ROW` simply means the current row.
 
-- In the `offset PRECEDING` and `offset FOLLOWING` frame options, the `offset` must be an expression not containing any variables, aggregate functions, or window functions. The meaning of the `offset` depends on the frame mode:
+- In the `<offset> PRECEDING` and `<offset> FOLLOWING` frame options, the `offset` must be an expression not containing any variables, aggregate functions, or window functions. The meaning of the `offset` depends on the frame mode:
 
     - In `ROWS` mode, the `offset` must yield a non-null, non-negative integer, and the option means that the frame starts or ends the specified number of rows before or after the current row.
 
