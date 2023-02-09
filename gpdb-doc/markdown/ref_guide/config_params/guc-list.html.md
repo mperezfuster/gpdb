@@ -1624,7 +1624,7 @@ Determines whether JIT compilation may be used by Greenplum Database.
 
 ## <a id="jit_above_cost"></a>jit\_above\_cost
 
-Sets the query cost above which JIT compilation is activated when JIT is enabled. Performing JIT compilation costs planning time but can accelerate query execution. Setting this to -1 disables JIT compilation.
+Sets the query cost above which JIT compilation is activated when JIT is enabled. Performing JIT compilation costs planning time but can accelerate query execution. Setting this to a negative value disables JIT compilation.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -1632,7 +1632,7 @@ Sets the query cost above which JIT compilation is activated when JIT is enabled
 
 ## <a id="jit_inline_above_cost"></a>jit\_inline\_above\_cost
 
-Sets the query cost above which JIT compilation attempts to inline functions and operators. Inlining adds planning time, but can improve execution speed. It is not meaningful to set this to less than `jit_above_cost`. Setting this to -1 disables inlining.
+Sets the query cost above which JIT compilation attempts to inline functions and operators. Inlining adds planning time, but can improve execution speed. It is not meaningful to set this to less than `jit_above_cost`. Setting this to a negative value disables inlining.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -1640,7 +1640,7 @@ Sets the query cost above which JIT compilation attempts to inline functions and
 
 ## <a id="jit_optimize_above_cost"></a>jit\_optimize\_above\_cost
 
-Sets the query cost above which JIT compilation applies expensive optimizations. Such optimization adds planning time, but can improve execution speed. It is not meaningful to set this to less than `jit_above_cost`, and it is unlikely to be beneficial to set it to more than `jit_inline_above_cost`. Setting this to -1 disables expensive optimizations.
+Sets the query cost above which JIT compilation applies expensive optimizations. Such optimization adds planning time, but can improve execution speed. It is not meaningful to set this to less than `jit_above_cost`, and it is unlikely to be beneficial to set it to more than `jit_inline_above_cost`. Setting this to a negative value disables expensive optimizations.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|

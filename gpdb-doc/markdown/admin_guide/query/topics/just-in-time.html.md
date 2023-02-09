@@ -88,7 +88,7 @@ In the above examples, the configuration parameter `jit_above_cost` was modified
 
 ## <a id="topic4"></a>Configuration
 
-The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether to use or not JIT is cost-based is controlled by the configuration parameters:
+The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether or not to use JIT is cost-based is controlled by the configuration parameters:
 
 - [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost): All queries with a higher total cost trigger JIT compilation, *without* optimization (expensive part). This commonly already results in significant speedups if expression/deforming is a bottleneck (removing dynamic branches mostly).
 - [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost): all queries with a higher total cost trigger JIT, *with* optimization (expensive part).
@@ -96,7 +96,7 @@ The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html
 
 Whenever the total cost of a query is above these limits, JIT compilation takes place.
 
-Note that setting the JIT cost parameters to ‘0’ will force all queries to be JIT-compiled and, as a result, slow down queries.
+Note that setting the JIT cost parameters to ‘0’ will force all queries to be JIT-compiled and, as a result, slow down queries. Setting the JIT cost to a negative value will disable JIT.
 
 You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Planner.
 
