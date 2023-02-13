@@ -121,11 +121,14 @@ The row expression usually must be in parentheses, but you can omit these parent
 
 ```
 mytable.mycolumn
+```
 
+```
 $1.somecolumn
+```
 
+```
 (rowfunction(a,b)).col3
-
 ```
 
 A qualified column reference is a special case of field selection syntax.
@@ -202,12 +205,10 @@ Greenplum Database provides the `MEDIAN` aggregate function, which returns the f
 
 ```
 PERCENTILE_CONT(<percentage>) WITHIN GROUP (ORDER BY <expression>)
-
 ```
 
 ```
 PERCENTILE_DISC(<percentage>) WITHIN GROUP (ORDER BY <expression>)
-
 ```
 
 Currently you can use only these two expressions with the keyword `WITHIN GROUP`.
@@ -428,7 +429,7 @@ FROM empsalary ORDER BY depname, sum;
 (10 rows)
 ```
 
-In this example, since the `frame_start` and `frame_end` are not using an `<offset>`, `RANGE` and `GROUPS` mode provide identical results:
+In this example, since the `<frame_start>` and `<frame_end>` are not using an `<offset>`, `RANGE` and `GROUPS` mode provide identical results:
 
 ```
 SELECT depname, empno, salary,
@@ -450,7 +451,7 @@ FROM empsalary ORDER BY depname, sum;
 (10 rows)
 ```
 
-##### <a id="ex4"></a>Example 4 – Aggregate Function for a Range and a Groups Window Frame
+##### <a id="ex4"></a>Example 5 – Aggregate Function for a Range and a Groups Window Frame
 
 This example demonstrates the difference between `RANGE` and `GROUPS`. The table `sales` lists the sales a company's two shops during a period of four days. 
 
