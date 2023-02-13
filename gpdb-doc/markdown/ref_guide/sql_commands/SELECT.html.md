@@ -21,21 +21,20 @@ SELECT [ALL | DISTINCT [ON (<expression> [, ...])]]
   [FOR2 {UPDATE | NO KEY UPDATE | SHARE | KEY SHARE} [OF <table_name> [, ...]] [NOWAIT] [...]]
 
 TABLE { [ ONLY ] <table_name> [ * ] | <with_query_name> }
-
 ```
 
-where with\_query: is:
+where `<with_query>`: is:
 
 ```
   <with_query_name> [( <column_name> [, ...] )] AS ( <select> | <values> | <insert> | <update> | delete )
 ```
 
-where from\_item can be one of:
+where `<from_item>` can be one of:
 
 ```
 [ONLY] <table_name> [ * ] [ [ AS ] <alias> [ ( <column_alias> [, ...] ) ] ]
 ( <select> ) [ AS ] <alias> [( <column_alias> [, ...] ) ]
-with\_query\_name [ [ AS ] <alias> [ ( <column_alias> [, ...] ) ] ]
+with_query_name [ [ AS ] <alias> [ ( <column_alias> [, ...] ) ] ]
 <function_name> ( [ <argument> [, ...] ] )
             [ WITH ORDINALITY ] [ [ AS ] <alias> [ ( <column_alias> [, ...] ) ] ]
 <function_name> ( [ <argument> [, ...] ] ) [ AS ] <alias> ( <column_definition> [, ...] )
@@ -46,7 +45,7 @@ ROWS FROM( function_name ( [ argument [, ...] ] ) [ AS ( column_definition [, ..
           [ ON <join_condition> | USING ( <join_column> [, ...] ) ]
 ```
 
-where grouping\_element can be one of:
+where `<grouping_element>` can be one of:
 
 ```
   ()
@@ -56,7 +55,7 @@ where grouping\_element can be one of:
   GROUPING SETS ((<grouping_element> [, ...]))
 ```
 
-where window_definition is:
+where `<window_definition>` is:
 
 ```
   [<existing_window_name>]
@@ -65,14 +64,14 @@ where window_definition is:
   [ frame_clause ]
 ```
 
-The optional frame_clause defines the window frame for window functions that depend on the frame (not all do). The window frame is a set of related rows for each row of the query (called the current row). The frame_clause can be one of the following:
+The optional `<frame_clause>` defines the window frame for window functions that depend on the frame (not all do). The window frame is a set of related rows for each row of the query (called the current row). The `<frame_clause>` can be one of the following:
 
 ```
-{ RANGE | ROWS | GROUPS } frame_start [ frame_exclusion ]
-{ RANGE | ROWS | GROUPS } BETWEEN frame_start AND frame_end [ frame_exclusion ]
+{ RANGE | ROWS | GROUPS } <frame_start> [ <frame_exclusion> ]
+{ RANGE | ROWS | GROUPS } BETWEEN <frame_start> AND <frame_end> [ <frame_exclusion> ]
 ```
 
-where frame_start and frame_end can be one of:
+where `<frame_start>` and `<frame_end>` can be one of:
 
 ```
   UNBOUNDED PRECEDING
@@ -82,7 +81,7 @@ where frame_start and frame_end can be one of:
   UNBOUNDED FOLLOWING
 ```
 
-and frame_exclusion can be one of the following:
+and `<frame_exclusion>` can be one of the following:
 
 ```
 EXCLUDE CURRENT ROW
@@ -92,7 +91,7 @@ EXCLUDE NO OTHERS
 ```
 
 
-<sup>2</sup>When a locking clause is specified \(the `FOR` clause\), the Global Deadlock Detector affects how table rows are locked. See item [12](#eg138885) in Description and see "The Locking Clause" later in this section.
+<sup>2</sup>When a locking clause is specified (the `FOR` clause), the Global Deadlock Detector affects how table rows are locked. See item [12](#eg138885) in Description and see "The Locking Clause" later in this section.
 
 ## <a id="section3"></a>Description 
 
@@ -549,7 +548,7 @@ When using `LIMIT`, it is a good idea to use an `ORDER BY` clause that constrain
 
 The query optimizer takes `LIMIT` into account when generating a query plan, so you are very likely to get different plans \(yielding different row orders\) depending on what you use for `LIMIT` and `OFFSET`. Thus, using different `LIMIT/OFFSET` values to select different subsets of a query result will give inconsistent results unless you enforce a predictable result ordering with `ORDER BY`. This is not a defect; it is an inherent consequence of the fact that SQL does not promise to deliver the results of a query in any particular order unless `ORDER BY` is used to constrain the order.
 
-**The Locking Clause**
+**The Locking Clause**{#locking}
 
 `FOR UPDATE`, `FOR NO KEY UPDATE`, `FOR SHARE` and `FOR KEY SHARE` are *locking clauses*; they affect how `SELECT` locks rows as they are obtained from the table. The Global Deadlock Detector affects the locking used by `SELECT` queries that contain a locking clause \(`FOR lock\_strength`\). The Global Deadlock Detector is enabled by setting the [gp\_enable\_global\_deadlock\_detector](../config_params/guc-list.html) configuration parameter to `on`. See [Global Deadlock Detector](../../admin_guide/dml.html#topic_gdd) in the *Greenplum Database Administrator Guide* for information about the Global Deadlock Detector.
 
