@@ -37,11 +37,10 @@ JIT compilation is beneficial primarily for long-running CPU-bound queries. Freq
 The internal workflow of JIT can be divided into three different stages:
 
 1. Planner Stage
-
     This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. It then makes the decision of whether or not to trigger JIT compilation if:
-        - The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) is `true`.
-        - The configuration parameter [jit_expressions](../../../ref_guide/config_params/guc-list.html#jit_expressions) is `true`.
-        - The estimated cost of the query is higher than the value of the configuration parameter [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost).  
+    - The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) is `true`.
+    - The configuration parameter [jit_expressions](../../../ref_guide/config_params/guc-list.html#jit_expressions) is `true`.
+    - The estimated cost of the query is higher than the value of the configuration parameter [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost).  
 
     If the above conditions are met, some additional decisions remain. Firstly, if the estimated cost is more than the setting of [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost), the planner compiles short functions and operators used in the query using in-line compilation. Secondly, if the estimated cost is more than the setting of [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost), it applies expensive optimizations to improve the generated code. Finally, if the configuration parameter [jit_tuple_deforming](../../../ref_guide/config_params/guc-list.html#jit_tuple_deforming) is enabled, it generates a custom function to deform the target table. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
 
