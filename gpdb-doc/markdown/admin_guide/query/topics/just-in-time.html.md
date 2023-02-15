@@ -36,7 +36,16 @@ JIT compilation is beneficial primarily for long-running CPU-bound queries. Freq
 
 The internal workflow of JIT can be divided into three different stages:
 
+1. **External network**
+
+    The external network is identified by the port group `gp-virtual-external`. It is used by Greenplum for external traffic through the master and standby master nodes. It requires a new VLAN ID and 4 routable static IP addresses that will be used for:
+    - Greenplum Master
+    - Greenplum Standby
+    - Greenplum Virtual Appliance
+    - Greenplum Virtual Machine template
+
 1. Planner Stage
+
     This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. It then makes the decision of whether or not to trigger JIT compilation if:
     - The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) is `true`.
     - The configuration parameter [jit_expressions](../../../ref_guide/config_params/guc-list.html#jit_expressions) is `true`.
