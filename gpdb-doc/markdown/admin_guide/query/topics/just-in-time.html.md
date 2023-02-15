@@ -12,7 +12,7 @@ Just-in-Time (JIT) compilation is the process of turning some form of interprete
 
 JIT compilation support is enabled with all RPM distributions of Greenplum Database. If you build Greenplum Database from source, you must include the `--with-llvm` build option to include JIT compilation support.
 
-It is possible to use JIT with both Postgres Planner and GPORCA. Since GPORCA and Postgres Planner use different algorithms and the values for the calculated costs are different, you must tune the JIT thresholds according to your usage. See [Configuration](#topic4) for more information.
+It is possible to use JIT with both Postgres Planner and GPORCA. Since GPORCA and Postgres Planner use different algorithms and the values for the calculated costs are different, you must tune the JIT thresholds according to your usage. See [When to JIT?](#topic3) for more information.
 
 ### <a id="topic21"></a>JIT accelerated operations
 
@@ -34,11 +34,45 @@ LLVM has support for optimizing generated code. Some of the optimizations are ch
 
 JIT compilation is beneficial primarily for long-running CPU-bound queries. Frequently these are analytical queries. For short queries the added overhead of performing JIT compilation will often be higher than the time it can save.
 
-To determine whether Greenplum Database should use JIT compilation, it uses the total estimated cost of a query. It compares the estimated cost of the query with the setting of `jit_above_cost`. If the cost is higher, it performs JIT compilation. Two further decisions remain. Firstly, if the estimated cost is more than the setting of `jit_inline_above_cost`, it compiles short functions and operators used in the query using in-line compilation. Secondly, if the estimated cost is more than the setting of `jit_optimize_above_cost`, it applies expensive optimizations to improve the generated code. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
+The internal workflow of JIT can be divided into three different stages:
 
-JIT compilation makes these cost-based decisions at plan time, not execution time. This means that when it is using prepared statements, and a generic plan (see [PREPARE](../../../ref_guide/sql_commands/PREPARE.html)), the values of the configuration parameters in effect at prepare time control the decisions, not the settings at execution time.
+1. Planner Stage
 
-The Greenplum Database configuration parameter [gp_explain_jit](../../../ref_guide/config_params/guc-list.html#gp_explain_jit) enables the display of summarized JIT information from all query executions when JIT compilation is enabled. `EXPLAIN` can be used to see whether JIT is used or not. For example:
+This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. It then makes the decision of whether or not to trigger JIT compilation if:
+
+    - The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) is `true`.
+    - The configuration parameter [jit_expressions](../../../ref_guide/config_params/guc-list.html#jit_expressions) is `true`.
+    - The estimated cost of the query is higher than the value of the configuration parameter [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost).  
+
+If the above conditions are met, some additional decisions remain. Firstly, if the estimated cost is more than the setting of [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost), the planner compiles short functions and operators used in the query using in-line compilation. Secondly, if the estimated cost is more than the setting of [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost), it applies expensive optimizations to improve the generated code. Finally, if the configuration parameter [jit_tuple_deforming](../../../ref_guide/config_params/guc-list.html#jit_tuple_deforming) is enabled, it generates a custom function to deform the target table. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
+
+You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Planner. Note that setting the JIT cost parameters to ‘0’ forces all queries to be JIT-compiled and, as a result, slow down queries. Setting them to a negative value will disable the feature the parameter provides.
+
+When the plan is ready, the planner provides the plan trees and JIT flags to the executor.
+
+1. Executor Initialization Stage
+
+This stage takes place in the Greenplum segments. Greenplum creates the expression evaluation steps. If JIT is used, it re-writes the steps as functions in the JIT space. The decisions made at plan time determine whether or not JIT compilation is adviced to be triggered in execution stage, along with the JIT strategy to apply if it is triggered. However, it is at execution time when Greenplum makes the decision of using JIT if the configuration parameter `jit` is enabled and the JIT libraries are loaded successfully. The executor may ignore the cached decisions if `jit` has been changed to `false` between planner and execution stages or if it encounters an error.
+
+Additionally, the executor checks the following developer configuration parameters:
+
+    - [jit_provider](../../../ref_guide/config_params/guc-list.html#jit_provider) : Specifies the name of the JIT provider library to be used.
+    - [jit_dump_bitcode](../../../ref_guide/config_params/guc-list.html#jit_dump_bitcode): Writes the generated LLVM IR out to the file system, inside `data_directory`.
+    - [jit_profiling_support](../../../ref_guide/config_params/guc-list.html#jit_profiling_support): If LLVM has the required functionality, emits the data needed to allow `perf` command to profile functions generated by JIT.
+    - [jit_debugging_support](../../../ref_guide/config_params/guc-list.html#jit_debugging_support): If LLVM has the required functionality, registers generated functions with `GDB`. 
+    - [gp_explain_jit](../../../ref_guide/config_params/guc-list.html#gp_explain_jit): Enables the display of summarized JIT information from all query executions when running the `EXPLAIN` command. You must turn disable it when running regression tests.
+
+1. Executor Run Stage
+
+This stage also occurs in the Greenplum segments which execute the steps provided by the initialization stage. The functions in JIT space are combined as a whole before the first call.
+
+The JIT workflow can also handle executor fault tolerance: if JIT fails to load on the segments, the execution mode fails back to non-JIT.
+
+## <a id="topic4"></a>Examples
+
+In the above examples, the configuration parameter `jit_above_cost` was modified so it would trigger JIT compilation. The use of JIT affects the cost of the plan, which can or cannot be bigger than the potential savings. JIT was used, but inlining and expensive optimization were not. If `jit_inline_above_cost` or `jit_optimize_above_cost` were also lowered, they could be triggered.
+
+Note that the output from `EXPLAIN` provides information on JIT such as the slice average timing spent in JIT, what segment the maximum vector comes from, or how many JIT functions are created and total time spent in JIT tasks. This information can be helpful when tuning JIT or debugging a timing problems. Set the configuration parameters `log_min_messages`, `client_min_messages` to `DEBUG 5` to view this information.
 
 With Postgres Planner:
 
@@ -81,22 +115,4 @@ JIT:
 Execution Time: 1.597 ms
 (12 rows)
 ```
-
-In the above examples, the configuration parameter `jit_above_cost` was modified so it would trigger JIT compilation. The use of JIT affects the cost of the plan, which can or cannot be bigger than the potential savings. JIT was used, but inlining and expensive optimization were not. If `jit_inline_above_cost` or `jit_optimize_above_cost` were also lowered, they could be triggered.
-
-**Note**: You must turn off the configuration parameter `gp_explain_jit` when running regression tests.
-
-## <a id="topic4"></a>Configuration
-
-The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) determines whether JIT compilation is enabled or disabled. If it is enabled, the decision whether or not to use JIT is cost-based is controlled by the configuration parameters:
-
-- [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost): All queries with a higher total cost trigger JIT compilation, *without* optimization (expensive part). This commonly already results in significant speedups if expression/deforming is a bottleneck (removing dynamic branches mostly).
-- [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost): all queries with a higher total cost trigger JIT, *with* optimization (expensive part).
-- [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost): inlining is tried if the query has higher cost.
-
-Whenever the total cost of a query is above these limits, JIT compilation takes place.
-
-Note that setting the JIT cost parameters to ‘0’ will force all queries to be JIT-compiled and, as a result, slow down queries. Setting the JIT cost to a negative value will disable JIT.
-
-You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Planner.
 
