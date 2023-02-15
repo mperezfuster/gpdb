@@ -38,22 +38,22 @@ The internal workflow of JIT can be divided into three different stages:
 
 1. Planner Stage
 
-This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. It then makes the decision of whether or not to trigger JIT compilation if:
+    This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. It then makes the decision of whether or not to trigger JIT compilation if:
     - The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) is `true`.
     - The configuration parameter [jit_expressions](../../../ref_guide/config_params/guc-list.html#jit_expressions) is `true`.
     - The estimated cost of the query is higher than the value of the configuration parameter [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost).  
 
-If the above conditions are met, some additional decisions remain. Firstly, if the estimated cost is more than the setting of [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost), the planner compiles short functions and operators used in the query using in-line compilation. Secondly, if the estimated cost is more than the setting of [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost), it applies expensive optimizations to improve the generated code. Finally, if the configuration parameter [jit_tuple_deforming](../../../ref_guide/config_params/guc-list.html#jit_tuple_deforming) is enabled, it generates a custom function to deform the target table. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
+    If the above conditions are met, some additional decisions remain. Firstly, if the estimated cost is more than the setting of [jit_inline_above_cost](../../../ref_guide/config_params/guc-list.html#jit_inline_above_cost), the planner compiles short functions and operators used in the query using in-line compilation. Secondly, if the estimated cost is more than the setting of [jit_optimize_above_cost](../../../ref_guide/config_params/guc-list.html#jit_optimize_above_cost), it applies expensive optimizations to improve the generated code. Finally, if the configuration parameter [jit_tuple_deforming](../../../ref_guide/config_params/guc-list.html#jit_tuple_deforming) is enabled, it generates a custom function to deform the target table. Each of these options increases the JIT compilation overhead, but can reduce query execution time considerably.
 
-You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Planner. Note that setting the JIT cost parameters to ‘0’ forces all queries to be JIT-compiled and, as a result, slow down queries. Setting them to a negative value will disable the feature the parameter provides.
+    You should tune these configuration parameters when you enable or disable GPORCA, as the meaning of cost is different for GPORCA and Postgres Planner. Note that setting the JIT cost parameters to ‘0’ forces all queries to be JIT-compiled and, as a result, slow down queries. Setting them to a negative value will disable the feature the parameter provides.
 
-When the plan is ready, the planner provides the plan trees and JIT flags to the executor.
+    When the plan is ready, the planner provides the plan trees and JIT flags to the executor.
 
 1. Executor Initialization Stage
 
-This stage takes place in the Greenplum segments. Greenplum creates the expression evaluation steps. If JIT is used, it re-writes the steps as functions in the JIT space. The decisions made at plan time determine whether or not JIT compilation is adviced to be triggered in execution stage, along with the JIT strategy to apply if it is triggered. However, it is at execution time when Greenplum makes the decision of using JIT if the configuration parameter `jit` is enabled and the JIT libraries are loaded successfully. The executor may ignore the cached decisions if `jit` has been changed to `false` between planner and execution stages or if it encounters an error.
+    This stage takes place in the Greenplum segments. Greenplum creates the expression evaluation steps. If JIT is used, it re-writes the steps as functions in the JIT space. The decisions made at plan time determine whether or not JIT compilation is adviced to be triggered in execution stage, along with the JIT strategy to apply if it is triggered. However, it is at execution time when Greenplum makes the decision of using JIT if the configuration parameter `jit` is enabled and the JIT libraries are loaded successfully. The executor may ignore the cached decisions if `jit` has been changed to `false` between planner and execution stages or if it encounters an error.
 
-Additionally, the executor checks the following developer configuration parameters:
+    Additionally, the executor checks the following developer configuration parameters:
     - [jit_provider](../../../ref_guide/config_params/guc-list.html#jit_provider) : Specifies the name of the JIT provider library to be used.
     - [jit_dump_bitcode](../../../ref_guide/config_params/guc-list.html#jit_dump_bitcode): Writes the generated LLVM IR out to the file system, inside `data_directory`.
     - [jit_profiling_support](../../../ref_guide/config_params/guc-list.html#jit_profiling_support): If LLVM has the required functionality, emits the data needed to allow `perf` command to profile functions generated by JIT.
@@ -62,9 +62,9 @@ Additionally, the executor checks the following developer configuration paramete
 
 1. Executor Run Stage
 
-This stage also occurs in the Greenplum segments which execute the steps provided by the initialization stage. The functions in JIT space are combined as a whole before the first call.
+    This stage also occurs in the Greenplum segments which execute the steps provided by the initialization stage. The functions in JIT space are combined as a whole before the first call.
 
-The JIT workflow can also handle executor fault tolerance: if JIT fails to load on the segments, the execution mode fails back to non-JIT.
+    The JIT workflow can also handle executor fault tolerance: if JIT fails to load on the segments, the execution mode fails back to non-JIT.
 
 ## <a id="topic4"></a>Examples
 
