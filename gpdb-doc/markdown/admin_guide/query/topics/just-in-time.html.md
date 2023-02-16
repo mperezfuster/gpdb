@@ -37,7 +37,8 @@ JIT compilation is beneficial primarily for long-running CPU-bound queries. Freq
 The internal workflow of JIT can be divided into three different stages:
 
 1. Planner Stage
-    This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. It then makes the decision of whether or not to trigger JIT compilation if:
+
+    This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. It then makes the decision to trigger JIT compilation if:
     - The configuration parameter [jit](../../../ref_guide/config_params/guc-list.html#jit) is `true`.
     - The configuration parameter [jit_expressions](../../../ref_guide/config_params/guc-list.html#jit_expressions) is `true`.
     - The estimated cost of the query is higher than the value of the configuration parameter [jit_above_cost](../../../ref_guide/config_params/guc-list.html#jit_above_cost).  
@@ -64,7 +65,7 @@ The internal workflow of JIT can be divided into three different stages:
 
     This stage also occurs in the Greenplum segments which execute the steps provided by the initialization stage. The functions in JIT space are combined as a whole before the first call.
 
-    The JIT workflow can also handle executor fault tolerance: if JIT fails to load on the segments, the execution mode fails back to non-JIT.
+The JIT workflow can also handle executor fault tolerance: if JIT fails to load on the segments, the execution mode fails back to non-JIT.
 
 ## <a id="topic4"></a>Examples
 
