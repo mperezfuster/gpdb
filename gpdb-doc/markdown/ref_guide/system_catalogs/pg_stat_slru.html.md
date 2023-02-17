@@ -1,4 +1,4 @@
-# pg_stat_activity 
+# pg_stat_slru
 
 Greenplum Database accesses certain on-disk information via SLRU (simple least-recently-used) caches. The `pg_stat_slru` view contains one row for each tracked SLRU cache, showing statistics about access to cached pages.
 
