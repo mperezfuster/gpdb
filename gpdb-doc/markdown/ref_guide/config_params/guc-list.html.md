@@ -2905,11 +2905,11 @@ Collects information about executing commands. Enables the collection of informa
 
 ## <a id="track_wal_io_timing"></a>track_wal_io_timing
 
-Enables timing of WAL I/O calls. This parameter is disabled by default, as it repeatedly queries the operating system for the current time, which may cause significant overhead on some platforms. You can use the pg_test_timing tool to measure the overhead of timing on your system. I/O timing information is displayed in [pg_stat_wal](../system_catalogs/pg_stat_wal.html). Only superusers and users with the appropriate `SET` privilege can change this setting.
+Enables timing of WAL I/O calls. This parameter is disabled by default, as it repeatedly queries the operating system for the current time, which may cause significant overhead on some platforms. The view [pg_stat_wal](../system_catalogs/pg_stat_wal.html) displays WAL I/O timing information. Only superusers and users with the appropriate `SET` privilege can change this setting.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-|Boolean|false||
+|Boolean|false|coordinator, session, reload|
 
 ## <a id="transaction_isolation"></a>transaction\_isolation 
 
