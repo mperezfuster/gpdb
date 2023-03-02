@@ -14,8 +14,6 @@ vacuumdb [<connection-option>...] [--all | -a] [--full | -f] [-F]
     [--disable-page-skipping]
     [--skip-locked]
 
-vacuumdb --ao_aux_only <ao_table_name>
-
 vacuumdb -? | --help
 
 vacuumdb -V | --version
@@ -31,9 +29,6 @@ vacuumdb -V | --version
 
 -a \| --all
 :   Vacuums all databases.
-
---ao_aux_only
-:   Runs `VACUUM` against all auxiliary tables of an append-optimized table. It does not run `VACUUM` against the append-optimized table.
 
 \[-d\] dbname \| \[--dbname=\]dbname
 :   The name of the database to vacuum. If this is not specified and `-a` \(or `--all`\) is not used, the database name is read from the environment variable `PGDATABASE`. If that is not set, the user name specified for the connection is used.
