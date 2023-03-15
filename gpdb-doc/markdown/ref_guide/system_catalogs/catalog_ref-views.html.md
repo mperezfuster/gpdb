@@ -1,6 +1,6 @@
 # System Views 
 
-Greenplum Database provides the following system views not available in PostgreSQL.
+Greenplum Database provides the following system views.
 
 -   [gp_distributed_log](gp_distributed_log.html)
 -   [gp_distributed_xacts](gp_distributed_xacts.html)
