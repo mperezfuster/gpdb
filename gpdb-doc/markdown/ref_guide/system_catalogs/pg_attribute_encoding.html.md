@@ -7,6 +7,7 @@ The `pg_attribute_encoding` system catalog table contains column storage informa
 |`attrelid`|oid|not null|plain|Foreign key to `pg_attribute.attrelid`|
 |`attnum`|smallint|not null|plain|Foreign key to `pg_attribute.attnum`|
 |`attoptions`|text \[ \]| |extended|The options|
+|`filenum`|smallint|not null|plain|Range of files for the column|
 
 **Parent topic:** [System Catalogs Definitions](../system_catalogs/catalog_ref-html.html)
 
