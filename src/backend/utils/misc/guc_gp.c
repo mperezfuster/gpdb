@@ -236,6 +236,7 @@ int			gp_perfmon_segment_interval;
 
 /* Perfmon debug GUC */
 bool		gp_perfmon_print_packet_info;
+bool		gp_resource_group_bypass_catalog_query;
 
 bool		vmem_process_interrupt = false;
 bool		execute_pruned_plan = false;
@@ -340,6 +341,7 @@ bool		optimizer_enable_multiple_distinct_aggs;
 bool		optimizer_enable_direct_dispatch;
 bool		optimizer_enable_hashjoin_redistribute_broadcast_children;
 bool		optimizer_enable_broadcast_nestloop_outer_child;
+bool		optimizer_discard_redistribute_hashjoin;
 bool		optimizer_enable_streaming_material;
 bool		optimizer_enable_gather_on_segment_for_dml;
 bool		optimizer_enable_assert_maxonerow;
@@ -2637,6 +2639,16 @@ struct config_bool ConfigureNamesBool_gp[] =
 		NULL, NULL, NULL
 	},
 	{
+		{"optimizer_discard_redistribute_hashjoin", PGC_USERSET, DEVELOPER_OPTIONS,
+			gettext_noop("Discard hash join plans with redistribute motion in the optimizer."),
+			NULL,
+			GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE
+		},
+		&optimizer_discard_redistribute_hashjoin,
+		false,
+		NULL, NULL, NULL
+	},
+	{
 		{"optimizer_expand_fulljoin", PGC_USERSET, DEVELOPER_OPTIONS,
 			gettext_noop("Enables the optimizer's support of expanding full outer joins using union all."),
 			NULL,
@@ -3083,6 +3095,24 @@ struct config_bool ConfigureNamesBool_gp[] =
 	},
 
 	{
+		{"gp_resource_group_bypass_catalog_query", PGC_USERSET, RESOURCES,
+			gettext_noop("Bypass all catalog only queries."),
+			NULL
+		},
+		&gp_resource_group_bypass_catalog_query,
+		true, NULL, NULL
+	},
+
+	{
+		{"gp_count_host_segments_using_address", PGC_POSTMASTER, RESOURCES,
+		   gettext_noop("Count the number segments on a host using the address field in gp_segment_configuration"),
+		   gettext_noop("If false, count it using gp_segment_configuration.hostname instead")
+		},
+		&gp_count_host_segments_using_address,
+		false, NULL, NULL
+	},
+
+	{
 		{"stats_queue_level", PGC_SUSET, STATS_COLLECTOR,
 			gettext_noop("Collects resource queue-level statistics on database activity."),
 			NULL
@@ -3385,7 +3415,7 @@ struct config_int ConfigureNamesInt_gp[] =
 			NULL
 		},
 		&gp_resource_group_cpu_priority,
-		10, 1, 256,
+		10, 1, 50,
 		NULL, NULL, NULL
 	},
 
@@ -4376,7 +4406,7 @@ struct config_int ConfigureNamesInt_gp[] =
 
 	{
 		{"optimizer_xform_bind_threshold", PGC_USERSET, DEVELOPER_OPTIONS,
-			gettext_noop("Maximum number bindings per xform per group expression"),
+			gettext_noop("Maximum number bindings per xform per group expression. A value of 0 disables."),
 			NULL,
 			GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE
 		},
@@ -4419,7 +4449,7 @@ struct config_int ConfigureNamesInt_gp[] =
 
 	{
 		{"optimizer_penalize_broadcast_threshold", PGC_USERSET, QUERY_TUNING_METHOD,
-			gettext_noop("Maximum number of rows of a relation that can be broadcasted without penalty."),
+			gettext_noop("Maximum number of rows of a relation that can be broadcasted without penalty. A value of 0 disables."),
 			NULL,
 			GUC_NO_SHOW_ALL | GUC_NOT_IN_SAMPLE
 		},

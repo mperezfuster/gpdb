@@ -568,6 +568,14 @@ The local content id if a segment.
 |-----------|-------|-------------------|
 |integer| |read only|
 
+## <a id="gp_count_host_segments_using_address"></a>gp_count_host_segments_using_address
+
+Beginning in version 6.21.0, the Resource Groups implementation was changed to calculate segment memory using `gp_segment_configuration.hostname` instead of `gp_segment_configuration.address`. This implementation can result in a lower memory limit value compared to the earlier code, for deployments where each host uses multiple IP addresses.  In some cases, this change in behavior could lead to Out Of Memory errors when upgrading from an earlier version. Version 6.23.4 introduces a configuration parameter, `gp_count_host_segments_using_address`, that can be enabled to calculate of segment memory using `gp_segment_configuration.address` if Out Of Memory errors are encountered after an upgrade. This parameter is disabled by default. This parameter will not be provided in Greenplum Version 7 because resource group memory calculation will no longer be dependent on the segments per host value.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|boolean|off|master, system, restart|
+
 ## <a id="gp_create_table_random_default_distribution"></a>gp\_create\_table\_random\_default\_distribution 
 
 Controls table creation when a Greenplum Database table is created with a CREATE TABLE or CREATE TABLE AS command that does not contain a DISTRIBUTED BY clause.
@@ -666,7 +674,7 @@ gpconfig -s 'gp_default_storage_options'
 
 > **Note** <sup>1</sup>The set classification when the parameter is set at the system level with the `gpconfig` utility.
 
-> **Note** <sup>2</sup>QuickLZ compression is available only in the commercial release of Tanzu Greenplum.
+> **Note** <sup>2</sup>QuickLZ compression is available only in the commercial release of VMware Greenplum.
 
 ## <a id="gp_dispatch_keepalives_count"></a>gp\_dispatch\_keepalives\_count 
 
@@ -820,9 +828,9 @@ Enables collection of query metrics. When query metrics collection is enabled, G
 
 After changing this configuration parameter, Greenplum Database must be restarted for the change to take effect.
 
-The Greenplum Database metrics collection extension, when enabled, sends the collected metrics over UDP to a Tanzu Greenplum Command Center agent<sup>1</sup>.
+The Greenplum Database metrics collection extension, when enabled, sends the collected metrics over UDP to a VMware Greenplum Command Center agent<sup>1</sup>.
 
-> **Note** <sup>1</sup>The metrics collection extension is included in VMware's commercial version of Greenplum Database. Tanzu Greenplum Command Center is supported only with Tanzu Greenplum.
+> **Note** <sup>1</sup>The metrics collection extension is included in VMware's commercial version of Greenplum Database. VMware Greenplum Command Center is supported only with VMware Greenplum.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -1336,6 +1344,17 @@ Identifies the maximum percentage of system CPU resources to allocate to resourc
 |-----------|-------|-------------------|
 |0.1 - 1.0|0.9|local, system, restart|
 
+## <a id="gp_resource_group_cpu_priority"></a>gp_resource_group_cpu_priority
+
+Sets the CPU priority for Greenplum processes relative to non-Greenplum processes when resource groups are enabled. For example, setting this parameter to `10` sets the ratio of allotted CPU resources for Greenplum processes to non-Greenplum processes to 10:1. 
+
+> **Note** 
+> This ratio calculation applies only when the machine's CPU usage is at 100%.
+
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|1 - 50|10|local, system, restart|
 
 ## <a id="gp_resource_group_enable_recalculate_query_mem"></a>gp\_resource\_group\_enable\_recalculate\_query\_mem
 
@@ -2214,6 +2233,17 @@ The parameter can be set for a database system, an individual database, or a ses
 |-----------|-------|-------------------|
 |Boolean|true|master, session, reload|
 
+## <a id="optimizer_discard_redistribute_hashjoin"></a>optimizer\_discard\_redistribute\_hashjoin
+
+When GPORCA is enabled \(the default\), this parameter specifies whether the Query Optimizer should eliminate plans that include a HashJoin operator with a Redistribute Motion child. Eliminating such plans can improve performance in cases where the data being joined exhibits high skewness in the join keys.
+
+The default setting is `off`, GPORCA considers all plan alternatives, including those with a Redistribute Motion child, in the HashJoin operator. If you observe performance issues with queries that use a HashJoin with highly skewed data, you may want to consider setting `optimizer_discard_redistribute_hashjoin` to `on` to instruct GPORCA to discard such plans.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Boolean|off|master, session, reload|
+
+
 ## <a id="optimizer_enable_associativity"></a>optimizer\_enable\_associativity 
 
 When GPORCA is enabled \(the default\), this parameter controls whether the join associativity transform is enabled during query optimization. The transform analyzes join orders. For the default value `off`, only the GPORCA dynamic programming algorithm for analyzing join orders is enabled. The join associativity transform largely duplicates the functionality of the newer dynamic programming algorithm.
@@ -2461,6 +2491,16 @@ The parameter can be set for a database system, an individual database, or a ses
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
 |boolean|off|master, session, reload|
+
+## <a id="optimizer_penalize_broadcast_threshold"></a>optimizer_penalize_skew_broadcast_threshold
+
+When GPORCA is enabled (the default), during query optimization GPORCA penalizes the cost of plans that attempt to broadcast more than the value specified by `optimizer_penalize_broadcast_threshold`. For example, if this parameter is set to 100K rows (the default), any broadcast of more than 100K rows is heavily penalized. 
+
+When this parameter is set to `0`, GPORCA sets this broadcast threshold to unlimited and never penalizes a broadcast motion.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|integer >= 0|100K rows|master, session, reload|
 
 ## <a id="optimizer_penalize_skew"></a>optimizer\_penalize\_skew 
 

@@ -34,7 +34,7 @@ The following topics describe the components that make up a Greenplum Database s
 -   [About the Greenplum Segments](#arch_segments)
 -   [About the Greenplum Interconnect](#arch_interconnect)
 -   [About ETL Hosts for Data Loading](#topic13)
--   [About Tanzu Greenplum Performance Monitoring](#topic_e5t_whm_kbb)
+-   [About VMware Greenplum Performance Monitoring](#topic_e5t_whm_kbb)
 
 ## <a id="arch_master"></a>About the Greenplum Master 
 
@@ -64,7 +64,7 @@ When a user connects to the database via the Greenplum master and issues a query
 
 User-defined tables and their indexes are distributed across the available segments in a Greenplum Database system; each segment contains a distinct portion of data. The database server processes that serve segment data run under the corresponding segment instances. Users interact with segments in a Greenplum Database system through the master.
 
-Segments run on a server called *segment hosts*. A segment host typically runs from two to eight Greenplum segments, depending on the CPU cores, RAM, storage, network interfaces, and workloads. Segment hosts are expected to be identically configured. The key to obtaining the best performance from Greenplum Database is to distribute data and workloads *evenly* across a large number of equally capable segments so that all segments begin working on a task simultaneously and complete their work at the same time.
+A server that runs a segment instance is called a *segment host*. A segment host typically runs from two to eight Greenplum segments, depending on the CPU cores, RAM, storage, network interfaces, and workloads. Segment hosts are expected to be identically configured. The key to obtaining the best performance from Greenplum Database is to distribute data and workloads *evenly* across a large number of equally capable segments so that all segments begin working on a task simultaneously and complete their work at the same time.
 
 ### <a id="topic5"></a>Segment Redundancy 
 
@@ -148,8 +148,8 @@ The `gpfdist` program can serve data to the segment instances at an average rate
 
 ![External Tables Using Multiple gpfdist Instances with Multiple NICs](../graphics/ext_tables.jpg "External Tables Using Multiple gpfdist Instances with Multiple NICs")
 
-## <a id="topic_e5t_whm_kbb"></a>About Tanzu Greenplum Performance Monitoring 
+## <a id="topic_e5t_whm_kbb"></a>About VMware Greenplum Performance Monitoring 
 
-Tanzu Greenplum Greenplum Command Center is an optional web-based performance monitoring and management tool for Greenplum Database. Administrators can install Command Center separately from Greenplum Database.
+VMware Greenplum Greenplum Command Center is an optional web-based performance monitoring and management tool for Greenplum Database. Administrators can install Command Center separately from Greenplum Database.
 
 ![Greenplum Performance Monitoring Architecture](../graphics/cc_arch_gpdb.png "Greenplum Performance Monitoring Architecture")

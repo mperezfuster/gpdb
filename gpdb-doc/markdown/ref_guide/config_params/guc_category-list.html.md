@@ -116,6 +116,7 @@ These parameters control the usage of GPORCA by Greenplum Database. For informat
 - [optimizer_cost_model](guc-list.html#optimizer_cost_model)
 - [optimizer_cte_inlining_bound](guc-list.html#optimizer_cte_inlining_bound)
 - [optimizer_dpe_stats](guc-list.html#optimizer_dpe_stats)
+- [optimizer_discard_redistribute_hashjoin](guc-list.html#optimizer_discard_redistribute_hashjoin)
 - [optimizer_enable_associativity](guc-list.html#optimizer_enable_associativity)
 - [optimizer_enable_dml](guc-list.html#optimizer_enable_dml)
 - [optimizer_enable_indexonlyscan](guc-list.html#optimizer_enable_indexonlyscan)
@@ -133,6 +134,7 @@ These parameters control the usage of GPORCA by Greenplum Database. For informat
 - [optimizer_mdcache_size](guc-list.html#optimizer_mdcache_size)
 - [optimizer_metadata_caching](guc-list.html#optimizer_metadata_caching)
 - [optimizer_parallel_union](guc-list.html#optimizer_parallel_union)
+- [optimizer_penalize_broadcast_threshold](guc-list.html#optimizer_penalize_broadcast_threshold)
 - [optimizer_penalize_skew](guc-list.html#optimizer_penalize_skew)
 - [optimizer_print_missing_stats](guc-list.html#optimizer_print_missing_stats)
 - [optimizer_print_optimization_stats](guc-list.html#optimizer_print_optimization_stats)
@@ -295,7 +297,7 @@ The following parameters configure the data collection agents that populate the 
 
 ### <a id="query-metrics"></a>Query Metrics Collection Parameters 
 
-These parameters enable and configure query metrics collection. When enabled, Greenplum Database saves metrics to shared memory during query execution. These metrics are used by Tanzu Greenplum Command Center, which is included with VMware's commercial version of Greenplum Database.
+These parameters enable and configure query metrics collection. When enabled, Greenplum Database saves metrics to shared memory during query execution. These metrics are used by VMware Greenplum Command Center, which is included with VMware's commercial version of Greenplum Database.
 
 - [gp_enable_query_metrics](guc-list.html#gp_enable_query_metrics)
 - [gp_instrument_shmem_size](guc-list.html#gp_instrument_shmem_size)
@@ -394,11 +396,13 @@ The following configuration parameters configure the Greenplum Database resource
 
 The following parameters configure the Greenplum Database resource group workload management feature.
 
+- [gp_count_host_segments_using_address](guc-list.html#gp_count_host_segments_using_address)
 - [gp_resgroup_memory_policy](guc-list.html#gp_resgroup_memory_policy)
 - [gp_resource_group_bypass](guc-list.html#gp_resource_group_bypass)
 - [gp_resource_group_cpu_ceiling_enforcement](guc-list.html#gp_resource_group_cpu_ceiling_enforcement)
 - [gp_resource_group_cpu_limit](guc-list.html#gp_resource_group_cpu_limit)
-- [gp\_resource\_group\_enable\_recalculate\_query\_mem](guc-list.html#gp_resource_group_enable_recalculate_query_mem)
+- [gp_resource_group_cpu_priority](guc-list.html#gp_resource_group_cpu_priority)
+- [gp_resource_group_enable_recalculate_query_mem](guc-list.html#gp_resource_group_enable_recalculate_query_mem)
 - [gp_resource_group_memory_limit](guc-list.html#gp_resource_group_memory_limit)
 - [gp_resource_group_queuing_timeout](guc-list.html#gp_resource_group_queuing_timeout)
 - [gp_resource_manager](guc-list.html#gp_resource_manager)

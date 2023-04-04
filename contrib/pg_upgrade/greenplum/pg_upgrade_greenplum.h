@@ -80,13 +80,7 @@ extern void freeze_master_data(void);
 void reset_system_identifier(void);
 
 /* frozenxids_gp.c */
-void update_segment_db_xids(void);
-
-/* aotable.c */
-
-void		restore_aosegment_tables(void);
-bool        is_appendonly(char relstorage);
-
+void update_db_xids(void);
 
 /* version_gp.c */
 
