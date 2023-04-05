@@ -9,7 +9,7 @@ The `pg_attribute_encoding` system catalog table contains column storage informa
 |`filenum`|smallint|not null|plain|Shorthand for the file range assigned to the column|
 |`attoptions`|text \[ \]| |extended|The options|
 
-For a column with `filenum` = *f*, the column files on disk use the suffix `(f - 1)*128 to f*128 - 1`. For example:
+For a column with `filenum = f`, the column files on disk use the suffix `(f - 1)*128 to f*128 - 1`. For example:
 
 - Column with `filenum` = 1 has files `relfilenode`, `relfilenode.1` .. `relfilenode.127`.
 - Column with `filenum` = 2 has files `relfilenode.128`, `relfilenode.129` .. `relfilenode.255`.
