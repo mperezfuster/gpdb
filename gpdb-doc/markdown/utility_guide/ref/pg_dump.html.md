@@ -29,7 +29,7 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 
 ## <a id="section4"></a>Options 
 
-\<dbname\>
+<dbname>
 :   Specifies the name of the database to be dumped. If this is not specified, the environment variable `PGDATABASE` is used. If that is not set, the user name specified for the connection is used.
 
 **Dump Options**
