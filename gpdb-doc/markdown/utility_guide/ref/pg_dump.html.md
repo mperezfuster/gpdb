@@ -50,16 +50,16 @@ dbname
 -C \| --create
 :   Begin the output with a command to create the database itself and reconnect to the created database. \(With a script of this form, it doesn't matter which database in the destination installation you connect to before running the script.\) If `--clean` is also specified, the script drops and recreates the target database before reconnecting to it. This option is only meaningful for the plain-text format. For the archive formats, you may specify the option when you call [pg\_restore](pg_restore.html).
 
--E <encoding> \| --encoding=<encoding>
+-E encoding \| --encoding=encoding
 :   Create the dump in the specified character set encoding. By default, the dump is created in the database encoding. \(Another way to get the same result is to set the `PGCLIENTENCODING` environment variable to the desired dump encoding.\)
 
---exclude-table-and-children=<pattern>
-:   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the <pattern>.
+--exclude-table-and-children=pattern
+:   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the pattern.
 
---exclude-table-data-and-children=<pattern>
-:   This option is equivalent to `--exclude-table-data`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the <pattern>.
+--exclude-table-data-and-children=pattern
+:   This option is equivalent to `--exclude-table-data`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the pattern.
 
--f <file> \| --file=<file>
+-f file \| --file=file
 :   Send output to the specified file. This parameter can be omitted for file-based output formats, in which case the standard output is used. It must be given for the directory output format however, where it specifies the target directory instead of a file. In this case the directory is created by `pg_dump` and must not exist before.
 
 -F p\|c\|d\|t \| --format=plain\|custom\|directory\|tar
@@ -70,7 +70,7 @@ dbname
 - d \| directory — Output a directory-format archive suitable for input into `pg_restore`. This will create a directory with one file for each table and blob being dumped, plus a so-called Table of Contents file describing the dumped objects in a machine-readable format that `pg_restore` can read. A directory format archive can be manipulated with standard Unix tools; for example, files in an uncompressed archive can be compressed with the `gzip` tool. This format is compressed by default.
 - t \| tar — Output a tar-format archive suitable for input into [pg\_restore](pg_restore.html). The tar format is compatible with the directory format; extracting a tar-format archive produces a valid directory-format archive. However, the tar format does not support compression. Also, when using tar format the relative order of table data items cannot be changed during restore.
 
--j <njobs> \| --jobs=<njobs>
+-j njobs \| --jobs=njobs
 :   Run the dump in parallel by dumping njobs tables simultaneously. This option reduces the time of the dump but it also increases the load on the database server. You can only use this option with the directory output format because this is the only output format where multiple processes can write their data at the same time.
 
 :   > **Note** Parallel dumps using `pg_dump` are parallelized only on the query dispatcher \(coordinator\) node, not across the query executor \(segment\) nodes as is the case when you use `gpbackup`.
@@ -83,14 +83,14 @@ dbname
 
 :   If you want to run a parallel dump of a pre-6.0 server, you need to make sure that the database content doesn't change from between the time the coordinator connects to the database until the last worker job has connected to the database. The easiest way to do this is to halt any data modifying processes \(DDL and DML\) accessing the database before starting the backup. You also need to specify the `--no-synchronized-snapshots` parameter when running `pg_dump -j` against a pre-6.0 Greenplum Database server.
 
--n <schema> \| --schema=<schema>
+-n schema \| --schema=schema
 :   Dump only schemas matching the schema pattern; this selects both the schema itself, and all its contained objects. When this option is not specified, all non-system schemas in the target database will be dumped. Multiple schemas can be selected by writing multiple `-n` switches. Also, the schema parameter is interpreted as a pattern according to the same rules used by `psql`'s`\d` commands, so multiple schemas can also be selected by writing wildcard characters in the pattern. When using wildcards, be careful to quote the pattern if needed to prevent the shell from expanding the wildcards.
 
 :   Note: When -n is specified, `pg_dump` makes no attempt to dump any other database objects that the selected schema\(s\) may depend upon. Therefore, there is no guarantee that the results of a specific-schema dump can be successfully restored by themselves into a clean database.
 
     > **Note** Non-schema objects such as blobs are not dumped when `-n` is specified. You can add blobs back to the dump with the `--blobs` switch.
 
--N <schema> \| --exclude-schema=<schema>
+-N schema \| --exclude-schema=schema
 :   Do not dump any schemas matching the schema pattern. The pattern is interpreted according to the same rules as for `-n`. `-N` can be given more than once to exclude schemas matching any of several patterns. When both `-n` and `-N` are given, the behavior is to dump just the schemas that match at least one `-n` switch but no `-N` switches. If `-N` appears without `-n`, then schemas matching `-N` are excluded from what is otherwise a normal dump.
 
 -o \| --oids
@@ -108,12 +108,12 @@ dbname
 
 :   To exclude table data for only a subset of tables in the database, see `--exclude-table-data`.
 
--S <username> \| --superuser=<username>
+-S username \| --superuser=username
 :   Specify the superuser user name to use when deactivating triggers. This is relevant only if `--disable-triggers` is used. It is better to leave this out, and instead start the resulting script as a superuser.
 
     > **Note** Greenplum Database does not support user-defined triggers.
 
--t <table> \| --table=<table>
+-t table \| --table=table
 :   Dump only tables \(or views or sequences or foreign tables\) matching the table pattern. Specify the table in the format `schema.table`.
 
 :   Multiple tables can be selected by writing multiple `-t` switches. Also, the table parameter is interpreted as a pattern according to the same rules used by `psql`'s `\d` commands, so multiple tables can also be selected by writing wildcard characters in the pattern. When using wildcards, be careful to quote the pattern if needed to prevent the shell from expanding the wildcards. The `-n` and `-N` switches have no effect when `-t` is used, because tables selected by `-t` will be dumped regardless of those switches, and non-table objects will not be dumped.
@@ -122,11 +122,11 @@ dbname
 
     Also, `-t` cannot be used to specify a child table partition. To dump a partitioned table, you must specify the parent table name.
 
--T <table> \| --exclude-table=<table>
+-T table \| --exclude-table=table
 :   Do not dump any tables matching the table pattern. The pattern is interpreted according to the same rules as for `-t`. `-T` can be given more than once to exclude tables matching any of several patterns. When both `-t` and `-T` are given, the behavior is to dump just the tables that match at least one `-t` switch but no `-T` switches. If `-T` appears without `-t`, then tables matching `-T` are excluded from what is otherwise a normal dump.
 
--table-and-children=<pattern>
-:   This option is equivalent to `-t`, except that it also includes any partitions of inheritance child tables of the table(s) matching the <pattern>.
+-table-and-children=pattern
+:   This option is equivalent to `-t`, except that it also includes any partitions of inheritance child tables of the table(s) matching the pattern.
 
 -v \| --verbose
 :   Specifies verbose mode. This will cause `pg_dump` to output detailed object comments and start/stop times to the dump file, and progress messages to standard error.
