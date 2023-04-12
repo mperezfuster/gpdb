@@ -32,8 +32,6 @@ ALTER RESOURCE GROUP rg_concurrency_test SET CONCURRENCY 1;
 
 ALTER RESOURCE GROUP rg_concurrency_test SET CONCURRENCY 2;
 
-SELECT * FROM rg_activity_status;
-
 11:END;
 11q:
 21<:
@@ -61,14 +59,13 @@ ALTER RESOURCE GROUP rg_concurrency_test SET CONCURRENCY 2;
 
 21:SET ROLE role_concurrency_test;
 22:SET ROLE role_concurrency_test;
-21&:BEGIN;
+21:BEGIN;
 22&:BEGIN;
 
 SELECT * FROM rg_activity_status;
 
 11:END;
 11q:
-21<:
 22<:
 
 SELECT * FROM rg_activity_status;
@@ -232,3 +229,4 @@ DROP VIEW rg_activity_status;
 DROP ROLE role_concurrency_test;
 DROP RESOURCE GROUP rg_concurrency_test;
 -- end_ignore
+

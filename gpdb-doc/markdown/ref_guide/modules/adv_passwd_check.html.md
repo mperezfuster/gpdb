@@ -69,7 +69,7 @@ You would run the following commands to configure Greenplum Database to enforce 
 
 gpadmin@gpcoordinator$ gpconfig -c advanced_password_check.minimum_length -v 10
 gpadmin@gpcoordinator$ gpconfig -c advanced_password_check.maximum_length -v 18
-gpadmin@gpcoordinator$ gpconfig -c advanced_password_check.restrict_number -v false
+gpadmin@gpcoordinator$ gpconfig -c advanced_password_check.restrict_numbers -v false
 gpadmin@gpcoordinator$ gpstop -u
 ```
 
@@ -83,5 +83,5 @@ missing, special character missing (needs to be one listed in "<list-of-special-
 
 ## <a id="topic_info"></a>Additional Module Documentation 
 
-Refer to the [passwordcheck](https://www.postgresql.org/docs/9.4/passwordcheck.html) PostgreSQL documentation for more information about this module.
+Refer to the [passwordcheck](https://www.postgresql.org/docs/12/passwordcheck.html) PostgreSQL documentation for more information about this module.
 

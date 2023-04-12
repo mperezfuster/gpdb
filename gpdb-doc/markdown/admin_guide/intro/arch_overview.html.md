@@ -40,7 +40,7 @@ The following topics describe the components that make up a Greenplum Database s
 
 The Greenplum Database coordinator is the entry to the Greenplum Database system, accepting client connections and SQL queries, and distributing work to the segment instances.
 
-Greenplum Database end-users interact with Greenplum Database \(through the coordinator\) as they would with a typical PostgreSQL database. They connect to the database using client programs such as `psql` or application programming interfaces \(APIs\) such as JDBC, ODBC or [libpq](https://www.postgresql.org/docs/9.4/libpq.html) \(the PostgreSQL C API\).
+Greenplum Database end-users interact with Greenplum Database \(through the coordinator\) as they would with a typical PostgreSQL database. They connect to the database using client programs such as `psql` or application programming interfaces \(APIs\) such as JDBC, ODBC or [libpq](https://www.postgresql.org/docs/12/libpq.html) \(the PostgreSQL C API\).
 
 The coordinator is where the *global system catalog* resides. The global system catalog is the set of system tables that contain metadata about the Greenplum Database system itself. The coordinator does not contain any user data; data resides only on the *segments*. The coordinator authenticates client connections, processes incoming SQL commands, distributes workloads among segments, coordinates the results returned by each segment, and presents the final results to the client program.
 
@@ -64,7 +64,7 @@ When a user connects to the database via the Greenplum coordinator and issues a 
 
 User-defined tables and their indexes are distributed across the available segments in a Greenplum Database system; each segment contains a distinct portion of data. The database server processes that serve segment data run under the corresponding segment instances. Users interact with segments in a Greenplum Database system through the coordinator.
 
-Segments run on a server called *segment hosts*. A segment host typically runs from two to eight Greenplum segments, depending on the CPU cores, RAM, storage, network interfaces, and workloads. Segment hosts are expected to be identically configured. The key to obtaining the best performance from Greenplum Database is to distribute data and workloads *evenly* across a large number of equally capable segments so that all segments begin working on a task simultaneously and complete their work at the same time.
+A server that runs a segment instance is called a *segment host*. A segment host typically runs from two to eight Greenplum segments, depending on the CPU cores, RAM, storage, network interfaces, and workloads. Segment hosts are expected to be identically configured. The key to obtaining the best performance from Greenplum Database is to distribute data and workloads *evenly* across a large number of equally capable segments so that all segments begin working on a task simultaneously and complete their work at the same time.
 
 ### <a id="topic5"></a>Segment Redundancy 
 

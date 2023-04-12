@@ -54,6 +54,7 @@
 #include "utils/vmem_tracker.h"
 #include "utils/cgroup-ops-v1.h"
 #include "utils/cgroup-ops-dummy.h"
+#include "utils/cgroup-ops-v2.h"
 
 #define InvalidSlotId	(-1)
 #define RESGROUP_MAX_SLOTS	(MaxConnections)
@@ -61,6 +62,12 @@
 /*
  * GUC variables.
  */
+int							gp_resgroup_memory_policy = RESMANAGER_MEMORY_POLICY_NONE;
+bool						gp_log_resgroup_memory = false;
+int							gp_resgroup_memory_query_fixed_mem;
+int							gp_resgroup_memory_policy_auto_fixed_mem;
+bool						gp_resgroup_print_operator_memory_limits = false;
+
 bool						gp_resgroup_debug_wait_queue = true;
 int							gp_resource_group_queuing_timeout = 0;
 
@@ -138,8 +145,8 @@ struct ResGroupData
 
 	volatile int	nRunning;			/* number of running trans */
 	volatile int	nRunningBypassed;	/* number of running trans in bypass mode */
-	int				totalExecuted;		/* total number of executed trans */
-	int				totalQueued;		/* total number of queued trans	*/
+	int64			totalExecuted;		/* total number of executed trans */
+	int64			totalQueued;		/* total number of queued trans	*/
 	int64			totalQueuedTimeMs;	/* total queue time, in milliseconds */
 	PROC_QUEUE		waitProcs;			/* list of PGPROC objects waiting on this group */
 
@@ -239,6 +246,8 @@ static void groupWaitQueuePush(ResGroupData *group, PGPROC *proc);
 static PGPROC *groupWaitQueuePop(ResGroupData *group);
 static void groupWaitQueueErase(ResGroupData *group, PGPROC *proc);
 static bool groupWaitQueueIsEmpty(const ResGroupData *group);
+static bool checkBypassWalker(Node *node, void *context);
+static bool shouldBypassSelectQuery(Node *node);
 static bool shouldBypassQuery(const char *query_string);
 static void lockResGroupForDrop(ResGroupData *group);
 static void unlockResGroupForDrop(ResGroupData *group);
@@ -414,10 +423,15 @@ void
 initCgroup(void)
 {
 #ifdef __linux__
-	if (!gp_resource_group_enable_cgroup_version_two)
+	if (Gp_resource_manager_policy == RESOURCE_MANAGER_POLICY_GROUP)
 	{
-		cgroupOpsRoutine = get_group_routine_alpha();
-		cgroupSystemInfo = get_cgroup_sysinfo_alpha();
+		cgroupOpsRoutine = get_group_routine_v1();
+		cgroupSystemInfo = get_cgroup_sysinfo_v1();
+	}
+	else
+	{
+		cgroupOpsRoutine = get_group_routine_v2();
+		cgroupSystemInfo = get_cgroup_sysinfo_v2();
 	}
 #else
 	cgroupOpsRoutine = get_cgroup_routine_dummy();
@@ -800,6 +814,10 @@ ResGroupAlterOnCommit(const ResourceGroupCallbackContext *callbackCtx)
 									        cpuset);
 			}
 		}
+		else if (callbackCtx->limittype == RESGROUP_LIMIT_TYPE_CONCURRENCY)
+		{
+			wakeupSlots(group, true);
+		}
 		/* reset default group if cpuset has changed */
 		if (strcmp(callbackCtx->oldCaps.cpuset, callbackCtx->caps.cpuset) &&
 			gp_resource_group_enable_cgroup_cpuset)
@@ -892,10 +910,10 @@ ResGroupGetStat(Oid groupId, ResGroupStatType type)
 			result = Int32GetDatum(group->waitProcs.size);
 			break;
 		case RES_GROUP_STAT_TOTAL_EXECUTED:
-			result = Int32GetDatum(group->totalExecuted);
+			result = Int64GetDatum(group->totalExecuted);
 			break;
 		case RES_GROUP_STAT_TOTAL_QUEUED:
-			result = Int32GetDatum(group->totalQueued);
+			result = Int64GetDatum(group->totalQueued);
 			break;
 		case RES_GROUP_STAT_TOTAL_QUEUE_TIME:
 			/*
@@ -1184,7 +1202,7 @@ decideResGroup(ResGroupInfo *pGroupInfo)
 
 	if (!group)
 	{
-		groupId = superuser() ? GPDB_ADMIN_CGROUP : GPDB_DEFAULT_CGROUP;
+		groupId = superuser() ? ADMINRESGROUP_OID : DEFAULTRESGROUP_OID;
 		group = groupHashFind(groupId, false);
 	}
 
@@ -1415,6 +1433,8 @@ SerializeResGroupInfo(StringInfo str)
 	appendBinaryStringInfo(str, (char *) &itmp, sizeof(int32));
 	itmp = htonl(caps->cpuSoftPriority);
 	appendBinaryStringInfo(str, (char *) &itmp, sizeof(int32));
+	itmp = htonl(caps->memory_limit);
+	appendBinaryStringInfo(str, (char *) &itmp, sizeof(int32));
 
 	cpuset_len = strlen(caps->cpuset);
 	itmp = htonl(cpuset_len);
@@ -1451,6 +1471,9 @@ DeserializeResGroupInfo(struct ResGroupCaps *capsOut,
 	capsOut->cpuHardQuotaLimit = ntohl(itmp);
 	memcpy(&itmp, ptr, sizeof(int32)); ptr += sizeof(int32);
 	capsOut->cpuSoftPriority = ntohl(itmp);
+	memcpy(&itmp, ptr, sizeof(int32)); ptr += sizeof(int32);
+	capsOut->memory_limit = ntohl(itmp);
+
 
 	memcpy(&itmp, ptr, sizeof(int32)); ptr += sizeof(int32);
 	cpuset_len = ntohl(itmp);
@@ -1520,10 +1543,7 @@ AssignResGroupOnMaster(void)
 	if (shouldBypassQuery(debug_query_string))
 	{
 		/*
-		 * Although we decide to bypass this query we should load the
-		 * memory_spill_ratio setting from the resgroup, otherwise a
-		 * `SHOW memory_spill_ratio` command will output the default value 20
-		 * if it's the first query in the connection (make sure tab completion
+		 * If it's the first query in the connection (make sure tab completion
 		 * is not triggered otherwise it will run some implicit query before
 		 * you execute the SHOW command).
 		 *
@@ -2528,10 +2548,56 @@ groupWaitQueueFind(ResGroupData *group, const PGPROC *proc)
 #endif/* USE_ASSERT_CHECKING */
 
 /*
+ * Walk through the raw expression tree, if there is a RangeVar without
+ * `pg_catalog` prefix, terminate the process immediately to save the cpu
+ * resource.
+ */
+static bool
+checkBypassWalker(Node *node, void *context)
+{
+	bool *bypass = context;
+
+	if (node == NULL)
+		return false;
+
+	if (IsA(node, RangeVar))
+	{
+		RangeVar *from = (RangeVar *) node;
+		if (from->schemaname == NULL ||
+			strcmp(from->schemaname, "pg_catalog") != 0)
+		{
+			*bypass = false;
+			return true;
+		}
+		else
+		{
+			/*
+			 * Make sure there is at least one RangeVar
+			 */
+			*bypass = true;
+		}
+	}
+
+	return raw_expression_tree_walker(node, checkBypassWalker, context);
+}
+
+static bool
+shouldBypassSelectQuery(Node *node)
+{
+	bool catalog_bypass = false;
+
+	if (gp_resource_group_bypass_catalog_query)
+		raw_expression_tree_walker(node, checkBypassWalker, &catalog_bypass);
+
+	return catalog_bypass;
+}
+
+/*
  * Parse the query and check if this query should
  * bypass the management of resource group.
  *
- * Currently, only SET/RESET/SHOW command can be bypassed
+ * Currently, only SET/RESET/SHOW command and SELECT with only catalog tables
+ * can be bypassed
  */
 static bool
 shouldBypassQuery(const char *query_string)
@@ -2580,7 +2646,8 @@ shouldBypassQuery(const char *query_string)
 	if (parsetree_list == NULL)
 		return false;
 
-	/* Only bypass SET/RESET/SHOW command for now */
+	/* Only bypass SET/RESET/SHOW command and SELECT with only catalog tables
+	 * for now */
 	bypass = true;
 	foreach(parsetree_item, parsetree_list)
 	{
@@ -2589,7 +2656,15 @@ shouldBypassQuery(const char *query_string)
 		if (nodeTag(parsetree) == T_RawStmt)
 			parsetree = ((RawStmt *)parsetree)->stmt;
 
-		if (nodeTag(parsetree) != T_VariableSetStmt &&
+		if (IsA(parsetree, SelectStmt))
+		{
+			if (!shouldBypassSelectQuery(parsetree))
+			{
+				bypass = false;
+				break;
+			}
+		}
+		else if (nodeTag(parsetree) != T_VariableSetStmt &&
 			nodeTag(parsetree) != T_VariableShowStmt)
 		{
 			bypass = false;
@@ -3281,4 +3356,42 @@ ResGroupGetGroupIdBySessionId(int sessionId)
 	LWLockRelease(SessionStateLock);
 
 	return groupId;
+}
+
+/*
+ * In resource group mode, how much memory should a query take in bytes.
+ */
+uint64
+ResourceGroupGetQueryMemoryLimit(void)
+{
+	ResGroupCaps		*caps;
+	int64	resgLimit = -1;
+	uint64	queryMem = -1;
+
+	Assert(Gp_role == GP_ROLE_DISPATCH || Gp_role == GP_ROLE_UTILITY);
+
+	if (bypassedGroup)
+		return 0;
+
+	if (gp_resgroup_memory_query_fixed_mem)
+		return (uint64) gp_resgroup_memory_query_fixed_mem * 1024L;
+
+	Assert(selfIsAssigned());
+
+	LWLockAcquire(ResGroupLock, LW_SHARED);
+
+	caps = &self->group->caps;
+	resgLimit = caps->memory_limit;
+
+	AssertImply(resgLimit < 0, resgLimit == -1);
+	if (resgLimit == -1)
+	{
+		LWLockRelease(ResGroupLock);
+		return (uint64) statement_mem * 1024L;
+	}
+
+	queryMem = (uint64)(resgLimit *1024L *1024L / caps->concurrency);
+	LWLockRelease(ResGroupLock);
+
+	return queryMem;
 }

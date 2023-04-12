@@ -1941,7 +1941,8 @@ test_consume_xids(PG_FUNCTION_ARGS)
 
 	xid = ReadNewTransactionId();
 
-	targetxid = xid + nxids;
+	/* xid is the "next xid" now, so minus one here */
+	targetxid = xid + nxids - 1;
 	while (targetxid < FirstNormalTransactionId)
 		targetxid++;
 
@@ -2078,13 +2079,6 @@ broken_int4out(PG_FUNCTION_ARGS)
 				 errdetail("The trigger value was 1234")));
 
 	return DirectFunctionCall1(int4out, Int32GetDatum(arg));
-}
-
-PG_FUNCTION_INFO_V1(get_tablespace_version_directory_name);
-Datum
-get_tablespace_version_directory_name(PG_FUNCTION_ARGS)
-{
-	PG_RETURN_TEXT_P(CStringGetTextDatum(GP_TABLESPACE_VERSION_DIRECTORY));
 }
 
 #if defined(TCP_KEEPIDLE)

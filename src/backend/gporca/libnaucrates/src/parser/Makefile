@@ -32,6 +32,7 @@ OBJS        = CParseHandlerAgg.o \
               CParseHandlerDirectDispatchInfo.o \
               CParseHandlerDistinctComp.o \
               CParseHandlerDummy.o \
+              CParseHandlerDynamicForeignScan.o \
               CParseHandlerDynamicIndexScan.o \
               CParseHandlerDynamicTableScan.o \
               CParseHandlerEnumeratorConfig.o \
@@ -115,6 +116,13 @@ OBJS        = CParseHandlerAgg.o \
               CParseHandlerRandomMotion.o \
               CParseHandlerRedistributeMotion.o \
               CParseHandlerRelStats.o \
+              CParseHandlerRelationExtendedStats.o \
+              CParseHandlerExtStatsInfo.o \
+              CParseHandlerExtStats.o \
+              CParseHandlerExtStatsDependency.o \
+              CParseHandlerExtStatsDependencies.o \
+              CParseHandlerExtStatsNDistinct.o \
+              CParseHandlerExtStatsNDistinctList.o \
               CParseHandlerResult.o \
               CParseHandlerRoutedMotion.o \
               CParseHandlerScalarAggref.o \
@@ -147,12 +155,6 @@ OBJS        = CParseHandlerAgg.o \
               CParseHandlerScalarOp.o \
               CParseHandlerScalarOpExpr.o \
               CParseHandlerScalarOpList.o \
-              CParseHandlerScalarPartBound.o \
-              CParseHandlerScalarPartBoundInclusion.o \
-              CParseHandlerScalarPartBoundOpen.o \
-              CParseHandlerScalarPartDefault.o \
-              CParseHandlerScalarPartListNullTest.o \
-              CParseHandlerScalarPartListValues.o \
               CParseHandlerScalarSubPlan.o \
               CParseHandlerScalarSubPlanParam.o \
               CParseHandlerScalarSubPlanParamList.o \
