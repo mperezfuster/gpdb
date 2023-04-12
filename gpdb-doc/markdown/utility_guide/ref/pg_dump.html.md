@@ -53,13 +53,10 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 -E \<encoding\> \| --encoding=\<encoding\>
 :   Create the dump in the specified character set encoding. By default, the dump is created in the database encoding. \(Another way to get the same result is to set the `PGCLIENTENCODING` environment variable to the desired dump encoding.\)
 
-&lt; &gt;exclude-table-and-children=\<pattern\>
+&#8209;&#8209;exclude-table-and-children=\<pattern\>
 :   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
 
---exclude-table-and-children=\<pattern\>
-:   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
-
---exclude-table-data-and-children=\<pattern\>
+&#8209;&#8209;exclude-table-data-and-children=\<pattern\>
 :   This option is equivalent to `--exclude-table-data`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
 
 -f \<file\> \| --file=\<file\>
