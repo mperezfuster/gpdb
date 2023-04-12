@@ -53,6 +53,9 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 -E \<encoding\> \| --encoding=\<encoding\>
 :   Create the dump in the specified character set encoding. By default, the dump is created in the database encoding. \(Another way to get the same result is to set the `PGCLIENTENCODING` environment variable to the desired dump encoding.\)
 
+&lt; &gt;exclude-table-and-children=\<pattern\>
+:   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
+
 --exclude-table-and-children=\<pattern\>
 :   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
 
@@ -156,7 +159,7 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 
     > **Note** Greenplum Database does not support user-defined triggers.
 
-`--exclude-table-data=\<table\>`
+`--exclude-table-data=<table>`
 :   Do not dump data for any tables matching the table pattern. The pattern is interpreted according to the same rules as for `-t`. `--exclude-table-data` can be given more than once to exclude tables matching any of several patterns. This option is useful when you need the definition of a particular table even though you do not need the data in it.
 
 :   To exclude data for all tables in the database, see `--schema-only`.
