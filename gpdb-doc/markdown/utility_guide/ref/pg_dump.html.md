@@ -29,11 +29,8 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 
 ## <a id="section4"></a>Options 
 
-<dbname_name>
+\<dbname\>
 :   Specifies the name of the database to be dumped. If this is not specified, the environment variable `PGDATABASE` is used. If that is not set, the user name specified for the connection is used.
-
-<table_name>
-:   The name (optionally schema-qualified) of an existing table or view. If `ONLY` is specified, only that table is scanned. If `ONLY` is not specified, the table and all its descendant tables (if any) are scanned.
 
 **Dump Options**
 
@@ -55,12 +52,6 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 
 -E \<encoding\> \| --encoding=\<encoding\>
 :   Create the dump in the specified character set encoding. By default, the dump is created in the database encoding. \(Another way to get the same result is to set the `PGCLIENTENCODING` environment variable to the desired dump encoding.\)
-
---exclude-table-and-children=\<pattern\>
-:   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
-
---exclude-table-data-and-children=\<pattern\>
-:   This option is equivalent to `--exclude-table-data`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
 
 -f \<file\> \| --file=\<file\>
 :   Send output to the specified file. This parameter can be omitted for file-based output formats, in which case the standard output is used. It must be given for the directory output format however, where it specifies the target directory instead of a file. In this case the directory is created by `pg_dump` and must not exist before.
@@ -128,9 +119,6 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 -T \<table\> \| --exclude-table=\<table\>
 :   Do not dump any tables matching the table pattern. The pattern is interpreted according to the same rules as for `-t`. `-T` can be given more than once to exclude tables matching any of several patterns. When both `-t` and `-T` are given, the behavior is to dump just the tables that match at least one `-t` switch but no `-T` switches. If `-T` appears without `-t`, then tables matching `-T` are excluded from what is otherwise a normal dump.
 
--table-and-children=\<pattern\>
-:   This option is equivalent to `-t`, except that it also includes any partitions of inheritance child tables of the table(s) matching the pattern.
-
 -v \| --verbose
 :   Specifies verbose mode. This will cause `pg_dump` to output detailed object comments and start/stop times to the dump file, and progress messages to standard error.
 
@@ -159,12 +147,18 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 
     > **Note** Greenplum Database does not support user-defined triggers.
 
-`--exclude-table-data=<table>`
+--exclude-table-and-children=\<pattern\>
+:   This option is equivalent to `-T` or `-exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
+
+--exclude-table-data=\<table\>
 :   Do not dump data for any tables matching the table pattern. The pattern is interpreted according to the same rules as for `-t`. `--exclude-table-data` can be given more than once to exclude tables matching any of several patterns. This option is useful when you need the definition of a particular table even though you do not need the data in it.
 
 :   To exclude data for all tables in the database, see `--schema-only`.
 
-`--if-exists`
+--exclude-table-data-and-children=\<pattern\>
+:   This option is equivalent to `--exclude-table-data`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
+
+--if-exists
 :   Use conditional commands \(i.e. add an `IF EXISTS` clause\) when cleaning database objects. This option is not valid unless `--clean` is also specified.
 
 --inserts
@@ -203,6 +197,9 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 :   This option will make no difference if there are no read-write transactions active when `pg_dump` is started. If read-write transactions are active, the start of the dump may be delayed for an indeterminate length of time. Once running, performance with or without the switch is the same.
 
 :   > **Note** Because Greenplum Database does not support serializable transactions, the `--serializable-deferrable` option has no effect in Greenplum Database.
+
+--table-and-children=\<pattern\>
+:   This option is equivalent to `-t`, except that it also includes any partitions of inheritance child tables of the table(s) matching the pattern.
 
 --use-set-session-authorization
 :   Output SQL-standard `SET SESSION AUTHORIZATION` commands instead of `ALTER OWNER` commands to determine object ownership. This makes the dump more standards-compatible, but depending on the history of the objects in the dump, may not restore properly. A dump using `SET SESSION AUTHORIZATION` will require superuser privileges to restore correctly, whereas `ALTER OWNER` requires lesser privileges.
