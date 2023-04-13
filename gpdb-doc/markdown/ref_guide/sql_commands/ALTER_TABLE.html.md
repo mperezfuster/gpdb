@@ -432,7 +432,7 @@ This table lists the `ALTER TABLE` operations that require a table rewrite when 
 
 |Operation \(See Note\)|Append-Optimized, Column-Oriented|Append-Optimized|Heap|
 |----------------------|---------------------------------|----------------|----|
-|`ALTER COLUMN TYPE`|Yes|Yes|Yes|
+|`ALTER COLUMN TYPE`|No|Yes|Yes|
 |`ADD COLUMN`|No|Yes|Yes|
 | `ALTER COLUMN SET ENCODING`|Yes|N/A|N/A|
 
