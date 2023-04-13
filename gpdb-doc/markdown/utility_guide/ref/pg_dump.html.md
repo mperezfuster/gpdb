@@ -32,6 +32,9 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 <dbname>
 :   Specifies the name of the database to be dumped. If this is not specified, the environment variable `PGDATABASE` is used. If that is not set, the user name specified for the connection is used.
 
+<table_name>
+:   The name (optionally schema-qualified) of an existing table or view. If `ONLY` is specified, only that table is scanned. If `ONLY` is not specified, the table and all its descendant tables (if any) are scanned.
+
 **Dump Options**
 
 -a \| --data-only
