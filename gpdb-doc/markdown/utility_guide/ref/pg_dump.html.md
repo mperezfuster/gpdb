@@ -147,16 +147,16 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 
     > **Note** Greenplum Database does not support user-defined triggers.
 
---exclude-table-and-children=\<pattern\>
-:   This option is equivalent to `-T` or `--exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
+--exclude-table-and-children=\<table\>
+:   This option is equivalent to `-T` or `--exclude-table`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<table\> name.
 
 --exclude-table-data=\<table\>
 :   Do not dump data for any tables matching the table pattern. The pattern is interpreted according to the same rules as for `-t`. `--exclude-table-data` can be given more than once to exclude tables matching any of several patterns. This option is useful when you need the definition of a particular table even though you do not need the data in it.
 
 :   To exclude data for all tables in the database, see `--schema-only`.
 
---exclude-table-data-and-children=\<pattern\>
-:   This option is equivalent to `--exclude-table-data`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<pattern\>.
+--exclude-table-data-and-children=\<table\>
+:   This option is equivalent to `--exclude-table-data`, except that it also excludes any partitions of inheritance child tables of the table(s) matching the \<table\> name.
 
 --if-exists
 :   Use conditional commands \(i.e. add an `IF EXISTS` clause\) when cleaning database objects. This option is not valid unless `--clean` is also specified.
@@ -198,8 +198,8 @@ When used with one of the archive file formats and combined with `pg_restore`, `
 
 :   > **Note** Because Greenplum Database does not support serializable transactions, the `--serializable-deferrable` option has no effect in Greenplum Database.
 
---table-and-children=\<pattern\>
-:   This option is equivalent to `-t` or `--table`, except that it also includes any partitions of inheritance child tables of the table(s) matching the pattern.
+--table-and-children=\<table\>
+:   This option is equivalent to `-t` or `--table`, except that it also includes any partitions of inheritance child tables of the table(s) matching the \<table\> name.
 
 --use-set-session-authorization
 :   Output SQL-standard `SET SESSION AUTHORIZATION` commands instead of `ALTER OWNER` commands to determine object ownership. This makes the dump more standards-compatible, but depending on the history of the objects in the dump, may not restore properly. A dump using `SET SESSION AUTHORIZATION` will require superuser privileges to restore correctly, whereas `ALTER OWNER` requires lesser privileges.
