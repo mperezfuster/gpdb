@@ -39,7 +39,7 @@ When enabled, Greenplum Database starts up the autovacuum daemon, which operates
 
 ## <a id="autovacuum_freeze_max_age"></a>autovacuum_freeze_max_age
 
-Specifies the maximum age at which to autovacuum a table to prevent transaction ID wraparound. Note that the system will launch autovacuum processes to prevent wraparound even when `autovacuum=off`. The default value is 200 million transactions. 
+Specifies the maximum age at which to automatically vacuum a table to prevent transaction ID wraparound. Note that the system will launch autovacuum processes to prevent wraparound even when `autovacuum=off`. The default value is 200 million transactions. 
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -59,21 +59,21 @@ This parameter may be set only in the `postgresql.conf` file or on the server co
 
 ## <a id="autovacuum_vacuum_cost_delay"></a>autovacuum_vacuum_cost_delay
 
-Specifies the cost delay value in milliseconds for automatic `VACUUM` operations. If set to -1, the value of this parameter is the set by [`vacuum_cost_delay`](#vacuum_cost_delay).
+Specifies the cost delay value in milliseconds for automatic vacuum operations. If set to -1, the value of this parameter is the set by [`vacuum_cost_delay`](#vacuum_cost_delay).
 
-A value without units is taken to be milliseconds. The default is 2 milliseconds. The default value is 2 milliseconds. This parameter may be set in the `postgresql.conf` file or on the server command line.
+A value without units is taken to be milliseconds. The default is 2 milliseconds. This parameter may be set only in the `postgresql.conf` file or on the server command line.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-| floating point < 100 | 2 |local, session, reload|
+| floating point < 100 | 2 |local, system, reload|
 
 ## <a id="autovacuum_vacuum_scale_factor"></a>autovacuum_vacuum_scale_factor
 
-Specifies a fraction of the table size to add to [`autovacuum_vacuum_threshold`](#autovacuum_vacuum_threshold) when deciding whether to trigger a `VACUUM`. The default is 0.2 (20% of table size). This parameter can only be set in the `postgresql.conf` file or on the server command line.
+Specifies a fraction of the table size to add to [`autovacuum_vacuum_threshold`](#autovacuum_vacuum_threshold) when deciding whether to trigger a `VACUUM`. The default is 0.2 (20% of table size). This parameter may be set only in the `postgresql.conf` file or on the server command line.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-| floating point (%) | 0.2 |local, session, reload|
+| floating point (%) | 0.2 |local, system, reload|
 
 ## <a id="autovacuum_vacuum_threshold"></a>autovacuum_vacuum_threshold
 
@@ -81,7 +81,7 @@ Specifies the minimum number of updated or deleted tuples needed to trigger a `V
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-| 0 < integer < INT_MAX | 50 |local, session, reload|
+| 0 < integer < INT_MAX | 50 |local, system, reload|
 
 ## <a id="backslash_quote"></a>backslash\_quote 
 
