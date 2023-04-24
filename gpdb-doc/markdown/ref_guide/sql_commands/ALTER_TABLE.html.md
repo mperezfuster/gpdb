@@ -201,7 +201,7 @@ Although you can specify the table's access method using the <code>appendoptimiz
 
     > **Note** GPORCA supports collation only when all columns in the query use the same collation. If columns in the query use different collations, then Greenplum uses the Postgres Planner.
 
-    Changing a column data type requires a table rewrite. For information about table rewrites performed by `ALTER TABLE`, see [Notes](#section5).
+    Changing a column data type may require a table rewrite. For information about table rewrites performed by `ALTER TABLE`, see [Notes](#section5).
 
 -   **SET/DROP DEFAULT** — Sets or removes the default value for a column. Default values only apply in subsequent `INSERT` or `UPDATE` commands; they do not cause rows already in the table to change.
 -   **SET/DROP NOT NULL** — Changes whether a column is marked to allow null values or to reject null values. You can only use `SET NOT NULL` when the column contains no null values.
