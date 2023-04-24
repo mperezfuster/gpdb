@@ -306,16 +306,16 @@ SELECT (gp_toolkit.__gp_aoblkdir('<table_name>')).*
 
 ### <a id="topic_getcolumnsize"></a>get_column_size(oid)
 
-For a given AOCO table, this function returns its column size and compression ratio.
+For a given AOCO table, this function returns the column size and compression ratio for all columns in the table.
 
-The input argument is the oid of a column-oriented append-optimized table.
+The input argument is the object identifier of a column-oriented append-optimized table.
 
 |Column|Description|
 |------|-----------|
 | segment | The segment id. |
 | attnum | The attribute number of the column. |
 | size | The size of the column in bytes. |
-| size_uncompressed | The size of the column in bytes if the column were uncompressed. |
+| size_uncompressed | The size of the column in bytes if the column was not compressed. |
 | compression_ratio | The compression ratio. |
 
 ### <a id="topic_viewcolumnsize"></a>gp_column_size
@@ -329,12 +329,12 @@ This view gathers the column size and compression ratio for column-oriented appe
 | attnum | The attribute number of the column. |
 | attname | The column name. | 
 | size | The size of the column in bytes. |
-| size_uncompressed | The size of the column in bytes if the column were uncompressed. |
+| size_uncompressed | The size of the column in bytes if the column was not compressed. |
 | compression_ratio | The compression ratio. |
 
 ### <a id="topic_viewcolumnsizesummary"></a>gp_column_size_summary
 
-This view shows a summary of the `gp_column_size` view. It aggregates the column size and compression ratio for column-oriented append-optimized tables from all segments
+This view shows a summary of the `gp_column_size` view. It aggregates the column size and compression ratio for each column in each column-oriented append-optimized table from all segments.
 
 |Column|Description|
 |------|-----------|
