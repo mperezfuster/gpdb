@@ -279,7 +279,6 @@ enum Edxltoken
 	EdxltokenTypeMod,
 	EdxltokenCoercionForm,
 	EdxltokenLocation,
-	EdxltokenElementFunc,
 	EdxltokenIsExplicit,
 
 	EdxltokenJoinType,
@@ -619,6 +618,7 @@ enum Edxltoken
 	EdxltokenGPDBCastSrcType,
 	EdxltokenGPDBCastDestType,
 	EdxltokenGPDBCastFuncId,
+	EdxltokenGPDBCastSrcElemType,
 	EdxltokenGPDBCastCoercePathType,
 	EdxltokenGPDBArrayCoerceCast,
 

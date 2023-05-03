@@ -275,7 +275,6 @@ CDXLTokens::Init(CMemoryPool *mp)
 		{EdxltokenTypeMod, GPOS_WSZ_LIT("TypeModifier")},
 		{EdxltokenCoercionForm, GPOS_WSZ_LIT("CoercionForm")},
 		{EdxltokenLocation, GPOS_WSZ_LIT("Location")},
-		{EdxltokenElementFunc, GPOS_WSZ_LIT("ElementFunc")},
 		{EdxltokenIsExplicit, GPOS_WSZ_LIT("IsExplicit")},
 
 		{EdxltokenJoinType, GPOS_WSZ_LIT("JoinType")},
@@ -689,6 +688,7 @@ CDXLTokens::Init(CMemoryPool *mp)
 		{EdxltokenGPDBCastSrcType, GPOS_WSZ_LIT("SourceTypeId")},
 		{EdxltokenGPDBCastDestType, GPOS_WSZ_LIT("DestinationTypeId")},
 		{EdxltokenGPDBCastFuncId, GPOS_WSZ_LIT("CastFuncId")},
+		{EdxltokenGPDBCastSrcElemType, GPOS_WSZ_LIT("SourceElemTypeId")},
 		{EdxltokenGPDBCastCoercePathType, GPOS_WSZ_LIT("CoercePathType")},
 		{EdxltokenGPDBArrayCoerceCast, GPOS_WSZ_LIT("ArrayCoerceCast")},
 

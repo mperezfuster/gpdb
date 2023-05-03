@@ -3489,6 +3489,15 @@ insert into ts_tbl select to_timestamp('99991231'::text, 'YYYYMMDD'::text) from 
 analyze ts_tbl;
 explain select * from ts_tbl where ts = to_timestamp('99991231'::text, 'YYYYMMDD'::text);
 
+-- Test ORCA support for implicit array coerce cast
+-- ORCA should generate a valid plan passing along the cast function as part of ArrayCoerceExpr
+-- While execution thin insert query fails due to the mismatch of column length.
+create table array_coerce_foo (a int, b varchar(2)[]);
+create table array_coerce_bar (a int, b varchar(10)[]);
+
+insert into array_coerce_bar values (1, ARRAY['abcde']);
+explain insert into array_coerce_foo select * from array_coerce_bar;
+insert into array_coerce_foo select * from array_coerce_bar;
 
 -- start_ignore
 DROP SCHEMA orca CASCADE;

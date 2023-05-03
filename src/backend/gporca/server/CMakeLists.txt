@@ -243,6 +243,9 @@ PartTbl-SPE-DynamicTableScan-Range-Cost5 PartTbl-SPE-DynamicTableScan-List-Cost1
 PartTbl-SPE-DynamicTableScan-List-Cost2 PartTbl-SPE-DynamicTableScan-List-Cost3
 PartTbl-SPE-DynamicTableScan-List-Cost4 PartTbl-SPE-DynamicTableScan-List-Cost5;
 
+CPartTblSPEBoolTest:
+PartTbl-SPE-Boolean1 PartTbl-SPE-Boolean2;
+
 CSetop1Test:
 ValueScanWithDuplicateAndSelfComparison PushGbBelowNaryUnionAll
 PushGbBelowNaryUnion-1 PushGbBelowNaryUnion-2 MS-UnionAll-1
@@ -281,7 +284,8 @@ LeftJoinPruning LeftJoinPruningOuterQuery LeftJoinPruningInnerQuery LeftJoinPrun
 COuterJoin2Test:
 LOJ-IsNullPred Select-Proj-OuterJoin OuterJoin-With-OuterRefs Join-Disj-Subqs
 EffectOfLocalPredOnJoin EffectOfLocalPredOnJoin2 EffectOfLocalPredOnJoin3
-LeftJoin-UnsupportedFilter-Cardinality LeftOuter2InnerUnionAllAntiSemiJoin;
+LeftJoin-UnsupportedFilter-Cardinality LeftOuter2InnerUnionAllAntiSemiJoin
+LOJ-With-Single-Pred-On-Outer LOJ_NULLTEST-On-SelfCheck-Pred;
 
 COuterJoin3Test:
 LOJ_IDF_no_convert_outer_ref_predicate_with_NULL

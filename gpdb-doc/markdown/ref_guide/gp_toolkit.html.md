@@ -304,6 +304,46 @@ SELECT (gp_toolkit.__gp_aoblkdir('<table_name>')).*
 |file\_offset|The starting file offset of the rows covered by this block directory entry.|
 |row\_count|The count of rows covered by this block directory entry.|
 
+### <a id="topic_getcolumnsize"></a>get_column_size(oid)
+
+For a given AOCO table, this function returns the column size and compression ratio for all columns in the table.
+
+The input argument is the object identifier of a column-oriented append-optimized table.
+
+|Column|Description|
+|------|-----------|
+| segment | The segment id. |
+| attnum | The attribute number of the column. |
+| size | The size of the column in bytes. |
+| size_uncompressed | The size of the column in bytes if the column was not compressed. |
+| compression_ratio | The compression ratio. |
+
+### <a id="topic_viewcolumnsize"></a>gp_column_size
+
+This view gathers the column size and compression ratio for column-oriented append-optimized tables from all segments.
+
+|Column|Description|
+|------|-----------|
+| relname | The table name. | 
+| segment | The segment id. |
+| attnum | The attribute number of the column. |
+| attname | The column name. | 
+| size | The size of the column in bytes. |
+| size_uncompressed | The size of the column in bytes if the column was not compressed. |
+| compression_ratio | The compression ratio. |
+
+### <a id="topic_viewcolumnsizesummary"></a>gp_column_size_summary
+
+This view shows a summary of the `gp_column_size` view. It aggregates the column size and compression ratio for each column in each column-oriented append-optimized table from all segments.
+
+|Column|Description|
+|------|-----------|
+| relname | The table name. |
+| attnum | The attribute number of the column. |
+| size | The size of the column in bytes. |
+| size_uncompressed | The size of the column in bytes if the column were uncompressed. |
+| compression_ratio | The compression ratio. |
+
 ## <a id="topic16"></a>Viewing Greenplum Database Server Log Files 
 
 Each component of a Greenplum Database system \(coordinator, standby coordinator, primary segments, and mirror segments\) keeps its own server log files. The `gp_log_*` family of views allows you to issue SQL queries against the server log files to find particular entries of interest. The use of these views require superuser permissions.
@@ -501,7 +541,7 @@ This view is accessible to all users.
 |memory\_shared\_quota|The shared memory quota \(`MEMORY_SHARED_QUOTA`\) value specified for the resource group.|
 |memory\_spill\_ratio|The memory spill ratio \(`MEMORY_SPILL_RATIO`\) value specified for the resource group.|
 |memory\_auditor|The memory auditor for the resource group.|
-|cpuset|The CPU cores reserved for the resource group on the master host and segment hosts, or -1.|
+|cpuset|The CPU cores reserved for the resource group on the coordinator host and segment hosts, or -1.|
 
 ### <a id="topic31x"></a>gp\_resgroup\_status 
 
@@ -545,7 +585,7 @@ For each resource group that you assign to an external component, the `memory_us
 "1":{"used":11, "limit_granted":15}
 ```
 
-> **Note** See the `gp_resgroup_status_per_host` and `gp_resgroup_status_per_segment` views, described below, for more user-friendly display of CPU and memory usage.
+> **Note** See the `gp_resgroup_status_per_host` view, described below, for more user-friendly display of CPU and memory usage.
 
 ### <a id="perhost"></a>gp\_resgroup\_status\_per\_host 
 
@@ -573,26 +613,6 @@ Sample output for the `gp_resgroup_status_per_host` view:
  default_group | 6437    | my-desktop | 0.00 | 0           | 816              | 0                 | 400                    | 0                  | 416                     
 (2 rows)
 ```
-
-### <a id="perseg"></a>gp\_resgroup\_status\_per\_segment 
-
-The [gp\_resgroup\_status\_per\_segment](system_catalogs/gp_resgroup_status_per_segment.html) view displays the real-time CPU and memory usage \(MBs\) for each resource group on a per-segment-instance and per-host basis. The view also displays available and granted group fixed and shared memory for each resource group and segment instance combination on the host.
-
-|Column|Description|
-|------|-----------|
-|`rsgname`|The name of the resource group.|
-|`groupid`|The ID of the resource group.|
-|`hostname`|The hostname of the segment host.|
-|`segment_id`|The content ID for a segment instance on the segment host.|
-|`cpu`|The real-time, per-segment instance CPU core usage by the resource group on the host. The value is the sum of the percentages \(as a decimal value\) of the CPU cores that are used by the resource group for the segment instance.|
-|`memory_used`|The real-time memory usage of the resource group for the segment instance on the host. This total includes resource group fixed and shared memory. It also includes global shared memory used by the resource group.|
-|`memory_available`|The unused fixed and shared memory for the resource group for the segment instance on the host.|
-|`memory_quota_used`|The real-time fixed memory usage for the resource group for the segment instance on the host.|
-|`memory_quota_available`|The fixed memory available to the resource group for the segment instance on the host.|
-|`memory_shared_used`|The group shared memory used by the resource group for the segment instance on the host.|
-|`memory_shared_available`|The amount of group shared memory available for the segment instance on the host. Resource group global shared memory is not included in this total.|
-
-Query output for this view is similar to that of the `gp_resgroup_status_per_host` view, and breaks out the CPU and memory \(used and available\) for each segment instance on each host.
 
 ## <a id="topic26"></a>Checking Resource Queue Activity and Status 
 
