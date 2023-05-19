@@ -8,9 +8,7 @@ You can use resource management features to limit the number of concurrent queri
 
 Either the resource queue or the resource group management scheme can be active in Greenplum Database; both schemes cannot be active at the same time.
 
-Resource queues are enabled by default when you install your Greenplum Database cluster. While you can create and assign resource groups when resource queues are active, you must explicitly enable resource groups to start using that management scheme.
-
-The following table summarizes some of the differences between Resource Queues and Resource Groups.
+The following table summarizes some of the differences between resource queues and resource groups.
 
 |Metric|Resource Queues|Resource Groups|
 |------|---------------|---------------|
@@ -23,11 +21,4 @@ The following table summarizes some of the differences between Resource Queues a
 |Query Failure|Query may fail immediately if not enough memory|Query may fail after reaching transaction fixed memory limit when no shared resource group memory exists and the transaction requests more memory|
 |Limit Bypass|Limits are not enforced for `SUPERUSER` roles and certain operators and functions|Limits are not enforced on `SET`, `RESET`, and `SHOW` commands|
 |External Components|None|Manage PL/Container CPU and memory resources|
-
--   **[Using Resource Groups](workload_mgmt_resgroups.html)**  
-
--   **[Using Resource Queues](workload_mgmt.html)**  
-
-
-**Parent topic:** [Managing Performance](partV.html)
 

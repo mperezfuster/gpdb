@@ -32,9 +32,7 @@ Nested cgroups do not affect memory limits for Greenplum Database external compo
 
 ## <a id="topic8339introattrlim"></a>Resource Group Attributes and Limits 
 
-When you create a resource group, you provide a set of limits that determine the amount of CPU and memory resources available to the group.
-
-Resource group attributes and limits:
+When you create a resource group, you provide a set of limits that determine the amount of CPU and memory resources available to the group. The following table lists the avaiable limits for resource groups:
 
 |Limit Type|Description|
 |----------|-----------|
@@ -46,7 +44,7 @@ Resource group attributes and limits:
 
 > **Note** Resource limits are not enforced on `SET`, `RESET`, and `SHOW` commands.
 
-## <a id="topic8339717179"></a>Transaction Concurrency Limit 
+### <a id="topic8339717179"></a>Transaction Concurrency Limit 
 
 The `CONCURRENCY` limit controls the maximum number of concurrent transactions permitted for a resource group for roles.
 
@@ -62,13 +60,13 @@ You can set the server configuration parameter [gp\_resource\_group\_bypass](../
 
 You can set the server configuration parameter [gp\_resource\_group\_queuing\_timeout](../ref_guide/config_params/guc-list.html) to specify the amount of time a transaction remains in the queue before Greenplum Database cancels the transaction. The default timeout is zero, Greenplum queues transactions indefinitely.
 
-## <a id="topic833971717"></a>CPU Limits 
+### <a id="topic833971717"></a>CPU Limits 
 
 You configure the share of CPU resources to reserve for a resource group on the coordinator and segment hosts by assigning specific CPU core\(s\) to the group, or by identifying the percentage of segment CPU resources to allocate to the group. Greenplum Database uses the `CPUSET` and `CPU_HARD_QUOTA_LIMIT` resource group limits to identify the CPU resource allocation mode. You must specify only one of these limits when you configure a resource group.
 
 You may employ both modes of CPU resource allocation simultaneously in your Greenplum Database cluster. You may also change the CPU resource allocation mode for a resource group at runtime.
 
-### <a id="cpuset"></a>Assigning CPU Resources by Core 
+#### <a id="cpuset"></a>Assigning CPU Resources by Core 
 
 You identify the CPU cores that you want to reserve for a resource group with the `CPUSET` property. The CPU cores that you specify must be available in the system and cannot overlap with any CPU cores that you reserved for other resource groups. \(Although Greenplum Database uses the cores that you assign to a resource group exclusively for that group, note that those CPU cores may also be used by non-Greenplum processes in the system.\)
 
@@ -88,7 +86,7 @@ When you configure `CPUSET` for a resource group, Greenplum Database deactivates
 
 > **Note** You must configure `CPUSET` for a resource group *after* you have enabled resource group-based resource management for your Greenplum Database cluster.
 
-### <a id="cpu_hard_quota_limit"></a>Assigning CPU Resources by Percentage 
+#### <a id="cpu_hard_quota_limit"></a>Assigning CPU Resources by Percentage 
 
 The Greenplum Database node CPU percentage is divided equally among each segment on the Greenplum node. Each resource group that you configure with a `CPU_HARD_QUOTA_LIMIT` reserves the specified percentage of the segment CPU for resource management.
 
@@ -113,27 +111,38 @@ Use cases:
 High priority job that does not need too much resources: CPU_HARD_QUOTA_LIMIT=10, CPU_SOFT_PRIORITY=500. 
 Low priority job but it needs a lot of CPU resources: CPU_HARD_QUOTA_LIMIT=100, CPU_SOFT_PRIORITY=10.  
 
-## <a id="topic8339717"></a>Memory Limits 
+### <a id="topic8339717"></a>Memory Limits 
 
-When you enable resource groups, memory usage is managed at the Greenplum Database node, segment, and resource group levels. You can also manage memory at the transaction level.
+When you enable resource groups, memory usage is managed at the Greenplum Database node, segment, and resource group levels. You can also manage memory at the transaction level. The amount of memory a resource group can use is based on the value of `query_mem` of a plan. See [Greenplum Database Memory Overview](wlmgmt_intro.html) for more details.
 
-The amount of memory a resource group can use is based on the value of `query_mem` of a plan. See [Greenplum Database Memory Overview](wlmgmt_intro.html) for more details.
-
-When using resource groups, the value of `query_mem` depends on the value of the `MEMORY_LIMIT` for the specific resource group, and the value of the server configuration parameter `gp_resgroup_memory_query_fixed_mem`, if set.
-
-- The resource limit `MEMORY_LIMIT` sets the maximum available memory reserved for this resource group. This determines the total amount of memory that all worker processes of a query can consume on a segment host during query execution.
-
-- The server configuration parameter `gp_resgroup_memory_query_fixed_mem` sets the fixed amount of memory reserved for a query at session level. This overrides other memory limit calculations.
-
-The amount of memory allocated per query in a resource group is calculated as:
+Setting `MEMORY_LIMIT` on a resource group sets the maximum amount of memory that all active queries submitted through the group can consume on a segment host. The amount of memory allotted to a query is the group memory limit divided by the concurrency limit. 
 
 ```
 query_mem = MEMORY_LIMIT / CONCURRENCY
 ```
 
-- If `MEMORY_LIMIT` is set to -1, `query_mem` takes the value of `statement_mem`.
-- If `gp_resgroup_memory_query_fixed_mem` is set to a value other than 0, Greenplum uses this value to set the fixed amount of memory reserved for this query (at session level).A
-- If using `gp_resource_group_bypass` or `gp_resource_group_bypass` bypass query, `query_mem` takes the value of `statement_mem`.
+For example, if a group has a memory limit of 2000MB and a concurrency limit of 10, each query submitted through the group is allotted 200MB of memory by default. The default memory allotment can be overridden on a per-query basis using the `gp_resgroup_memory_query_fixed_mem` server configuration parameter \(up to the group memory limit\). Once a query has started running, it holds its allotted memory in the group until it completes, even if during execution it actually consumes less than its allotted amount of memory.
+
+You can use the `gp_resgroup_memory_query_fixed_mem` server configuration parameter to override memory limits set by the current resource group. At the session level, you can increase `gp_resgroup_memory_query_fixed_mem` up to the resource group's `MEMORY_LIMIT`. This will allow an individual query to use all of the memory allocated for the entire group without affecting other resource groups.
+
+If `gp_resource_group_bypass` is not set (value is 0) and, `MEMORY_LIMIT` is not set on a group (value is to -1), the value of `query_mem` is set by the server configuration parameter `statement_mem`.
+
+The value of `statement_mem` is capped using the `max_statement_mem` configuration parameter \(a superuser parameter\). For a query in a resource group with `MEMORY_LIMIT` set, the maximum value for `statement_mem` is `min(MEMORY_LIMIT, max_statement_mem)`. When a query is admitted, the memory allocated to it is subtracted from `MEMORY_LIMIT`. If `MEMORY_LIMIT` is exhausted, new queries in the same resource group must wait. This happens even if `CONCURRENCY` has not yet been reached. Note that this can happen only when `statement_mem` is used to override the memory allocated by the resource group.
+
+Additionally, if using `gp_resource_group_bypass` or `gp_resource_group_bypass_catalog_query` to bypass the resource group limits, `query_mem` takes the value of `statement_mem`.
+
+For example, consider a resource group named `adhoc` with the following settings:
+
+-   `MEMORY_LIMIT` is 1.5GB
+-   `CONCURRENCY` is 3
+
+By default each statement submitted to the group is allocated 500MB of memory. Now consider the following series of events:
+
+1.  User `ADHOC_1` submits query `Q1`, overriding `gp_resgroup_memory_query_fixed_mem` to 800MB. The `Q1` statement is admitted into the system.
+2.  User `ADHOC_2` submits query `Q2`, using the default 500MB.
+3.  With `Q1` and `Q2` still running, user `ADHOC3` submits query `Q3`, using the default 500MB.
+
+Queries `Q1` and `Q2` have used 1300MB of the group's 1500MB. Therefore, `Q3` must wait for `Q1` or `Q2` to complete before it can run.
 
 ## <a id="topic71717999"></a>Configuring and Using Resource Groups 
 
@@ -143,38 +152,23 @@ Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manag
 
 There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database uses cgroup v2 by default. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
 
-Complete the following tasks on each node in your Greenplum Database cluster to set up cgroups for use with resource groups:
+Verify what version of cgroup is configured in your environment by checking what filesystem is mounted by default during system boot:
+    
+```
+stat -fc %T /sys/fs/cgroup/
+```
 
-1. Check your cgroup version.
+For cgroup v1, the output is `tmpfs`. For cgroup v2, output is `cgroup2fs`.
+
+#### <a id="cgroupv1"></a>Configuring cgroup v1
+
+Complete the following tasks on each node in your Greenplum Database cluster to set up cgroups for use with resource groups:
 
 1.  If not already installed, install the Control Groups operating system package on each Greenplum Database node. The command that you run to perform this task will differ based on the operating system installed on the node. You must be the superuser or have `sudo` access to run the command:
     -   Redhat/Oracle/Rocky 8.x systems:
 
         ```
         sudo yum install libcgroup-tools
-        ```
-
-1. If you are using Redhat 8.x, make sure that you configured the system to mount the `cgroups-v1` filesystem by default during system boot by running the following command:
-
-    ```
-    stat -fc %T /sys/fs/cgroup/
-    ```
-
-    For cgroup v1, the output is `tmpfs`.  
-    If your output is `cgroup2fs`, configure the system to mount `cgroups-v1` by default during system boot by the `systemd` system and service manager:
-
-    ```
-    grubby --update-kernel=/boot/vmlinuz-$(uname -r) --args="systemd.unified_cgroup_hierarchy=0 systemd.legacy_systemd_cgroup_controller"
-    ```
-
-    To add the same parameters to all kernel boot entries:
-
-    ```
-    grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0 systemd.legacy_systemd_cgroup_controller"
-    ```
-
-    Reboot the system for the changes to take effect.
-
 
 1.  Locate the cgroups configuration file `/etc/cgconfig.conf`. You must be the superuser or have `sudo` access to edit this file:
 
@@ -250,6 +244,27 @@ Complete the following tasks on each node in your Greenplum Database cluster to 
 
     You may choose a different method to recreate the Greenplum Database resource group cgroup hierarchies.
 
+#### <a id="cgroupv2"></a>Configuring cgroup v2
+
+1. Configure the system to mount `cgroups-v2` by default during system boot by the `systemd` system and service manager:
+
+    ```
+    sudo grubby --update-kernel=ALL --args=“systemd.unified_cgroup_hierarchy=1”
+    ```
+
+1. Reboot the system for the changes to take effect.
+1. Create the directory `/sys/fs/cgroup/gpdb` and ensure `gpadmin` user has read and write permission on it.
+
+    ```
+    mkdir -p /sys/fs/cgroup/gpdb 
+    chmod +rw /sys/fs/cgroup/gpdb
+    ```
+
+1. Ensure that `gpadmin` has read and write permission on `/sys/fs/cgroup/cgroup.procs`.
+
+    ```
+    chmod +rw /sys/fs/cgroup/cgroup.procs
+    ```
 
 ## <a id="topic8"></a>Enabling Resource Groups 
 
