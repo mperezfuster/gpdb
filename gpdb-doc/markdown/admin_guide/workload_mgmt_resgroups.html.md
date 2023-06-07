@@ -2,17 +2,15 @@
 title: Using Resource Groups 
 ---
 
-You use resource groups to set and enforce CPU, memory, and concurrent transaction limits in Greenplum Database. After you define a resource group, you can then assign the group to one or more Greenplum Database roles, or to an external component such as PL/Container, in order to control the resources used by those roles or components. 
+You use resource groups to set and enforce CPU, memory, and concurrent transaction limits in Greenplum Database. After you define a resource group, you can then assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
+
+Linux-based CGroup is used for CPU resource management, and Runaway Detector is used for statistics, tracking and management of memory. 
 
 When you assign a resource group to a role \(a role-based resource group\), the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
-
-Similarly, when you assign a resource group to an external component, the group limits apply to all running instances of the component. For example, if you create a resource group for a PL/Container external component, the memory limit that you define for the group specifies the maximum memory usage for all running instances of each PL/Container runtime to which you assign the group.
 
 When using resource groups to control resources like CPU cores, review the Hyperthreading note in [Hardware and Network](../install_guide/platform-requirements-overview.html#hardware-and-network-3).
 
 ## <a id="topic8339intro"></a>Understanding Role and Component Resource Groups 
-
-Greenplum Database supports two types of resource groups: groups that manage resources for roles, and groups that manage resources for external components such as PL/Container.
 
 The most common application for resource groups is to manage the number of active queries that different roles may run concurrently in your Greenplum Database cluster. You can also manage the amount of CPU and memory resources that Greenplum allocates to each query.
 
@@ -22,13 +20,9 @@ When the user runs a query, Greenplum Database evaluates the query against a set
 
 Within a resource group for roles, transactions are evaluated on a first in, first out basis. Greenplum Database periodically assesses the active workload of the system, reallocating resources and starting/queuing jobs as necessary.
 
-You can also use resource groups to manage the CPU and memory resources of external components such as PL/Container. Resource groups for external components use Linux cgroups to manage both the total CPU and total memory resources for the component.
-
-> **Note** Containerized deployments of Greenplum Database might create a hierarchical set of nested cgroups to manage host system resources. The nesting of cgroups affects the Greenplum Database resource group limits for CPU percentage, CPU cores, and memory \(except for Greenplum Database external components\). The Greenplum Database resource group system resource limit is based on the quota for the parent group.
+> **Note** Containerized deployments of Greenplum Database might create a hierarchical set of nested cgroups to manage host system resources. The nesting of cgroups affects the Greenplum Database resource group limits for CPU percentage, CPU cores, and memory. The Greenplum Database resource group system resource limit is based on the quota for the parent group.
 
 For example, Greenplum Database is running in a cgroup demo, and the Greenplum Database cgroup is nested in the cgroup demo. If the cgroup demo is configured with a CPU limit of 60% of system CPU resources and the Greenplum Database resource group CPU limit is set 90%, the Greenplum Database limit of host system CPU resources is 54% \(0.6 x 0.9\).
-
-Nested cgroups do not affect memory limits for Greenplum Database external components such as PL/Container. Memory limits for external components can only be managed if the cgroup that is used to manage Greenplum Database resources is not nested, the cgroup is configured as a top-level cgroup.
 
 ## <a id="topic8339introattrlim"></a>Resource Group Attributes and Limits 
 
@@ -37,28 +31,37 @@ When you create a resource group, you provide a set of limits that determine the
 |Limit Type|Description|
 |----------|-----------|
 |CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.|
-|CPU\_HARD\_QUOTA_LIMIT|The maximum percentage of CPU resources the group can use.|
+|CPU_HARD_QUOTA_LIMIT|The maximum percentage of CPU resources the group can use.|
 |CPU_SOFT_PRIORITY|The scheduling priority of this resource group.|
-|CPUSET|The CPU cores to reserve for this resource group on the coordinator and segment hosts.|
-|MEMORY\_LIMIT|The memory limit value specified for this resource group.|
+|CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.|
+|MEMORY_LIMIT|The memory limit value specified for this resource group.|
+|MIN_COST| The minimum cost of a query plan to be included in a resource group.|
 
-> **Note** Resource limits are not enforced on `SET`, `RESET`, and `SHOW` commands.
+> **Note** Resource limits are not enforced on `SET`, `RESET`, and `SHOW` commands. Queries can also bypassed the `CONCURRENCY` limit  by setting the server configuration parameters [gp\_resource\_group\_bypass](../ref_guide/config_params/guc-list.html#gp_resource_group_bypass) or [gp\_resource\_group\_bypass_catalog_query](../ref_guide/config_params/guc-list.html#gp_resource_group_bypass_catalog_query).
 
 ### <a id="topic8339717179"></a>Transaction Concurrency Limit 
 
-The `CONCURRENCY` limit controls the maximum number of concurrent transactions permitted for a resource group for roles.
+The `CONCURRENCY` limit controls the maximum number of concurrent transactions permitted for a resource group. 
 
-> **Note** The `CONCURRENCY` limit is not applicable to resource groups for external components and must be set to zero \(0\) for such groups.
+Each resource group is logically divided into a fixed number of slots equal to the `CONCURRENCY` limit. Greenplum Database allocates these slots an equal, fixed percentage of memory resources.
 
-Each resource group for roles is logically divided into a fixed number of slots equal to the `CONCURRENCY` limit. Greenplum Database allocates these slots an equal, fixed percentage of memory resources.
+The default `CONCURRENCY` limit value for a resource group for roles is 20. A value of 0 means that no query is allowed to run for this resource group.
 
-The default `CONCURRENCY` limit value for a resource group for roles is 20.
-
-Greenplum Database queues any transactions submitted after the resource group reaches its `CONCURRENCY` limit. When a running transaction completes, Greenplum Database un-queues and runs the earliest queued transaction if sufficient memory resources exist.
-
-You can set the server configuration parameter [gp\_resource\_group\_bypass](../ref_guide/config_params/guc-list.html#gp_resource_group_bypass) to bypass a resource group concurrency limit, and [gp\_resource\_group\_bypass_catalog_query](../ref_guide/config_params/guc-list.html#gp_resource_group_bypass_catalog_query) to bypass a resource group concurrency limit when running queries against system catalog tables.
+Greenplum Database queues any transactions submitted after the resource group reaches its `CONCURRENCY` limit. When a running transaction completes, Greenplum Database un-queues and runs the earliest queued transaction if sufficient memory resources exist. Note that if a transaction is in idle state, even if no statement is running, the concurrency slot is still in use.
 
 You can set the server configuration parameter [gp\_resource\_group\_queuing\_timeout](../ref_guide/config_params/guc-list.html) to specify the amount of time a transaction remains in the queue before Greenplum Database cancels the transaction. The default timeout is zero, Greenplum queues transactions indefinitely.
+
+### <a id="bypass"></a>Bypass and Unassign from Resource Groups
+
+A query may bypass the resource group concurrency limit if you set the server configuration parameter [gp_resource_group_bypass](./ref_guide/config_params/guc-list.html#gp_resource_group_bypass). This parameter enables or disables the concurrent transaction limit for the resource group so a query can run immediately. The default value is false, which enforces the limit of the `CONCURRENCY` limit. You may only set this parameter for a single session, not within a transaction or a function.
+
+If you set `gp_resource_group_bypass` to true, the query no longer enforces the CPU or memory limits assigned to its corresponding resource group. Instead, it uses resources outside the resource group. The memory quota assigned to this query is approximately `statement_mem` per query. If there is not enough memory to satisfy the memory allocation request, the query will fail.
+
+You may bypass queries that only use catalog tables, such as the database GUI client, which runs catalog queries to obtain metadata. If the server configuration parameter [gp_resource_group_bypass_catalog_query](./ref_guide/config_params/guc-list.html#gp_resource_group_bypass_catalog_query) is set to true (the default), Greenplum Database's resource group scheduler bypasses all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only. These queries will be automatically unassigned from its current resource group. It will not enforce the limits of the resource group and it will not account for resource usage. It will be assigned out of the resource groups and it can run immediately. It uses `statement_mem` to allocate memory for the query.
+
+Note that if a query contains a mix of `pg_catalog` and any other schema tables, the scheduler will not bypass the query.
+
+Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group, so it will not enforce any of the limits set for this. The resources used by the query do not account for the resources of the resource group. The query uses `statement_mem` as the limit on memory allocated for this query. The value range of `MIN_COST` is an integer of 0-500. Default is 0.
 
 ### <a id="topic833971717"></a>CPU Limits 
 
@@ -92,7 +95,7 @@ The Greenplum Database node CPU percentage is divided equally among each segment
 
 Greenplum Database leverages Linux process scheduler and control groups to implement how CPU resources are assigned. How much about cgroups do we want to explain???? (Equivalences between gucs?)
 
-Each resource group that you configure with a `CPU_HARD_QUOTA_LIMIT` reserves the specified percentage of the segment CPU for resource management..
+Each resource group that you configure with a `CPU_HARD_QUOTA_LIMIT` reserves the specified percentage of the segment CPU for resource management.
 
 The minimum `CPU_HARD_QUOTA_LIMIT` percentage you can specify for a resource group is 1, the maximum is 100.
 
@@ -104,7 +107,7 @@ You may use the following parameters to limit CPU usage:
 
 `CPU_HARD_QUOTA_LIMIT` Specifies the maximum CPU resources that the current group can use. The sum of `CPU_HARD_QUOTA_LIMIT` specified for all resource groups in the Greenplum Databas cluster can exceed 100.
 
-`CPU_SOFT_PRIORITY` The scheduling priority of the current group. The default value is 100, and the maximum value is 500.
+`CPU_SOFT_PRIORITY` The scheduling priority of the current group. The default value is 100, and the range of values is 1-500.
 
 Use cases:
 
@@ -148,9 +151,9 @@ Queries `Q1` and `Q2` have used 1300MB of the group's 1500MB. Therefore, `Q3` mu
 
 ### <a id="topic833"></a>Prerequisites 
 
-Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources. Greenplum Database also uses cgroups to manage memory for resource groups for external components. With cgroups, Greenplum isolates the CPU and external component memory usage of your Greenplum processes from other processes on the node. This allows Greenplum to support CPU and external component memory usage restrictions on a per-resource-group basis.
+Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources. There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database uses cgroup v2 by default. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
 
-There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database uses cgroup v2 by default. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
+Cgroups v2 has been supported since version 4.5 of the Linux kernel. The default kernel 4.18 of RHEL Linux 8 supports cgoups v2, but the default is still v1.
 
 Verify what version of cgroup is configured in your environment by checking what filesystem is mounted by default during system boot:
     
@@ -283,35 +286,34 @@ When you install Greenplum Database, no resource management policy is enabled by
     gpstart
     ```
 
-Once enabled, any transaction submitted by a role is directed to the resource group assigned to the role, and is governed by that resource group's concurrency, memory, and CPU limits. Similarly, CPU and memory usage by an external component is governed by the CPU and memory limits configured for the resource group assigned to the component.
+Once enabled, any transaction submitted by a role is directed to the resource group assigned to the role, and is governed by that resource group's concurrency, memory, and CPU limits. 
 
-Greenplum Database creates two default resource groups for roles named `admin_group` and `default_group`. When you enable resources groups, any role that was not explicitly assigned a resource group is assigned the default group for the role's capability. `SUPERUSER` roles are assigned the `admin_group`, non-admin roles are assigned the group named `default_group`.
+Greenplum Database creates three default resource groups for roles named `admin_group`, `default_group`, and `system_group`. When you enable resources groups, any role that was not explicitly assigned a resource group is assigned the default group for the role's capability. `SUPERUSER` roles are assigned the `admin_group`, non-admin roles are assigned the group named `default_group`. The resources of the Greenplum Database system processes are assigned to the `system_group`.
 
 The default resource groups `admin_group` and `default_group` are created with the following resource limits:
 
-|Limit Type|admin\_group|default\_group|
-|----------|------------|--------------|
-|CONCURRENCY|10|20|
-|CPU_HARD_QUOTA_LIMIT| | |
-|CPU_SOFT_PRIORITY| | |
-|CPUSET|-1|-1|
-|MEMORY\_LIMIT|10|0|
+|Limit Type|admin\_group|default\_group|system_group|
+|----------|------------|--------------|------------|
+|CONCURRENCY|10|5|0|
+|CPU_HARD_QUOTA_LIMIT|10|20|10|
+|CPU_SOFT_PRIORITY|100|100|100|
+|CPUSET|-1|-1|-1|
+|MEMORY\_LIMIT|-1|-1|-1|
+|MIN_COST|0|0|0|
 
 ## <a id="topic10"></a>Creating Resource Groups 
 
-When you create a resource group for a role, you provide a name and a CPU resource allocation mode (core or percentage). You can optionally provide a concurrent transaction limit, a memory limit, and a CPU soft priority. Use the [CREATE RESOURCE GROUP](../ref_guide/sql_commands/CREATE_RESOURCE_GROUP.html) command to create a new resource group.
+When you create a resource group for a role, you provide a name and a CPU resource allocation mode (core or percentage). You can optionally provide a concurrent transaction limit, a memory limit, a CPU soft priority, and a minimum cost. Use the [CREATE RESOURCE GROUP](../ref_guide/sql_commands/CREATE_RESOURCE_GROUP.html) command to create a new resource group.
 
 When you create a resource group for a role, you must provide a `CPU_HARD_QUOTA_LIMIT` or `CPUSET` limit value. These limits identify the percentage of Greenplum Database CPU resources to allocate to this resource group. You may specify a `MEMORY_LIMIT` to reserve a fixed amount of memory for the resource group. 
 
-For example, to create a resource group named *rgroup1* with a CPU limit of 20, a memory limit of 25, and CPU soft priority of 500:
+For example, to create a resource group named *rgroup1* with a CPU limit of 20, a memory limit of 25, a CPU soft priority of 500 and a minimum cost of 50:
 
 ```
-CREATE RESOURCE GROUP rgroup1 WITH (CPU_HARD_QUOTA_LIMIT=20, MEMORY_LIMIT=25, CPU_SOFT_PRIORITY=500);
+CREATE RESOURCE GROUP rgroup1 WITH (CPU_HARD_QUOTA_LIMIT=20, MEMORY_LIMIT=25, CPU_SOFT_PRIORITY=500, min_cost=50);
 ```
 
 The CPU limit of 20 is shared by every role to which `rgroup1` is assigned. Similarly, the memory limit of 25 is shared by every role to which `rgroup1` is assigned. `rgroup1` utilizes the default `CONCURRENCY` setting of 20.
-
-*When you create a resource group for an external component*, you must provide `CPU_HARD_QUOTA_LIMIT` or `CPUSET` and `MEMORY_LIMIT` limit values. You must also explicitly set `CONCURRENCY` to zero \(0\). For example, to create a resource group named *rgroup\_extcomp* for which you reserve CPU core 1 on coordinator and segment hosts, and assign a memory limit of 1000 MB:
 
 ```
 CREATE RESOURCE GROUP rgroup_extcomp WITH (CONCURRENCY=0,
@@ -328,7 +330,7 @@ ALTER RESOURCE GROUP rgroup1 SET CPUSET '1;2,4';
 
 > **Note** You cannot set or alter the `CONCURRENCY` value for the `admin_group` to zero \(0\).
 
-The [DROP RESOURCE GROUP](../ref_guide/sql_commands/DROP_RESOURCE_GROUP.html) command drops a resource group. To drop a resource group for a role, the group cannot be assigned to any role, nor can there be any transactions active or waiting in the resource group. Dropping a resource group for an external component in which there are running instances terminates the running instances.
+The [DROP RESOURCE GROUP](../ref_guide/sql_commands/DROP_RESOURCE_GROUP.html) command drops a resource group. To drop a resource group for a role, the group cannot be assigned to any role, nor can there be any transactions active or waiting in the resource group.
 
 To drop a resource group:
 
@@ -356,8 +358,6 @@ CREATE ROLE mary RESOURCE GROUP exec;
 ```
 
 You can assign a resource group to one or more roles. If you have defined a role hierarchy, assigning a resource group to a parent role does not propagate down to the members of that role group.
-
-> **Note** You cannot assign a resource group that you create for an external component to a role.
 
 If you wish to remove a resource group assignment from a role and assign the role the default group, change the role's group name assignment to `NONE`. For example:
 
@@ -410,8 +410,6 @@ To view a resource group's running queries, pending queries, and how long the pe
 SELECT query, waiting, rsgname, rsgqueueduration 
 FROM pg_stat_activity;
 ```
-
-`pg_stat_activity` displays information about the user/role that initiated a query. A query that uses an external component such as PL/Container is composed of two parts: the query operator that runs in Greenplum Database and the UDF that runs in a PL/Container instance. Greenplum Database processes the query operators under the resource group assigned to the role that initiated the query. A UDF running in a PL/Container instance runs under the resource group assigned to the PL/Container runtime. The latter is not represented in the `pg_stat_activity` view; Greenplum Database does not have any insight into how external components such as PL/Container manage memory in running instances.
 
 ### <a id="topic27"></a>Cancelling a Running or Queued Transaction in a Resource Group 
 
