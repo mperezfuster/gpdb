@@ -8,7 +8,7 @@ A Greenplum Database segment host runs multiple PostgreSQL instances, all sharin
 
 For best query throughput, the memory configuration should be managed carefully. There are memory configuration options at every level in Greenplum Database, from operating system parameters, to managing resources with resource queues and resource groups, to setting the amount of memory allocated to an individual query.
 
-## <a id="seghost"></a>Segment Host Memory 
+## <a id="seghost"></a>Segment Host Memory Overview 
 
 On a Greenplum Database segment host, the available host memory is shared among all the processes running on the computer, including the operating system, Greenplum Database segment instances, and other application processes. Administrators must determine what Greenplum Database and non-Greenplum Database processes share the hosts' memory and configure the system to use the memory efficiently. It is equally important to monitor memory usage regularly to detect any changes in the way host memory is consumed by Greenplum Database or other processes.
 
@@ -20,17 +20,17 @@ Beginning at the bottom of the illustration, the line labeled *A* represents the
 
 The line labelled *B* shows that the total memory available must be shared by Greenplum Database and all other processes on the host. Non-Greenplum Database processes include the operating system and any other applications, for example system monitoring agents. Some applications may use a significant portion of memory and, as a result, you may have to adjust the number of segments per Greenplum Database host or the amount of memory per segment.
 
-The segments \(*C*\) each get an equal share of the Greenplum Database Memory \(*B*\).
+Each segment on line labelled *C* gets an equal share of the Greenplum Database Memory.
 
-Within a segment, the currently active resource management scheme, *Resource Queues* or *Resource Groups*, governs how memory is allocated to run a SQL statement. These constructs allow you to translate business requirements into execution policies in your Greenplum Database system and to guard against queries that could degrade performance. For an overview of resource groups and resource queues, refer to [Managing Resources](wlmgmt.html).
+Within a segment, the currently active resource management scheme, Resource Queues or Resource Groups, governs how memory is allocated to run a SQL statement. These constructs allow you to translate business requirements into execution policies in your Greenplum Database system and to guard against queries that could degrade performance. For an overview of resource groups and resource queues, refer to [Managing Resources](wlmgmt.html).
 
-## <a id="opts"></a>Options for Configuring Segment Host Memory 
+## <a id="config_seghost"></a>Configuring Segment Host Memory
 
 Host memory is the total memory shared by all applications on the segment host. You can configure the amount of host memory using any of the following methods:
 
 -   Add more RAM to the nodes to increase the physical memory.
 -   Allocate swap space to increase the size of virtual memory.
--   Set the kernel parameters vm.overcommit\_memory and vm.overcommit\_ratio to configure how the operating system handles large memory allocation requests.
+-   Set the kernel parameters `vm.overcommit_memory` and `vm.overcommit_ratio` to configure how the operating system handles large memory allocation requests.
 
 The physical RAM and OS configuration are usually managed by the platform team and system administrators. See the [Greenplum Database Installation Guide](../install_guide/prep_os.html#topic3) for the recommended kernel parameters and for how to set the `/etc/sysctl.conf` file parameters.
 
@@ -77,7 +77,7 @@ When you set up the Greenplum Database cluster, you determine the number of prim
 
 **Configuring Segment Memory when Resource Group-Based Resource Management is Active**
 
-When resource group-based resource management is active, the amount of memory allocated to each segment on a segment host is the memory available to Greenplum Database multiplied by the gp\_resource\_group\_memory\_limit server configuration parameter and divided by the number of active primary segments on the host. Use the following formula to calculate segment memory when using resource groups for resource management.
+When resource group-based resource management is active, the amount of memory allocated to each segment on a segment host is the memory available to Greenplum Database multiplied by the `gp_resource_group_memory_limit` server configuration parameter and divided by the number of active primary segments on the host. Use the following formula to calculate segment memory when using resource groups for resource management.
 
 ```
 
