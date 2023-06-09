@@ -4,7 +4,7 @@ title: Using Resource Groups
 
 You use resource groups to set and enforce CPU, memory, and concurrent transaction limits in Greenplum Database. After you define a resource group, you can then assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
 
-Linux-based CGroup is used for CPU resource management, and Runaway Detector is used for statistics, tracking and management of memory. 
+Greenplum Database uses Linux-based control groups for CPU resource management, and Runaway Detector for statistics, tracking and management of memory. 
 
 When you assign a resource group to a role \(a role-based resource group\), the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
 
@@ -19,8 +19,6 @@ The most common application for resource groups is to manage the number of activ
 When the user runs a query, Greenplum Database evaluates the query against a set of limits defined for the resource group. Greenplum Database runs the query immediately if the group's resource limits have not yet been reached and the query does not cause the group to exceed the concurrent transaction limit. If these conditions are not met, Greenplum Database queues the query. For example, if the maximum number of concurrent transactions for the resource group has already been reached, a subsequent query is queued and must wait until other queries complete before it runs. Greenplum Database may also run a pending query when the resource group's concurrency and memory limits are altered to large enough values.
 
 Within a resource group for roles, transactions are evaluated on a first in, first out basis. Greenplum Database periodically assesses the active workload of the system, reallocating resources and starting/queuing jobs as necessary.
-
-> **Note** Containerized deployments of Greenplum Database might create a hierarchical set of nested cgroups to manage host system resources. The nesting of cgroups affects the Greenplum Database resource group limits for CPU percentage, CPU cores, and memory. The Greenplum Database resource group system resource limit is based on the quota for the parent group.
 
 For example, Greenplum Database is running in a cgroup demo, and the Greenplum Database cgroup is nested in the cgroup demo. If the cgroup demo is configured with a CPU limit of 60% of system CPU resources and the Greenplum Database resource group CPU limit is set 90%, the Greenplum Database limit of host system CPU resources is 54% \(0.6 x 0.9\).
 
@@ -67,14 +65,16 @@ Queries whose plan cost is less than the limit `MIN_COST` will be automatically 
 
 ### <a id="topic833971717"></a>CPU Limits 
 
-You configure the share of CPU resources to reserve for a resource group on the coordinator and segment hosts by assigning specific CPU core\(s\) to the group, or by identifying the percentage of segment CPU resources to allocate to the group. Greenplum Database uses the `CPUSET` and `CPU_HARD_QUOTA_LIMIT` resource group limits to identify the CPU resource allocation mode. You must specify only one of these limits when you configure a resource group.
+Greenplum Database leverages Linux control groups to implement CPU resource management. Greenplum allocates CPU resources in two ways: 
 
-You may employ both modes of CPU resource allocation simultaneously in your Greenplum Database cluster. You may also change the CPU resource allocation mode for a resource group at runtime.
+- By assigning a percentage of CPU resources to resource groups. 
+- By assigning specific CPU cores to resource groups 
 
+When you set one of the allocation modes for a resource group, Greenplum Database deactivates the other allocation mode. You may employ both modes of CPU resource allocation simultaneously for different resource groups. You may also change the CPU resource allocation mode for a resource group at runtime.
 
 #### <a id="cpuset"></a>Assigning CPU Resources by Core 
 
-You identify the CPU cores that you want to reserve for a resource group with the `CPUSET` property. The CPU cores that you specify must be available in the system and cannot overlap with any CPU cores that you reserved for other resource groups. \(Although Greenplum Database uses the cores that you assign to a resource group exclusively for that group, note that those CPU cores may also be used by non-Greenplum processes in the system.\)
+You identify the CPU cores that you want to reserve for a resource group with the `CPUSET` property. The CPU cores that you specify must be available in the system and cannot overlap with any CPU cores that you reserved for other resource groups. (Although Greenplum Database uses the cores that you assign to a resource group exclusively for that group, note that those CPU cores may also be used by non-Greenplum processes in the system). When you configure `CPUSET` for a resource group, Greenplum Database deactivates `CPU_HARD_QUOTA_LIMIT` and `CPU_SOFT_LIMIT` for the group and sets the value to -1.
 
 Specify CPU cores separately for the coordinator host and segment hosts, separated by a semicolon. Use a comma-separated list of single core numbers or number intervals when you configure cores for `CPUSET`. You must enclose the core numbers/intervals in single quotes, for example, '1;1,3-4' uses core 1 on the coordinator host, and cores 1, 3, and 4 on segment hosts.
 
@@ -88,32 +88,36 @@ When you assign CPU cores to `CPUSET` groups, consider the following:
 
 Resource groups that you configure with `CPUSET` have a higher priority on CPU resources. The maximum CPU resource usage percentage for all resource groups configured with `CPUSET` on a segment host is the number of CPU cores reserved divided by the number of all CPU cores, multiplied by 100.
 
-When you configure `CPUSET` for a resource group, Greenplum Database deactivates `CPU_HARD_QUOTA_LIMIT` for the group and sets the value to -1.
-
-> **Note** You must configure `CPUSET` for a resource group *after* you have enabled resource group-based resource management for your Greenplum Database cluster.
+> **Note** You must configure `CPUSET` for a resource group *after* you have enabled resource group-based resource management for your Greenplum Database cluster with the [gp_resource_manager](../ref_guide/config_params/guc-list.html#gp_resource_manager) server configuration parameter.
 
 #### <a id="cpu_hard_quota_limit"></a>Assigning CPU Resources by Percentage 
 
-The Greenplum Database node CPU percentage is divided equally among each segment on the Greenplum node. Each resource group that you configure with a `CPU_HARD_QUOTA_LIMIT` reserves the specified percentage of the segment CPU for resource management.
+Greenplum Database uses the server configuration parameter [gp_resource_group_cpu_limit](../ref_guide/config_params/guc-list.html#gp_resource_group_cpu_limiti) to identify the maximum percentage of system CPU resources to allocate to resource groups on each Greenplum Database segment node. The remaining unreserved CPU resources are used for the operating system kernel and Greenplum Database daemons. The amount of CPU available to Greenplum Database queries per host is then divided equally among each segment on the Greenplum node.
 
-Each resource group that you configure with a `CPU_HARD_QUOTA_LIMIT` reserves the specified percentage of the segment CPU for resource management.
+You configure a resource group with `CPU_HARD_QUOTA_LIMIT` in order to assign CPU resources by percentage. When you configure `CPU_HARD_QUOTA_LIMIT` for a resource group, Greenplum Database deactivates `CPUSET` for the group. 
 
-The minimum `CPU_HARD_QUOTA_LIMIT` percentage you can specify for a resource group is 1, the maximum is 100.
+The parameter `CPU_HARD_QUOTA_LIMIT` reserves the specified percentage of the segment CPU for resource management. The minimum `CPU_HARD_QUOTA_LIMIT` percentage you can specify for a resource group is 1, the maximum is 100. The sum of `CPU_HARD_QUOTA_LIMIT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100. It specifies the total time ratio that all tasks in a resource group can run in one CPU cycle. Once the tasks in the resource group have used up all the time specified by the quota, they are throttled for the remainder of the time specified in that time period, and are not allowed to run until the next time period. 
 
-The sum of `CPU_HARD_QUOTA_LIMIT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100.
+You set the parameter `CPU_SOFT_PRIORITY` to assign the scheduling priority of the current group. The default value is 100, and the range of values is 1 to 500. The value specifies the relative share of CPU time available to tasks in the resource group. For example, tasks in two resource groups with `CPU_SOFT_PRIORITY` set to 100 get the same CPU time, but tasks in a resource group with `CPU_SOFT_PRIORITY` set to 200 get twice the CPU time. 
 
-When you configure `CPU_HARD_QUOTA_LIMIT` for a resource group, Greenplum Database deactivates `CPUSET` for the group and sets the value to -1.
+For example, for a high priority job that does not need too much CPU configure the resource group with values `CPU_HARD_QUOTA_LIMIT`=10 and `CPU_SOFT_PRIORITY`=500. For a low priority job that requires a high amount of CPU resources, configure the resource group with values `CPU_HARD_QUOTA_LIMIT`=100 and `CPU_SOFT_PRIORITY`=10.  
 
-You may use the following parameters to limit CPU usage: 
+When tasks in a resource group are idle and not using any CPU time, the leftover time is collected in a global pool of unused CPU cycles. Other resource groups can borrow CPU cycles from this pool. The actual amount of CPU time available to a resource group may vary, depending on the number of resource groups present on the system. 
 
-`CPU_HARD_QUOTA_LIMIT` Specifies the maximum CPU resources that the current group can use. The sum of `CPU_HARD_QUOTA_LIMIT` specified for all resource groups in the Greenplum Databas cluster can exceed 100.
+For example, consider the following groups:
 
-`CPU_SOFT_PRIORITY` The scheduling priority of the current group. The default value is 100, and the range of values is 1-500.
+| Group Name | CONCURRENCY | CPU_HARD_QUOTA_LIMIT | CPU_SOFT_PRIORITY |
+| --------- | ----------- | -------------------- | ----------------- |
+| default_group | 20 | 50 | 10 |
+| admin_group | 10 | 70 | 30 |
+| system_group |10 | 30 | 10 |
+| test | 10 | 10 | 10 | 
 
-Use cases:
+Roles in `default_group` have an available CPU ratio (determined by `CPU_SOFT_PRIORITY`) of 10/(10+30+10+10)=16%. This means that they can use at least 16% of the CPU when the system workload is high. When the system has idle CPU resources, they can use more resouces, as the hard limit (set by `CPU_HARD_QUOTA_LIMIT`) is 50%.
 
-High priority job that does not need too much resources: CPU_HARD_QUOTA_LIMIT=10, CPU_SOFT_PRIORITY=500. 
-Low priority job but it needs a lot of CPU resources: CPU_HARD_QUOTA_LIMIT=100, CPU_SOFT_PRIORITY=10.  
+Roles in `admin_group` have an available CPU ratio of 30/(10+30+10+10)=50% when the system workload is high. When the system has idle CPU resources, they can use resources up to the hard limit of 70%.
+
+Roles in `test` have a CPU ratio of 10/(10+30+10+10)=16%. However, as the hard limit determined by `CPU_HARD_QUOTA_LIMIT` is 10%, they can only use up to 10% of the resources even when the system is idle.
 
 ### <a id="topic8339717"></a>Memory Limits 
 
@@ -126,8 +130,6 @@ If a query requires a large amount of memory, you may use the server configurati
 Greenplum allocates memory for an incoming query using the `gp_resgroup_memory_query_fixed_mem` value, if set, to bypass the resource group settings. Otherwise, it uses `MEMORY_LIMIT` / `CONCURRENCY` as the memory allocated for the query. If `MEMORY_LIMIT` is not set, the value for the query memory allocation defaults to [statement_mem](../ref_guide/config_params/guc-list.html#statement_mem).
 
 Memory allocation is based on first-come-first-served principle for all queries. When a query is admitted, the memory allocated to it is subtracted from `MEMORY_LIMIT` (except if it is using `gp_resgroup_memory_query_fixed_mem`). If `MEMORY_LIMIT` is exhausted, new queries in the same resource group must wait. This happens even if `CONCURRENCY` has not yet been reached. Once a query has started running, it holds its allotted memory in the group until it completes, even if during execution it actually consumes less than its allotted amount of memory. When using `gp_resgroup_memory_query_fixed_mem` to override the memory limits set by the current resource group, if there is not enough memory, the query spills to disk. When the limit [gp_workfile_limit_files_per_query]((../ref_guide/config_params/guc-list.html#gp_workfile_limit_files_per_query)) is reached, Greenplum Database generates an out of memory (OOM).
-
-If you set the configuration parameters `gp_resource_group_bypass` or `gp_resource_group_bypass_catalog_query` to bypass the resource group limits, the memory limit for the query takes the value of `statement_mem`.
 
 For example, consider a resource group named `adhoc` with the following settings:
 
@@ -143,6 +145,19 @@ By default each statement submitted to the group is allocated 500 MB of memory. 
 
 1. User `ADHOC4` submits query `Q4`, using `gp_resgroup_memory_query_fixed_mem` set to 700 MB.
     Query `Q4` runs, spilling to disk, in order to allocate the required memory.
+
+Some special usage considerations: 
+- If you set the configuration parameters `gp_resource_group_bypass` or `gp_resource_group_bypass_catalog_query` to bypass the resource group limits, the memory limit for the query takes the value of `statement_mem`.
+ 
+- When `MEMORY_LIMIT` / `CONCURRENCY` < `statement_mem`, Greenplum uses `statement_mem` as the fixed amount of memory allocated by query.
+
+- The maximum value of `statement_mem` is capped at `max_statement_mem`.
+
+Greenplum Database supports the Runaway detector, which automatically terminates queries based on the amount of memory used by the query. For resource group-managed queries, Greenplum Database terminates a running query based on the amount of memory used by the query. The relevant configuration parameters are:
+
+- `gp_vmem_protect_limit` sets the amount of memory that all `postgres` processes of the active segment instance can consume. If a query causes this limit to be exceeded, no memory will be allocated and the query will fail. 
+
+- `runaway_detector_activation_percent`. When resource groups are enabled, if the used memory exceeds the specified value `gp_vmem_protect_limit` * `runaway_detector_activation_percent` , Greenplum Database terminates queries based on memory usage, selecting queries from the queries managed by user resource groups (excluding those in the `system_group` resource group). Greenplum Database starts with the query that consumes the largest amount of memory. The query will terminate until the percentage of memory used falls below the specified percentage. 
 
 ## <a id="topic71717999"></a>Configuring and Using Resource Groups 
 
@@ -275,7 +290,7 @@ Complete the following tasks on each node in your Greenplum Database cluster to 
 
 ## <a id="topic8"></a>Enabling Resource Groups 
 
-When you install Greenplum Database, no resource management policy is enabled by default. To use resource groups, set the [gp\_resource\_manager](../ref_guide/config_params/guc-list.html) server configuration parameter.
+When you install Greenplum Database, no resource management policy is enabled by default. To use resource groups, set the [gp_resource_manager](../ref_guide/config_params/guc-list.html#gp_resource_manager) server configuration parameter.
 
 1.  Set the `gp_resource_manager` server configuration parameter to the value `"group-v1"` or `"group-v2"`, depending on the version of cgroup configured on your Linux distribution. For example:
 
