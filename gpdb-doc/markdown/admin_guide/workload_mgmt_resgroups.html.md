@@ -6,7 +6,7 @@ You use resource groups to set and enforce CPU, memory, and concurrent transacti
 
 Greenplum Database uses Linux-based control groups for CPU resource management, and Runaway Detector for statistics, tracking and management of memory. 
 
-When you assign a resource group to a role \(a role-based resource group\), the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
+When you assign a resource group to a role, the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
 
 When using resource groups to control resources like CPU cores, review the Hyperthreading note in [Hardware and Network](../install_guide/platform-requirements-overview.html#hardware-and-network-3).
 
@@ -37,7 +37,7 @@ When you create a resource group, you provide a set of limits that determine the
 |MEMORY_LIMIT|The memory limit value specified for this resource group.|
 |MIN_COST| The minimum cost of a query plan to be included in a resource group.|
 
-> **Note** Resource limits are not enforced on `SET`, `RESET`, and `SHOW` commands. Queries can also bypassed the `CONCURRENCY` limit  by setting the server configuration parameters [gp\_resource\_group\_bypass](../ref_guide/config_params/guc-list.html#gp_resource_group_bypass) or [gp\_resource\_group\_bypass_catalog_query](../ref_guide/config_params/guc-list.html#gp_resource_group_bypass_catalog_query).
+> **Note** Resource limits are not enforced on `SET`, `RESET`, and `SHOW` commands.
 
 ### <a id="topic8339717179"></a>Transaction Concurrency Limit 
 
@@ -61,7 +61,7 @@ You may bypass queries that only use catalog tables, such as the database GUI cl
 
 Note that if a query contains a mix of `pg_catalog` and any other schema tables, the scheduler will not bypass the query.
 
-Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group, so it will not enforce any of the limits set for this. The resources used by the query do not account for the resources of the resource group. The query uses `statement_mem` as the limit on memory allocated for this query. The value range of `MIN_COST` is an integer of 0-500. Default is 0.
+Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and  will not enforce any of the limits set for this. The resources used by the query do not account for the resources of the resource group. The query uses `statement_mem` as the limit on memory allocated for this query. The value range of `MIN_COST` is an integer of 0-500. Default is 0.
 
 ### <a id="topic833971717"></a>CPU Limits 
 
@@ -152,12 +152,6 @@ Some special usage considerations:
 - When `MEMORY_LIMIT` / `CONCURRENCY` < `statement_mem`, Greenplum uses `statement_mem` as the fixed amount of memory allocated by query.
 
 - The maximum value of `statement_mem` is capped at `max_statement_mem`.
-
-Greenplum Database supports the Runaway detector, which automatically terminates queries based on the amount of memory used by the query. For resource group-managed queries, Greenplum Database terminates a running query based on the amount of memory used by the query. The relevant configuration parameters are:
-
-- `gp_vmem_protect_limit` sets the amount of memory that all `postgres` processes of the active segment instance can consume. If a query causes this limit to be exceeded, no memory will be allocated and the query will fail. 
-
-- `runaway_detector_activation_percent`. When resource groups are enabled, if the used memory exceeds the specified value `gp_vmem_protect_limit` * `runaway_detector_activation_percent` , Greenplum Database terminates queries based on memory usage, selecting queries from the queries managed by user resource groups (excluding those in the `system_group` resource group). Greenplum Database starts with the query that consumes the largest amount of memory. The query will terminate until the percentage of memory used falls below the specified percentage. 
 
 ## <a id="topic71717999"></a>Configuring and Using Resource Groups 
 
@@ -359,11 +353,11 @@ DROP RESOURCE GROUP exec;
 
 ## <a id="topic_jlz_hzg_pkb"></a>Configuring Automatic Query Termination Based on Memory Usage 
 
-When resource groups have a global shared memory pool, the server configuration parameter [runaway\_detector\_activation\_percent](../ref_guide/config_params/guc-list.html) sets the percent of utilized global shared memory that triggers the termination of queries that are managed by resource groups that are configured to use the `vmtracker` memory auditor, such as `admin_group` and `default_group`.
+Greenplum Database supports the Runaway detector, which automatically terminates queries based on the amount of memory used by the query. For resource group-managed queries, Greenplum Database terminates a running query based on the amount of memory used by the query. The relevant configuration parameters are:
 
-Resource groups have a global shared memory pool when the sum of the `MEMORY_LIMIT` attribute values configured for all resource groups is less than 100. For example, if you have 3 resource groups configured with `MEMORY_LIMIT` values of 10 , 20, and 30, then global shared memory is 40% = 100% - \(10% + 20% + 30%\).
+- `gp_vmem_protect_limit` sets the amount of memory that all `postgres` processes of the active segment instance can consume. If a query causes this limit to be exceeded, no memory will be allocated and the query will fail. 
 
-For information about global shared memory, see [Global Shared Memory](#topic833glob).
+- `runaway_detector_activation_percent`. When resource groups are enabled, if the used memory exceeds the specified value `gp_vmem_protect_limit` * `runaway_detector_activation_percent` , Greenplum Database terminates queries based on memory usage, selecting queries from the queries managed by user resource groups (excluding those in the `system_group` resource group). Greenplum Database starts with the query that consumes the largest amount of memory. The query will terminate until the percentage of memory used falls below the specified percentage.
 
 ## <a id="topic17"></a>Assigning a Resource Group to a Role 
 
@@ -396,9 +390,9 @@ The [gp\_resgroup\_config](../ref_guide/system_catalogs/catalog_ref-views.html#g
 SELECT * FROM gp_toolkit.gp_resgroup_config;
 ```
 
-### <a id="topic23"></a>Viewing Resource Group Query Status and Memory Usage 
+### <a id="topic23"></a>Viewing Resource Group Query Status
 
-The [gp\_resgroup\_status](../ref_guide/system_catalogs/catalog_ref-views.html#gp_resgroup_status) `gp_toolkit` system view enables you to view the status and activity of a resource group. The view displays the number of running and queued transactions. It also displays the real-time memory usage of the resource group. To view this information:
+The [gp\_resgroup\_status](../ref_guide/system_catalogs/catalog_ref-views.html#gp_resgroup_status) `gp_toolkit` system view enables you to view the status and activity of a resource group. The view displays the number of running and queued transactions. To view this information:
 
 ```
 SELECT * FROM gp_toolkit.gp_resgroup_status;
@@ -533,4 +527,30 @@ Refer to the [Greenplum Command Center documentation](http://docs.vmware.com/en/
 
     The resource group may be running `SET` and `SHOW` commands, which bypass resource group transaction checks.
 
+## <a id="scenarios"></a>Common Scenarios
 
+You may encounter any of the following scenarios:
+
+- **My query cannot run due to insufficient memory, resulting in memory leak Out of Memory (OOM).**
+
+First, ensure that the resource group is allocating enough memory required by the query by tuning resource group parameters such as `CONCURRENCY` and `MEMORY_LIMIT`. Analyze the type of query, whether there will be a lot of intermediate results using memory. If it does exist, you can set a reasonable `gp_resgroup_memory_query_fixed_mem` to allocate more memory at the session level for this specific query. 
+
+- **After a memory leak OOM the system has a high concurrent load**.
+
+When the system starts to clean up the out-of-control sessions, the concurrent load of the system is high at this time, and the OOM error message may still be thrown. Due to the current design, we cannot expedite the cleanup process of the Runsway Session at the code level. The solution to this problem is to adjust the `runaway_detector_activation_percent` to 0.85 or 0.8, or even lower, in order to increase the available memory of the segment host. 
+
+- **Some transaction requests only run during a certain period of time, and do not run at other times.**
+
+You may change the configuration of resource groups can be changed dynamically at regular intervals to match the requirements of your workload, and customize resource allocation at different times to achieve higher efficiency. For example, change the configuration of resources within a group, add or delete resource groups. 
+
+- **The actual concurrency number of the resource group is greater than the configured concurrency limit**
+
+This behaviour is expected. There are several reasons why this may happen:
+    - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
+    - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
+    - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
+    - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this. 
+
+- **After upgrading Greenplum Database, the performance seems to be degraded.**
+
+There are many factors that can affect performance degradation. A possible cause is that after upgrading to Greenplum Database 7, SWAP was not closed. The use of SWAP will affect the performance. Some operating systems are enabled by default, and customers are advised to disable it. SWAP is a memory swap space, or virtual memory, which is virtualized from a part of the space opened up on the disk space. From the perspective of running speed and efficiency, if the customer's memory configuration is sufficient, it is not recommended for customers to use SWAP space. But if you use SWAP, you need to know that this part will participate in the calculation of memory management allocation. 
