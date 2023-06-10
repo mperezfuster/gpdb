@@ -502,12 +502,11 @@ Greenplum Database considers memory availability before running a transaction, a
 
 - **Why is the number of running transactions in the resource group higher than the configured `CONCURRENCY` limit?**
 
-This behaviour is expected. There are several reasons why this may happen:
-
-    - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
-    - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
-    - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
-    - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this.
+    This behaviour is expected. There are several reasons why this may happen:
+        - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
+        - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
+        - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
+        - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this.
 
 - **My query cannot run due to insufficient memory, resulting in memory leak Out of Memory (OOM).**
 
@@ -520,14 +519,6 @@ When the system starts to clean up the out-of-control sessions, the concurrent l
 - **Some transaction requests only run during a certain period of time, and do not run at other times.**
 
 You may change the configuration of resource groups can be changed dynamically at regular intervals to match the requirements of your workload, and customize resource allocation at different times to achieve higher efficiency. For example, change the configuration of resources within a group, add or delete resource groups. 
-
-- **The actual concurrency number of the resource group is greater than the configured concurrency limit**
-
-This behaviour is expected. There are several reasons why this may happen:
-    - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
-    - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
-    - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
-    - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this. 
 
 - **After upgrading Greenplum Database, the performance seems to be degraded.**
 
