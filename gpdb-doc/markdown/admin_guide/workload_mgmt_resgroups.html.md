@@ -477,45 +477,38 @@ Refer to the [Greenplum Command Center documentation](http://docs.vmware.com/en/
 
 ## <a id="topic777999"></a>Resource Group Frequently Asked Questions 
 
-### <a id="topic791"></a>CPU 
+- **Why is CPU usage lower than the `CPU_HARD_QUOTA_LIMIT` configured for the resource group?**
 
--   **Why is CPU usage lower than the `CPU_HARD_QUOTA_LIMIT` configured for the resource group?**
+You may run into this situation when a low number of queries and slices are running in the resource group, and these processes are not utilizing all of the cores on the system.
 
-    You may run into this situation when a low number of queries and slices are running in the resource group, and these processes are not utilizing all of the cores on the system.
+- **Why is CPU usage for the resource group higher than the configured `CPU_HARD_QUOTA_LIMIT`?**
 
--   **Why is CPU usage for the resource group higher than the configured `CPU_HARD_QUOTA_LIMIT`?**
+This situation can occur in the following circumstances:
 
-    This situation can occur in the following circumstances:
+    - A resource group may utilize more CPU than its `CPU_HARD_QUOTA_LIMIT` when other resource groups are idle. In this situation, Greenplum Database allocates the CPU resource of an idle resource group to a busier one. This resource group feature is called CPU burst.
+    - The operating system CPU scheduler may cause CPU usage to spike, then drop down. If you believe this might be occurring, calculate the average CPU usage within a given period of time \(for example, 5 seconds\) and use that average to determine if CPU usage is higher than the configured limit.
 
-    -   A resource group may utilize more CPU than its `CPU_HARD_QUOTA_LIMIT` when other resource groups are idle. In this situation, Greenplum Database allocates the CPU resource of an idle resource group to a busier one. This resource group feature is called CPU burst.
-    -   The operating system CPU scheduler may cause CPU usage to spike, then drop down. If you believe this might be occurring, calculate the average CPU usage within a given period of time \(for example, 5 seconds\) and use that average to determine if CPU usage is higher than the configured limit.
+- **Why does the actual memory usage of my resource group exceed the amount configured for the group?**
 
-### <a id="topic795"></a>Memory 
+The actual memory usage of a resource group may exceed the configured amount when one or more queries running in the group is allocated memory from the global shared memory pool. \(If no global shared memory is available, queries fail and do not impact the memory resources of other resource groups.\)
 
--   **Why does the actual memory usage of my resource group exceed the amount configured for the group?**
+When global shared memory is available, memory usage may also exceed the configured amount when a transaction spills to disk. Greenplum Database statements continue to request memory when they start to spill to disk because:
 
-    The actual memory usage of a resource group may exceed the configured amount when one or more queries running in the group is allocated memory from the global shared memory pool. \(If no global shared memory is available, queries fail and do not impact the memory resources of other resource groups.\)
+    - Spilling to disk requires extra memory to work.
+    - Other operators may continue to request memory.
+<br/>Memory usage grows in spill situations; when global shared memory is available, the resource group may eventually use up to 200-300% of its configured group memory limit.
 
-    When global shared memory is available, memory usage may also exceed the configured amount when a transaction spills to disk. Greenplum Database statements continue to request memory when they start to spill to disk because:
+- **Why is the number of running transactions lower than the `CONCURRENCY` limit configured for the resource group?**
 
-    -   Spilling to disk requires extra memory to work.
-    -   Other operators may continue to request memory.
-    <br/>Memory usage grows in spill situations; when global shared memory is available, the resource group may eventually use up to 200-300% of its configured group memory limit.
+Greenplum Database considers memory availability before running a transaction, and will queue the transaction if there is not enough memory available to serve it. If you use `ALTER RESOURCE GROUP` to increase the `CONCURRENCY` limit for a resource group but do not also adjust memory limits, currently running transactions may be consuming all allotted memory resources for the group. When in this state, Greenplum Database queues subsequent transactions in the resource group.
 
+- **Why is the number of running transactions in the resource group higher than the configured `CONCURRENCY` limit?**
 
-### <a id="topic797"></a>Concurrency 
-
--   **Why is the number of running transactions lower than the `CONCURRENCY` limit configured for the resource group?**
-
-    Greenplum Database considers memory availability before running a transaction, and will queue the transaction if there is not enough memory available to serve it. If you use `ALTER RESOURCE GROUP` to increase the `CONCURRENCY` limit for a resource group but do not also adjust memory limits, currently running transactions may be consuming all allotted memory resources for the group. When in this state, Greenplum Database queues subsequent transactions in the resource group.
-
--   **Why is the number of running transactions in the resource group higher than the configured `CONCURRENCY` limit?**
-
-    The resource group may be running `SET` and `SHOW` commands, which bypass resource group transaction checks.
-
-## <a id="scenarios"></a>Common Scenarios
-
-You may encounter any of the following scenarios:
+This behaviour is expected. There are several reasons why this may happen:
+    - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
+    - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
+    - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
+    - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this.
 
 - **My query cannot run due to insufficient memory, resulting in memory leak Out of Memory (OOM).**
 
