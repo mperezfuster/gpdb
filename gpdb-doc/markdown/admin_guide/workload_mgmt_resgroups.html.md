@@ -483,9 +483,9 @@ You may run into this situation when a low number of queries and slices are runn
 
 - **Why is CPU usage for the resource group higher than the configured `CPU_HARD_QUOTA_LIMIT`?**
 
-This situation can occur in the following circumstances:
-    - A resource group may utilize more CPU than its `CPU_HARD_QUOTA_LIMIT` when other resource groups are idle. In this situation, Greenplum Database allocates the CPU resource of an idle resource group to a busier one. This resource group feature is called CPU burst.
-    - The operating system CPU scheduler may cause CPU usage to spike, then drop down. If you believe this might be occurring, calculate the average CPU usage within a given period of time \(for example, 5 seconds\) and use that average to determine if CPU usage is higher than the configured limit.
+    This situation can occur in the following circumstances:
+        - A resource group may utilize more CPU than its `CPU_HARD_QUOTA_LIMIT` when other resource groups are idle. In this situation, Greenplum Database allocates the CPU resource of an idle resource group to a busier one. This resource group feature is called CPU burst.
+        - The operating system CPU scheduler may cause CPU usage to spike, then drop down. If you believe this might be occurring, calculate the average CPU usage within a given period of time \(for example, 5 seconds\) and use that average to determine if CPU usage is higher than the configured limit.
 
 - **Why does the actual memory usage of my resource group exceed the amount configured for the group?**
 
