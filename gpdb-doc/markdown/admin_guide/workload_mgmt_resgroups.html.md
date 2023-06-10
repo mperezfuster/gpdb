@@ -501,12 +501,11 @@ When global shared memory is available, memory usage may also exceed the configu
 Greenplum Database considers memory availability before running a transaction, and will queue the transaction if there is not enough memory available to serve it. If you use `ALTER RESOURCE GROUP` to increase the `CONCURRENCY` limit for a resource group but do not also adjust memory limits, currently running transactions may be consuming all allotted memory resources for the group. When in this state, Greenplum Database queues subsequent transactions in the resource group.
 
 - **Why is the number of running transactions in the resource group higher than the configured `CONCURRENCY` limit?**
-
-    This behaviour is expected. There are several reasons why this may happen:
-        - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
-        - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
-        - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
-        - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this.
+This behaviour is expected. There are several reasons why this may happen:
+    - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
+    - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
+    - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
+    - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this.
 
 - **My query cannot run due to insufficient memory, resulting in memory leak Out of Memory (OOM).**
 
