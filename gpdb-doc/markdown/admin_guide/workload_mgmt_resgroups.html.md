@@ -501,6 +501,7 @@ When global shared memory is available, memory usage may also exceed the configu
 Greenplum Database considers memory availability before running a transaction, and will queue the transaction if there is not enough memory available to serve it. If you use `ALTER RESOURCE GROUP` to increase the `CONCURRENCY` limit for a resource group but do not also adjust memory limits, currently running transactions may be consuming all allotted memory resources for the group. When in this state, Greenplum Database queues subsequent transactions in the resource group.
 
 - **Why is the number of running transactions in the resource group higher than the configured `CONCURRENCY` limit?**
+
 This behaviour is expected. There are several reasons why this may happen:
     - Resource groups do not enforce resource restrictions on `SET`, `RESET` and `SHOW` commands
     - The server configuration parameter `gp_resource_group_bypass` disables the concurrent transaction limit for the resource group so a query can run immediately.
