@@ -141,10 +141,9 @@ For example, consider a resource group named `adhoc` with `MEMORY_LIMIT`set to 1
 
 There are some special usage considerations regarding memory limits:
 - If you set the configuration parameters `gp_resource_group_bypass` or `gp_resource_group_bypass_catalog_query` to bypass the resource group limits, the memory limit for the query takes the value of `statement_mem`.
- 
 - When (`MEMORY_LIMIT` / `CONCURRENCY`) < `statement_mem`, Greenplum Database uses `statement_mem` as the fixed amount of memory allocated by query.
-
 - The maximum value of `statement_mem` is capped at [max_statement_mem](../ref_guide/config_params/guc-list.html#max_statement_mem).
+- Queries whose plan cost is less than the limit `MIN_COST` use a memory quota of `statement_mem`. 
 
 ## <a id="topic71717999"></a>Configuring and Using Resource Groups 
 
