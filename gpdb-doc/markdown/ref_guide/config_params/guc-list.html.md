@@ -1570,7 +1570,7 @@ If a database session is idle for longer than the time specified, the session wi
 
 ## <a id="gp_vmem_protect_limit"></a>gp\_vmem\_protect\_limit 
 
-Sets the amount of memory \(in number of MBs\) that all `postgres` processes of an active segment instance can consume. If a query causes this limit to be exceeded, memory will not be allocated and the query will fail. Note that this is a local parameter and must be set for every segment in the system \(primary and mirrors\). When setting the parameter value, specify only the numeric value. For example, to specify 4096MB, use the value `4096`. Do not add the units `MB` to the value.
+When resource queue-based or resource-group based resource management is active, the parameter sets the amount of memory \(in number of MBs\) that all `postgres` processes of an active segment instance can consume. If a query causes this limit to be exceeded, memory will not be allocated and the query will fail. Note that this is a local parameter and must be set for every segment in the system \(primary and mirrors\). When setting the parameter value, specify only the numeric value. For example, to specify 4096MB, use the value `4096`. Do not add the units `MB` to the value.
 
 To prevent over-allocation of memory, these calculations can estimate a safe `gp_vmem_protect_limit` value.
 
@@ -1587,7 +1587,6 @@ First calculate the value of `gp_vmem`. This is the Greenplum Database memory av
     ```
     gp_vmem = ((SWAP + RAM) – (7.5GB + 0.05 * RAM)) / 1.17
     ```
-
 
 where SWAP is the host swap space and RAM is the RAM on the host in GB.
 
@@ -2801,23 +2800,13 @@ For queries that are managed by resource queues or resource groups, this paramet
 
 Either the resource queue or the resource group management scheme can be active in Greenplum Database; both schemes cannot be active at the same time. The server configuration parameter [gp\_resource\_manager](#gp_resource_manager) controls which scheme is active.
 
-**When resource queues are enabled -** This parameter sets the percent of utilized Greenplum Database vmem memory that triggers the termination of queries. If the percentage of vmem memory that is utilized for a Greenplum Database segment exceeds the specified value, Greenplum Database terminates queries managed by resource queues based on memory usage, starting with the query consuming the largest amount of memory. Queries are terminated until the percentage of utilized vmem is below the specified percentage.
+This parameter sets the percent of utilized Greenplum Database virtual memory that triggers the termination of queries. If the percentage of virtual memory that is utilized for a Greenplum Database segment exceeds the specified value, Greenplum Database terminates queries managed by resource queues based on memory usage, starting with the query consuming the largest amount of memory. Queries are terminated until the percentage of utilized virtual memory is below the specified percentage.
 
-Specify the maximum vmem value for active Greenplum Database segment instances with the server configuration parameter [gp\_vmem\_protect\_limit](#gp_vmem_protect_limit).
+Specify the maximum virtual memory value for active Greenplum Database segment instances with the server configuration parameter [gp\_vmem\_protect\_limit](#gp_vmem_protect_limit).
 
-For example, if vmem memory is set to 10GB, and this parameter is 90 \(90%\), Greenplum Database starts terminating queries when the utilized vmem memory exceeds 9 GB.
+For example, if `gp_vmem_protect_limit` is set to 10GB, and `runaway_detector_activation_percent` is 90 \(90%\), Greenplum Database starts terminating queries when the utilized virtual memory exceeds 9 GB.
 
-For information about resource queues, see [Using Resource Queues](../../admin_guide/workload_mgmt.html).
-
-**When resource groups are enabled -** This parameter sets the percent of utilized resource group global shared memory that triggers the termination of queries that are managed by resource groups that are configured to use the `vmtracker` memory auditor, such as `admin_group` and `default_group`. For information about memory auditors, see [Memory Auditor](../../admin_guide/workload_mgmt_resgroups.html#topic8339777).
-
-Resource groups have a global shared memory pool when the sum of the `MEMORY_LIMIT` attribute values configured for all resource groups is less than 100. For example, if you have 3 resource groups configured with `memory_limit` values of 10 , 20, and 30, then global shared memory is 40% = 100% - \(10% + 20% + 30%\). See [Global Shared Memory](../../admin_guide/workload_mgmt_resgroups.html#topic833glob).
-
-If the percentage of utilized global shared memory exceeds the specified value, Greenplum Database terminates queries based on memory usage, selecting from queries managed by the resource groups that are configured to use the `vmtracker` memory auditor. Greenplum Database starts with the query consuming the largest amount of memory. Queries are terminated until the percentage of utilized global shared memory is below the specified percentage.
-
-For example, if global shared memory is 10GB, and this parameter is 90 \(90%\), Greenplum Database starts terminating queries when the utilized global shared memory exceeds 9 GB.
-
-For information about resource groups, see [Using Resource Groups](../../admin_guide/workload_mgmt_resgroups.html).
+For information about resource groups and resource queues, see [Managing Resources]((../../admin_guide/wlmgmt.html).
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -2937,21 +2926,24 @@ Determines whether ordinary string literals \('...'\) treat backslashes literall
 
 Allocates segment host memory per query. The amount of memory allocated with this parameter cannot exceed [max\_statement\_mem](#max_statement_mem) or the memory limit on the resource queue or resource group through which the query was submitted. If additional memory is required for a query, temporary spill files on disk are used.
 
+You can use the following calculation to estimate a reasonable `statement_mem` value for a wide variety of situations:
+
+```
+( <gp_vmem_protect_limit>GB * .9 ) / <max_expected_concurrent_queries>
+```
+
+*If you are using resource groups to control resource allocation in your Greenplum Database cluster*:
+
+- If the server configuration parameter [gp_resgroup_memory_query_fixed_mem](#gp_resgroup_memory_query_fixed_mem) is set to 0, and the resource group parameter `MEMORY_LIMIT` is set to -1, `statement_mem` sets the amount of memory allocated for a query.
+- If you set the configuration parameters [gp_resource_group_bypass](#gp_resource_group_bypass) or [gp_resource_group_bypass_catalog_query](#gp_resource_group_bypass_catalog_query) to bypass the resource group limits, `statement_mem` sets the amount of memory allocated for the query.
+- If (`MEMORY_LIMIT` / `CONCURRENCY`) < `statement_mem`, `statement_mem` sets the amount of memory allocated for the query.
+- Queries whose plan cost is less than the limit `MIN_COST` use `statement_mem` as their memory quota.
+
 *If you are using resource queues to control resource allocation in your Greenplum Database cluster*:
 
--   When [gp\_resqueue\_memory\_policy](#gp_resqueue_memory_policy) =auto, `statement_mem` and resource queue memory limits control query memory usage.
--   You can use the following calculation to estimate a reasonable `statement_mem` value for a wide variety of situations:
+- When [gp\_resqueue\_memory\_policy](#gp_resqueue_memory_policy) =auto, `statement_mem` and resource queue memory limits control query memory usage.
 
-    ```
-    ( <gp_vmem_protect_limit>GB * .9 ) / <max_expected_concurrent_queries>
-    ```
-
-    For example, with a `gp_vmem_protect_limit` set to 8192MB \(8GB\) and assuming a maximum of 40 concurrent queries with a 10% buffer, you would use the following calculation to determine the `statement_mem` value:
-
-    ```
-    (8GB * .9) / 40 = .18GB = 184MB
-    ```
-
+For information about resource groups and resource queues, see [Managing Resources]((../../admin_guide/wlmgmt.html).
 
 When changing both `max_statement_mem` and `statement_mem`, `max_statement_mem` must be changed first, or listed first in the postgresql.conf file.
 
