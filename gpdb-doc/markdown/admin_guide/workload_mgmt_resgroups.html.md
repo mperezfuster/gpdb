@@ -474,28 +474,15 @@ Using VMware Greenplum Command Center, an administrator can create and manage re
 Workload management assignment rules assign transactions to different resource groups based on user-defined criteria. If no assignment rule is matched, Greenplum Database assigns the transaction to the role's default resource group.
 Refer to the [Greenplum Command Center documentation](http://docs.vmware.com/en/VMware-Greenplum-Command-Center/index.html) for more information about creating and managing resource groups and workload management rules.
 
-## <a id="topic777999"></a>Resource Group Frequently Asked Questions 
+## <a id="topic777999"></a>Frequently Asked Questions 
 
 **Why is CPU usage lower than the `CPU_HARD_QUOTA_LIMIT` configured for the resource group?**
 
 You may run into this situation when a low number of queries and slices are running in the resource group, and these processes are not utilizing all of the cores on the system.
 
-**Why is CPU usage for the resource group higher than the configured `CPU_HARD_QUOTA_LIMIT`?**
+**My resource group has a `CPU_SOFT_PRIORITY` equivalent to 40%. Why is the CPU usage never reaching this limit?
 
-This situation can occur in the following circumstances:
-
-- A resource group may utilize more CPU than its `CPU_HARD_QUOTA_LIMIT` when other resource groups are idle. In this situation, Greenplum Database allocates the CPU resource of an idle resource group to a busier one. This resource group feature is called CPU burst.
-- The operating system CPU scheduler may cause CPU usage to spike, then drop down. If you believe this might be occurring, calculate the average CPU usage within a given period of time \(for example, 5 seconds\) and use that average to determine if CPU usage is higher than the configured limit.
-
-**Why does the actual memory usage of my resource group exceed the amount configured for the group?**
-
-The actual memory usage of a resource group may exceed the configured amount when one or more queries running in the group is allocated memory from the global shared memory pool. \(If no global shared memory is available, queries fail and do not impact the memory resources of other resource groups.\)
-
-When global shared memory is available, memory usage may also exceed the configured amount when a transaction spills to disk. Greenplum Database statements continue to request memory when they start to spill to disk because:
-- Spilling to disk requires extra memory to work.
-- Other operators may continue to request memory.
-
-Memory usage grows in spill situations; when global shared memory is available, the resource group may eventually use up to 200-300% of its configured group memory limit.
+The value of `CPU_HARD_QUOTA_LIMIT` might be lower than 40, hence it might be limiting the CPU usage even with idle resources.
 
 **Why is the number of running transactions lower than the `CONCURRENCY` limit configured for the resource group?**
 
@@ -510,13 +497,17 @@ This behaviour is expected. There are several reasons why this may happen:
 - If the server configuration parameter `gp_resource_group_bypass_catalog_query` is set to true (the default), all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only will not enforce the limits of the resource group. 
 - Queries whose plan cost is less than the limit `MIN_COST` will be automatically unassigned from their resource group and will not enforce any of the limits set for this.
 
+**Why did my query return a "memory limit reached" error?**
+
+Greenplum Database automatically adjusts transaction and group memory to the new settings when you use `ALTER RESOURCE GROUP` to change a resource group's memory and/or concurrency limits. An "out of memory" error may occur if you recently altered resource group attributes and there is no longer a sufficient amount of memory available for a currently running query.
+
 **My query cannot run due to insufficient memory, resulting in memory leak Out of Memory (OOM).**
 
 First, ensure that the resource group is allocating enough memory required by the query by tuning resource group parameters such as `CONCURRENCY` and `MEMORY_LIMIT`. Analyze the type of query, whether there will be a lot of intermediate results using memory. If it does exist, you can set a reasonable `gp_resgroup_memory_query_fixed_mem` to allocate more memory at the session level for this specific query. 
 
 **After a memory leak OOM the system has a high concurrent load**.
 
-When the system starts to clean up the out-of-control sessions, the concurrent load of the system is high at this time, and the OOM error message may still be thrown. Due to the current design, we cannot expedite the cleanup process of the Runsway Session at the code level. The solution to this problem is to adjust the `runaway_detector_activation_percent` to 0.85 or 0.8, or even lower, in order to increase the available memory of the segment host. 
+When the system starts to clean up the sessions left over by the memory leak, the concurrent load of the system is high at this time, and the OOM error message may reappear. Due to the current design, we cannot expedite the cleanup process of the Runaway Session. The solution to this problem is to adjust the `runaway_detector_activation_percent` to 0.85 or 0.8, or even lower, in order to increase the available memory of the segment host. 
 
 **Some transaction requests only run during a certain period of time, and do not run at other times.**
 
@@ -524,4 +515,4 @@ You may change the configuration of resource groups can be changed dynamically a
 
 **After upgrading Greenplum Database, the performance seems to be degraded.**
 
-There are many factors that can affect performance degradation. A possible cause is that after upgrading to Greenplum Database 7, SWAP was not closed. The use of SWAP will affect the performance. Some operating systems are enabled by default, and customers are advised to disable it. SWAP is a memory swap space, or virtual memory, which is virtualized from a part of the space opened up on the disk space. From the perspective of running speed and efficiency, if the customer's memory configuration is sufficient, it is not recommended for customers to use SWAP space. But if you use SWAP, you need to know that this part will participate in the calculation of memory management allocation. 
+There are many factors that can affect performance degradation. A possible cause is that after upgrading to Greenplum Database 7, SWAP is enabled by default and hence affecting your performance. We recommend disabling SWAP and use RAM memory instead, in order to improve running speed and efficiency. If your memory configuration is sufficient, there is no need to use SWAP space. If you decide to use SWAP, be sure you understand how it takes part in the calculation of memory management allocation. See [Greenplum Database Memory Overview](wlmgmt_intro.html) for more information.
