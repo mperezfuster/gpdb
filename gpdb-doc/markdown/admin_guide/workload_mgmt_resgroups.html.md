@@ -26,7 +26,7 @@ When you create a resource group, you provide a set of limits that determine the
 
 |Limit Type|Description|Value Range|Default|
 |----------|-----------|-----| ------| 
-|CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.| 0-[max_connections]((../ref_guide/config_params/guc-list.html#max_connections)) | 20 |
+|CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.| 0-[max_connections](../ref_guide/config_params/guc-list.html#max_connections) | 20 |
 |CPU_HARD_QUOTA_LIMIT|The maximum percentage of CPU resources the group can use.| [0-100] | -1 (not set)|
 |CPU_SOFT_PRIORITY|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
@@ -119,7 +119,7 @@ Roles in `test` have a CPU ratio of 10/(10+30+10+10)=16%. However, as the hard l
 
 When you enable resource groups, memory usage is managed at the Greenplum Database segment and resource group levels. You can also manage memory at the transaction level. See [Greenplum Database Memory Overview](wlmgmt_intro.html) to estimate how much memory each Greenplum Database segment has available to use. This will help you estimate how much memory to assign to the resource groups. 
 
-The parameter `MEMORY_LIMIT` of a resource group sets the maximum amount of memory reserved for this resource group on a segment. This determines the total amount of memory that all worker processes for a query can consume on the segment during query execution. The amount of memory allotted to a query is the group memory limit divided by the group concurrency limit: `MEMORY_LIMIT` / `CONCURRENCY`. 
+The parameter `MEMORY_LIMIT` of a resource group sets the maximum amount of memory reserved for this resource group on a segment. This determines the total amount of memory that all worker processes for a query can consume on the segment host during query execution. The amount of memory allotted to a query is the group memory limit divided by the group concurrency limit: `MEMORY_LIMIT` / `CONCURRENCY`. 
 
 If a query requires a large amount of memory, you may use the server configuration parameter [gp_resgroup_memory_query_fixed_mem](../ref_guide/config_params/guc-list.html#gp_resgroup_memory_query_fixed_mem) to set a fixed memory amount for the query at the session level. This parameter overrides and can surpass the allocated memory of the resource group, since the value is taken from the total system memory and not the resource group memory.
 
