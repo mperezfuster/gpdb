@@ -1722,7 +1722,7 @@ The value *iso\_8601* will produce output matching the time interval *format wit
 
 ## <a id="jit"></a>jit
 
-Determines whether JIT compilation may be used by Greenplum Database when using Postgres Planner.
+Determines whether JIT compilation may be used by Greenplum Database. It enables or disables JIT for both GPORCA and Postgres Planner.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -2426,14 +2426,6 @@ The parameter can be set for a database system, an individual database, or a ses
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
 |Boolean|true|coordinator, session, reload|
-
-## <a id="optimizer_jit"></a>optimizer_jit
-
-Activates or deactivates optimizer-based JIT compilation when using GPORCA.
-
-|Value Range|Default|Set Classifications|
-|-----------|-------|-------------------|
-|Boolean|off|coordinator, session, reload|
 
 ## <a id="optimizer_jit_above_cost"></a>optimizer_jit_above_cost
 
