@@ -70,7 +70,7 @@ The JIT workflow can also handle executor fault tolerance: if JIT fails to load 
 
 ## <a id="topic4"></a>Examples
 
-In the examples below, the configuration parameter `optimizer_jit_above_cost` / `jit_above_cost` was modified so it would trigger JIT compilation. Note that the use of JIT might add more overhead than the potential savings. JIT was used, but inlining and expensive optimization were not. If `optimizer_jit_inline_above_cost` / `jit_inline_above_cost` or `optimizer_jit_optimize_above_cost` / `jit_optimize_above_cost` were also lowered, they could be triggered.
+In the examples below, the configuration parameter `optimizer_jit_above_cost`/`jit_above_cost` was modified so it would trigger JIT compilation. Note that the use of JIT might add more overhead than the potential savings. JIT was used, but inlining and expensive optimization were not. If `optimizer_jit_inline_above_cost`/`jit_inline_above_cost` or `optimizer_jit_optimize_above_cost`/`jit_optimize_above_cost` were also lowered, they could be triggered.
 
 You may enable the configuration parameter [gp_explain_jit](../../../ref_guide/config_params/guc-list.html#gp_explain_jit) to display summarized JIT information from all query executions when running the `EXPLAIN` command. You must turn it off when running regression tests.
 
