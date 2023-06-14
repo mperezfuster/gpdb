@@ -2427,6 +2427,38 @@ The parameter can be set for a database system, an individual database, or a ses
 |-----------|-------|-------------------|
 |Boolean|true|coordinator, session, reload|
 
+## <a id="optimizer_jit"></a>optimizer_jit
+
+Activates or deactivates optimizer-based JIT compilation using GPORCA.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Boolean|off|coordinator, session, reload|
+
+## <a id="optimizer_jit_above_cost"></a>optimizer_jit_above_cost
+
+When using optimizer-based JIT with GPORCA, sets the query cost above which JIT compilation is activated when JIT is enabled. Performing JIT compilation costs planning time but can accelerate query execution. Note that setting the JIT cost parameters to ‘0’ forces all queries to be JIT-compiled and, as a result, slows down queries. Setting it to a negative value disables JIT compilation.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Floating point|7500|coordinator, session, reload|
+
+## <a id="optimizer_jit_inline_above_cost"></a>optimizer_jit_inline_above_cost
+
+When using optimizer-based JIT with GPORCA, sets the query cost above which JIT compilation attempts to inline functions and operators. Inlining adds planning time, but can improve execution speed. It is not meaningful to set this to less than jit_above_cost. Note that setting the JIT cost parameters to ‘0’ forces all queries to be JIT-compiled and, as a result, slows down queries. Setting it to a negative value disables inlining.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Floating point|37500|coordinator, session, reload|
+
+## <a id="optimizer_jit_optimize_above_cost"></a>optimizer_jit_optimize_above_cost
+
+When using optimizer-based JIT with GPORCA, sets the query cost above which JIT compilation applies expensive optimizations. Such optimization adds planning time, but can improve execution speed. It is not meaningful to set this to less than `optimizer_jit_above_cost`, and it is unlikely to be beneficial to set it to more than `optimizer_jit_inline_above_cost`. Note that setting the JIT cost parameters to ‘0’ forces all queries to be JIT-compiled and, as a result, slows down queries. Setting it to a negative value disables expensive optimizations.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Floating point|37500|coordinator, session, reload|
+
 ## <a id="optimizer_join_arity_for_associativity_commutativity"></a>optimizer\_join\_arity\_for\_associativity\_commutativity 
 
 The value is an optimization hint to limit the number of join associativity and join commutativity transformations explored during query optimization. The limit controls the alternative plans that GPORCA considers during query optimization. For example, the default value of 18 is an optimization hint for GPORCA to stop exploring join associativity and join commutativity transformations when an n-ary join operator has more than 18 children during optimization.
