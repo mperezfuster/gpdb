@@ -31,7 +31,7 @@ When you create a resource group, you provide a set of limits that determine the
 |CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set) | 
-|MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer [0-500] | 0 |
+|MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer | 0 |
 
 > **Note** Resource limits are not enforced on `SET`, `RESET`, and `SHOW` commands.
 
@@ -53,7 +53,7 @@ A query bypasses the resource group concurrency limit if you set the server conf
 
 You may bypass queries that only use catalog tables, such as the database Graphical User Interface (GUI) client, which runs catalog queries to obtain metadata. If the server configuration parameter [gp_resource_group_bypass_catalog_query](./ref_guide/config_params/guc-list.html#gp_resource_group_bypass_catalog_query) is set to true (the default), Greenplum Database's resource group scheduler bypasses all queries that read exclusively from system catalogs, or queries that contain in their query text `pg_catalog` schema tables only. These queries are automatically unassigned from its current resource group; they do not enforce the limits of the resource group and do not account for resource usage. The query resources are assigned out of the resource groups and run immediately. The memory quota is `statement_mem` per the query.
 
-Queries whose plan cost is less than the limit `MIN_COST` are automatically unassigned from their resource group and do not enforce any of its limits. The resources used by the query do not account for the resources of the resource group. The query has a memory quota of `statement_mem`. The value range of `MIN_COST` is an integer in the range 0-500, and its default value is 0.
+Queries whose plan cost is less than the limit `MIN_COST` are automatically unassigned from their resource group and do not enforce any of its limits. The resources used by the query do not account for the resources of the resource group. The query has a memory quota of `statement_mem`. The default value of `MIN_COST` is 0.
 
 ### <a id="topic833971717"></a>CPU Limits 
 
