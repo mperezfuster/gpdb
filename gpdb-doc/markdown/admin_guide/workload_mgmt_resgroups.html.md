@@ -27,8 +27,8 @@ When you create a resource group, you provide a set of limits that determine the
 |Limit Type|Description|Value Range|Default|
 |----------|-----------|-----| ------| 
 |CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.| 0-[max_connections](../ref_guide/config_params/guc-list.html#max_connections) | 20 |
-|CPU_HARD_QUOTA_LIMIT|The maximum percentage of CPU resources the group can use.| [0-100] | -1 (not set)|
-|CPU_SOFT_PRIORITY|The scheduling priority of the resource group.| [1-500] | 100 |
+|CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [0-100] | -1 (not set)|
+|CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set) | 
 |MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer [0-500] | 0 |
@@ -72,7 +72,7 @@ Greenplum Database uses the server configuration parameter [gp_resource_group_cp
 
 #### <a id="cpuset"></a>Assigning CPU Resources by Core 
 
-You identify the CPU cores that you want to reserve for a resource group with the `CPUSET` property. The CPU cores that you specify must be available in the system and cannot overlap with any CPU cores that you reserved for other resource groups. Although Greenplum Database uses the cores that you assign to a resource group exclusively for that group, note that those CPU cores may also be used by non-Greenplum processes in the system. When you configure `CPUSET` for a resource group, Greenplum Database deactivates `CPU_HARD_QUOTA_LIMIT` and `CPU_SOFT_LIMIT` for the group and sets their value to -1.
+You identify the CPU cores that you want to reserve for a resource group with the `CPUSET` property. The CPU cores that you specify must be available in the system and cannot overlap with any CPU cores that you reserved for other resource groups. Although Greenplum Database uses the cores that you assign to a resource group exclusively for that group, note that those CPU cores may also be used by non-Greenplum processes in the system. When you configure `CPUSET` for a resource group, Greenplum Database deactivates `CPU_MAX_PERCENT` and `CPU_SOFT_LIMIT` for the group and sets their value to -1.
 
 Specify CPU cores separately for the coordinator host and segment hosts, separated by a semicolon. Use a comma-separated list of single core numbers or number intervals when you configure cores for `CPUSET`. You must enclose the core numbers/intervals in single quotes, for example, '1;1,3-4' uses core 1 on the coordinator host, and cores 1, 3, and 4 on segment hosts.
 
@@ -88,32 +88,32 @@ Resource groups that you configure with `CPUSET` have a higher priority on CPU r
 
 > **Note** You must configure `CPUSET` for a resource group *after* you have enabled resource group-based resource management for your Greenplum Database cluster with the [gp_resource_manager](../ref_guide/config_params/guc-list.html#gp_resource_manager) server configuration parameter.
 
-#### <a id="cpu_hard_quota_limit"></a>Assigning CPU Resources by Percentage 
+#### <a id="cpu_max_percent"></a>Assigning CPU Resources by Percentage 
 
-You configure a resource group with `CPU_HARD_QUOTA_LIMIT` in order to assign CPU resources by percentage. When you configure `CPU_HARD_QUOTA_LIMIT` for a resource group, Greenplum Database deactivates `CPUSET` for the group. 
+You configure a resource group with `CPU_MAX_PERCENT` in order to assign CPU resources by percentage. When you configure `CPU_MAX_PERCENT` for a resource group, Greenplum Database deactivates `CPUSET` for the group. 
 
-The parameter `CPU_HARD_QUOTA_LIMIT` reserves the specified percentage of the segment CPU for resource management. The minimum `CPU_HARD_QUOTA_LIMIT` percentage you can specify for a resource group is 1, the maximum is 100. The sum of `CPU_HARD_QUOTA_LIMIT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100. It specifies the total time ratio that all tasks in a resource group can run in one CPU cycle. Once the tasks in the resource group have used up all the time specified by the quota, they are throttled for the remainder of the time specified in that time period, and are not allowed to run until the next time period. 
+The parameter `CPU_MAX_PERCENT` reserves the specified percentage of the segment CPU for resource management. The minimum `CPU_MAX_PERCENT` percentage you can specify for a resource group is 1, the maximum is 100. The sum of `CPU_MAX_PERCENT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100. It specifies the total time ratio that all tasks in a resource group can run in one CPU cycle. Once the tasks in the resource group have used up all the time specified by the quota, they are throttled for the remainder of the time specified in that time period, and are not allowed to run until the next time period. 
 
-You set the parameter `CPU_SOFT_PRIORITY` to assign the scheduling priority of the current group. The default value is 100, and the range of values is 1 to 500. The value specifies the relative share of CPU time available to tasks in the resource group. For example, tasks in two resource groups with `CPU_SOFT_PRIORITY` set to 100 get the same CPU time, but tasks in a resource group with `CPU_SOFT_PRIORITY` set to 200 get twice the CPU time. 
+You set the parameter `CPU_WEIGHT` to assign the scheduling priority of the current group. The default value is 100, and the range of values is 1 to 500. The value specifies the relative share of CPU time available to tasks in the resource group. For example, tasks in two resource groups with `CPU_WEIGHT` set to 100 get the same CPU time, but tasks in a resource group with `CPU_WEIGHT` set to 200 get twice the CPU time. 
 
-For example, for a high priority job that does not need too much CPU resources, configure the resource group with values `CPU_HARD_QUOTA_LIMIT`=10 and `CPU_SOFT_PRIORITY`=500. For a low priority job that requires a high amount of CPU resources, configure the resource group with values `CPU_HARD_QUOTA_LIMIT`=90 and `CPU_SOFT_PRIORITY`=10.  
+For example, for a high priority job that does not need too much CPU resources, configure the resource group with values `CPU_MAX_PERCENT`=10 and `CPU_WEIGHT`=500. For a low priority job that requires a high amount of CPU resources, configure the resource group with values `CPU_MAX_PERCENT`=90 and `CPU_WEIGHT`=10.  
 
 When tasks in a resource group are idle and not using any CPU time, the leftover time is collected in a global pool of unused CPU cycles. Other resource groups can borrow CPU cycles from this pool. The actual amount of CPU time available to a resource group may vary, depending on the number of resource groups present on the system. 
 
 For example, consider the following groups:
 
-| Group Name | CONCURRENCY | CPU_HARD_QUOTA_LIMIT | CPU_SOFT_PRIORITY |
+| Group Name | CONCURRENCY | CPU_MAX_PERCENT | CPU_WEIGHT |
 | --------- | ----------- | -------------------- | ----------------- |
 | default_group | 20 | 50 | 10 |
 | admin_group | 10 | 70 | 30 |
 | system_group |10 | 30 | 10 |
 | test | 10 | 10 | 10 | 
 
-Roles in `default_group` have an available CPU ratio (determined by `CPU_SOFT_PRIORITY`) of 10/(10+30+10+10)=16%. This means that they can use at least 16% of the CPU when the system workload is high. When the system has idle CPU resources, they can use more resources, as the hard limit (set by `CPU_HARD_QUOTA_LIMIT`) is 50%.
+Roles in `default_group` have an available CPU ratio (determined by `CPU_WEIGHT`) of 10/(10+30+10+10)=16%. This means that they can use at least 16% of the CPU when the system workload is high. When the system has idle CPU resources, they can use more resources, as the hard limit (set by `CPU_MAX_PERCENT`) is 50%.
 
 Roles in `admin_group` have an available CPU ratio of 30/(10+30+10+10)=50% when the system workload is high. When the system has idle CPU resources, they can use resources up to the hard limit of 70%.
 
-Roles in `test` have a CPU ratio of 10/(10+30+10+10)=16%. However, as the hard limit determined by `CPU_HARD_QUOTA_LIMIT` is 10%, they can only use up to 10% of the resources even when the system is idle.
+Roles in `test` have a CPU ratio of 10/(10+30+10+10)=16%. However, as the hard limit determined by `CPU_MAX_PERCENT` is 10%, they can only use up to 10% of the resources even when the system is idle.
 
 ### <a id="topic8339717"></a>Memory Limits 
 
@@ -298,8 +298,8 @@ The default resource groups `admin_group`, `default_group`, and `system_group`  
 |Limit Type|admin\_group|default\_group|system_group|
 |----------|------------|--------------|------------|
 |CONCURRENCY|10|5|0|
-|CPU_HARD_QUOTA_LIMIT|10|20|10|
-|CPU_SOFT_PRIORITY|100|100|100|
+|CPU_MAX_PERCENT|10|20|10|
+|CPU_WEIGHT|100|100|100|
 |CPUSET|-1|-1|-1|
 |MEMORY\_LIMIT|-1|-1|-1|
 |MIN_COST|0|0|0|
@@ -308,12 +308,12 @@ The default resource groups `admin_group`, `default_group`, and `system_group`  
 
 When you create a resource group for a role, you provide a name and a CPU resource allocation mode (core or percentage). You can optionally provide a concurrent transaction limit, a memory limit, a CPU soft priority, and a minimum cost. Use the [CREATE RESOURCE GROUP](../ref_guide/sql_commands/CREATE_RESOURCE_GROUP.html) command to create a new resource group.
 
-When you create a resource group for a role, you must provide a `CPU_HARD_QUOTA_LIMIT` or `CPUSET` limit value. These limits identify the percentage of Greenplum Database CPU resources to allocate to this resource group. You may specify a `MEMORY_LIMIT` to reserve a fixed amount of memory for the resource group. 
+When you create a resource group for a role, you must provide a `CPU_MAX_PERCENT` or `CPUSET` limit value. These limits identify the percentage of Greenplum Database CPU resources to allocate to this resource group. You may specify a `MEMORY_LIMIT` to reserve a fixed amount of memory for the resource group. 
 
 For example, to create a resource group named *rgroup1* with a CPU limit of 20, a memory limit of 25, a CPU soft priority of 500 and a minimum cost of 50:
 
 ```
-CREATE RESOURCE GROUP rgroup1 WITH (CPU_HARD_QUOTA_LIMIT=20, MEMORY_LIMIT=25, CPU_SOFT_PRIORITY=500, MIN_COST=50);
+CREATE RESOURCE GROUP rgroup1 WITH (CPU_MAX_PERCENT=20, MEMORY_LIMIT=25, CPU_WEIGHT=500, MIN_COST=50);
 ```
 
 The CPU limit of 20 is shared by every role to which `rgroup1` is assigned. Similarly, the memory limit of 25 is shared by every role to which `rgroup1` is assigned. `rgroup1` utilizes the default `CONCURRENCY` setting of 20.
@@ -476,13 +476,13 @@ Refer to the [Greenplum Command Center documentation](http://docs.vmware.com/en/
 
 ## <a id="topic777999"></a>Frequently Asked Questions 
 
-**Why is CPU usage lower than the `CPU_HARD_QUOTA_LIMIT` configured for the resource group?**
+**Why is CPU usage lower than the `CPU_MAX_PERCENT` configured for the resource group?**
 
 You may run into this situation when a low number of queries and slices are running in the resource group, and these processes are not utilizing all of the cores on the system.
 
-**My resource group has a `CPU_SOFT_PRIORITY` equivalent to 40%. Why is the CPU usage never reaching this limit?
+**My resource group has a `CPU_WEIGHT` equivalent to 40%. Why is the CPU usage never reaching this limit?
 
-The value of `CPU_HARD_QUOTA_LIMIT` might be lower than 40, hence it might be limiting the CPU usage even with idle resources.
+The value of `CPU_MAX_PERCENT` might be lower than 40, hence it might be limiting the CPU usage even with idle resources.
 
 **Why is the number of running transactions lower than the `CONCURRENCY` limit configured for the resource group?**
 
