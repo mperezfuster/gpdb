@@ -72,7 +72,7 @@ Greenplum Database uses the server configuration parameter [gp_resource_group_cp
 
 #### <a id="cpuset"></a>Assigning CPU Resources by Core 
 
-You identify the CPU cores that you want to reserve for a resource group with the `CPUSET` property. The CPU cores that you specify must be available in the system and cannot overlap with any CPU cores that you reserved for other resource groups. Although Greenplum Database uses the cores that you assign to a resource group exclusively for that group, note that those CPU cores may also be used by non-Greenplum processes in the system. When you configure `CPUSET` for a resource group, Greenplum Database deactivates `CPU_MAX_PERCENT` and `CPU_SOFT_LIMIT` for the group and sets their value to -1.
+You identify the CPU cores that you want to reserve for a resource group with the `CPUSET` property. The CPU cores that you specify must be available in the system and cannot overlap with any CPU cores that you reserved for other resource groups. Although Greenplum Database uses the cores that you assign to a resource group exclusively for that group, note that those CPU cores may also be used by non-Greenplum processes in the system. When you configure `CPUSET` for a resource group, Greenplum Database deactivates `CPU_MAX_PERCENT` and `CPU_WEIGHT` for the group and sets their value to -1.
 
 Specify CPU cores separately for the coordinator host and segment hosts, separated by a semicolon. Use a comma-separated list of single core numbers or number intervals when you configure cores for `CPUSET`. You must enclose the core numbers/intervals in single quotes, for example, '1;1,3-4' uses core 1 on the coordinator host, and cores 1, 3, and 4 on segment hosts.
 
