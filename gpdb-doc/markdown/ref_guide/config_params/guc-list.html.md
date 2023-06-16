@@ -1358,6 +1358,19 @@ When this configuration parameter is set to `false` and the database has reached
 |-----------|-------|-------------------|
 |Boolean|true|local, session, reload|
 
+## <a id="gp_resource_group_bypass_direct_dispatch"></a>gp_resource_group_bypass_direct_dispatch
+
+> **Note** 
+>The `gp_resource_group_bypass_direct_dispatch` server configuration parameter is enforced only when resource group-based resource management is active.
+
+When set to `true` -- the default -- Greenplum Database's resource group scheduler bypasses the resource group's limits for a direct dispatch query so it can run immediately. A direct dispatch query is a special type of query that only requires a single segment to participate in the execution. In order to improve efficiency, Greenplum optimizes this type of query, called Direct Dispatch optimization. The system sends the query plan to the execution of a single segment that needs to execute the plan, instead of sending it to all segments for execution.  
+
+The query uses resources outside the resource groups to allocate memory. If there is not enough memory to satisfy the memory allocation request, the query will fail. You may set this parameter for a single session. You must not set this parameter within a transaction or function.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Boolean|true|local, session, reload|
+
 ## <a id="gp_resource_group_cpu_limit"></a>gp\_resource\_group\_cpu\_limit 
 
 > **Note** The `gp_resource_group_cpu_limit` server configuration parameter is enforced only when resource group-based resource management is active.
