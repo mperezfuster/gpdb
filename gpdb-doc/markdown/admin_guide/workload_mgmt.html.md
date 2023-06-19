@@ -205,7 +205,7 @@ gpstop -r
 
 ## <a id="topic10"></a>Creating Resource Queues 
 
-When you create a resource que for a role, you provide a name, set an active query limit, and optionally a query priority for the resource queue. Use the [CREATE RESOURCE QUEUE](../ref_guide/sql_commands/CREATE_RESOURCE_QUEUE.html) command to create new resource queues.
+When you create a resource queue for a role, you provide a name, set an active query limit, and optionally a query priority for the resource queue. Use the [CREATE RESOURCE QUEUE](../ref_guide/sql_commands/CREATE_RESOURCE_QUEUE.html) command to create new resource queues.
 
 ### <a id="topic11"></a>Creating Queues with an Active Query Limit 
 
