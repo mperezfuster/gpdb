@@ -73,7 +73,7 @@ This example has three classes of queries with different characteristics and ser
 
 The total memory allocated to the queues is 6.4GB, or 80% of the total segment memory defined by the `gp_vmem_protect_limit` server configuration parameter. Allowing a safety margin of 20% accommodates some operators and queries that are known to use more memory than they are allocated by the resource queue.
 
-See the [CREATE RESOURCE QUEUE](../ref_guide/sql_commands/CREATE_RESOURCE_QUEUE.html), [CREATE ROLE](../ref_guide/sql_commands/CREATE_ROLE.html), and [ALTER ROLE]((../ref_guide/sql_commands/ALTER_ROLE.html)) statements in the *Greenplum Database Reference Guide* for help with command syntax and detailed reference information.
+See the [CREATE RESOURCE QUEUE](../ref_guide/sql_commands/CREATE_RESOURCE_QUEUE.html), [CREATE ROLE](../ref_guide/sql_commands/CREATE_ROLE.html), and [ALTER ROLE](../ref_guide/sql_commands/ALTER_ROLE.html) statements in the *Greenplum Database Reference Guide* for help with command syntax and detailed reference information.
 
 ## <a id="topic113"></a>How Memory Limits Work 
 
