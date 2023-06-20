@@ -52,6 +52,14 @@ make_cgroups_dir() {
 EOF
 }
 
+install_python_dependency() {
+    local host_alias=$1
+
+    ssh $host_alias bash -ex <<EOF
+        pip3.9 install paramiko==3.1.0
+EOF
+}
+
 run_resgroup_test() {
     local gpdb_master_alias=$1
 
@@ -63,7 +71,7 @@ run_resgroup_test() {
         export CPPFLAGS="-I\${GPHOME}/include"
 
         cd /home/gpadmin/gpdb_src
-        PYTHON=python3 ./configure --prefix=/usr/local/greenplum-db-devel \
+        PYTHON=python3.9 ./configure --prefix=/usr/local/greenplum-db-devel \
             --without-zlib --without-rt --without-libcurl \
             --without-libedit-preferred --without-docdir --without-readline \
             --disable-gpcloud --disable-gpfdist --disable-orca \
@@ -142,6 +150,9 @@ mount_cgroups ccp-${CLUSTER_NAME}-0
 mount_cgroups ccp-${CLUSTER_NAME}-1
 make_cgroups_dir ccp-${CLUSTER_NAME}-0
 make_cgroups_dir ccp-${CLUSTER_NAME}-1
+install_python_dependency ccp-${CLUSTER_NAME}-0
+install_python_dependency ccp-${CLUSTER_NAME}-1
+install_python_dependency cdw
 run_resgroup_test cdw
 
 #

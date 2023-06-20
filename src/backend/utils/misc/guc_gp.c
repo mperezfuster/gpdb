@@ -331,7 +331,6 @@ bool		optimizer_enable_hashagg;
 bool		optimizer_enable_groupagg;
 bool		optimizer_expand_fulljoin;
 bool		optimizer_enable_mergejoin;
-bool		optimizer_prune_unused_columns;
 bool		optimizer_enable_redistribute_nestloop_loj_inner_child;
 bool		optimizer_force_comprehensive_join_implementation;
 bool		optimizer_enable_replicated_table;
@@ -2855,17 +2854,6 @@ struct config_bool ConfigureNamesBool_gp[] =
 	},
 
 	{
-		{"optimizer_prune_unused_columns", PGC_USERSET, DEVELOPER_OPTIONS,
-			gettext_noop("Prune unused table columns during query optimization."),
-			NULL,
-			GUC_NOT_IN_SAMPLE
-		},
-		&optimizer_prune_unused_columns,
-		true,
-		NULL, NULL, NULL
-	},
-
-	{
 		{"optimizer_enable_range_predicate_dpe", PGC_USERSET, DEVELOPER_OPTIONS,
 			gettext_noop("Enable range predicates for dynamic partition elimination."),
 			NULL,
@@ -3839,6 +3827,16 @@ struct config_int ConfigureNamesInt_gp[] =
 		},
 		&gp_resource_group_queuing_timeout,
 		0, 0, INT_MAX,
+		NULL, NULL, NULL
+	},
+	{
+		{"gp_resource_group_move_timeout", PGC_USERSET, RESOURCES_MGM,
+			gettext_noop("Wait up to the specified time (in ms) while moving process to another resource group (after queuing on it) before give up."),
+			NULL,
+			GUC_UNIT_MS
+		},
+		&gp_resource_group_move_timeout,
+		30000, 10, INT_MAX,
 		NULL, NULL, NULL
 	},
 	{

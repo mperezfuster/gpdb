@@ -37,9 +37,9 @@
 #define DefaultCpuset "-1"
 
 /*
- * Default value of cpu soft priority
+ * Default value of cpu weight
  */
-#define DefaultCPUSoftPriority 100
+#define DefaultCPUWeight 100
 
 /*
  * Resource group capability.
@@ -67,8 +67,8 @@ typedef struct ResGroupCaps
 {
 	ResGroupCap		__unknown;			/* placeholder, do not use it */
 	ResGroupCap		concurrency;
-	ResGroupCap		cpuHardQuotaLimit;
-	ResGroupCap		cpuSoftPriority;
+	ResGroupCap		cpuMaxPercent;
+	ResGroupCap		cpuWeight;
 	ResGroupCap		memory_limit;
 	volatile ResGroupCap	min_cost;
 	char			cpuset[MaxCpuSetLength];
@@ -95,6 +95,7 @@ extern double gp_resource_group_cpu_limit;
 extern bool gp_resource_group_bypass;
 extern int gp_resource_group_queuing_timeout;
 extern bool gp_resource_group_bypass_catalog_query;
+extern int gp_resource_group_move_timeout;
 extern bool gp_resource_group_bypass_direct_dispatch;
 
 /*
@@ -156,7 +157,7 @@ extern void DeserializeResGroupInfo(struct ResGroupCaps *capsOut,
 extern bool ShouldAssignResGroupOnCoordinator(void);
 extern bool ShouldUnassignResGroup(void);
 extern void AssignResGroupOnCoordinator(void);
-extern void UnassignResGroup(bool releaseSlot);
+extern void UnassignResGroup(void);
 extern void SwitchResGroupOnSegment(const char *buf, int len);
 
 extern bool ResGroupIsAssigned(void);

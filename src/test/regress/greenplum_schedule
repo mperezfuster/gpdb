@@ -188,7 +188,7 @@ test: rpt rpt_joins rpt_tpch rpt_returning
 # temp tables
 test: bfv_cte bfv_joins bfv_subquery bfv_planner bfv_legacy bfv_temp bfv_dml
 
-test: qp_olap_mdqa qp_misc gp_recursive_cte qp_dml_joins qp_skew qp_select partition_prune_opfamily
+test: qp_olap_mdqa qp_misc gp_recursive_cte qp_dml_joins qp_skew qp_select partition_prune_opfamily gp_tsrf
 
 test: qp_misc_jiras qp_with_clause qp_executor qp_olap_windowerr qp_olap_window qp_derived_table qp_bitmapscan qp_dropped_cols
 test: qp_with_functional_inlining qp_with_functional_noinlining
@@ -255,6 +255,9 @@ test: uaocs_compaction/threshold
 test: uao_ddl/analyze_ao_table_every_dml_row uao_ddl/analyze_ao_table_every_dml_column
 test: uao_dml/uao_dml_row
 test: uao_dml/uao_dml_column
+# test covering index (INCLUDE clause) on AO/CO tables
+test: uao_dml/ao_covering_index_row
+test: uao_dml/ao_covering_index_column
 test: ao_locks
 test: freeze_aux_tables
 
