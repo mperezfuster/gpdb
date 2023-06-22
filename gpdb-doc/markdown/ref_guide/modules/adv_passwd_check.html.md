@@ -2,7 +2,7 @@
 title: advanced_password_check 
 ---
 
-The `advanced_password_check` module provides password quality checking for Greenplum Database.
+The `advanced_password_check` module allows you to strenghten password policies for Greenplum Database.
 
 The Greenplum Database `advanced_password_check` module is based on the `passwordcheck_extra` module, which enhances the PostgreSQL `passwordcheck` module to support user-defined policies to strengthen `passwordcheck`'s minimum password requirements.
 
@@ -38,13 +38,13 @@ The `advanced_password_check` module defines server configuration parameters tha
 
 |Parameter Name|Type|Default Value|Description|
 |--------------|----|-------------|-----------|
-|lockout_duration|int [0-10000]|0|Number of minutes a user is locked after failing to log in the number of times set by password_login_attempts. If set to 0, user is locked indefinitely.|
+|lockout_duration|int|0|Number of minutes a user is locked after failing to log in the number of times set by password_login_attempts. If set to 0, user is locked indefinitely.|
 |minimum\_length|int|8|The minimum allowable length of a Greenplum Database password.|
 |maximum\_length|int|15|The maximum allowable length of Greenplum Database password.|
-|password_login_attempts|int [0-10000]|0|Number of failed log in attempts before user is locked. If set to 0, this feature is disable.|
-|password_max_age|int [0-10000]|0|The maximum amount of days before the password expires. If set to 0, password does not expire.|
-|password_reuse_days|int [0-10000]|0|Number of days before a user can reuse a password. If set to 0, user can reuse any password.|
-|password_reuse_history|int [0-24]|0|Number of previous passwords user must not reuse. If set to 0, user can reuse any password.|
+|password_login_attempts|int|0|Number of failed log in attempts before user is locked. If set to 0, this feature is disable.|
+|password_max_age|int|0|The maximum amount of days before the password expires. If set to 0, password does not expire.|
+|password_reuse_days|int|0|Number of days before a user can reuse a password. If set to 0, user can reuse any password.|
+|password_reuse_history|int|0|Number of previous passwords user must not reuse. If set to 0, user can reuse any password.|
 |special\_chars|string|!@\#$%^&\*\(\)\_+\{\}\|<\>?=|The set of characters that Greenplum Database considers to be special characters in a password.|
 |restrict\_upper|bool|true|Specifies whether or not the password string must contain at least one upper case character.|
 |restrict\_lower|bool|true|Specifies whether or not the password string must contain at least one lower case character.|
@@ -63,13 +63,13 @@ After you set or change module configuration in this manner, you must reload the
 gpstop -u
 ```
 
-The `advanced_password_check` module provides the following user-defined functions (UDF) for administration:
+The `advanced_password_check` module provides the following user-defined functions (UDF):
 
-|UDF Name|Parameters|Description|
+|Function Signature|Description|
 |--------|----------|-----------|
-|manage_exception_list(action, role_name, exception_type)|action: add/remove/show <br> role_name: role name <br> exception_type: (empty string represents “all”), password_max_age, password_reuse_days, password_reuse_history,password_login_attempts.| Adds or removes roles to the exception list for certain features. It can also be used to show who is in the exception list for some feature. The value of `exception_type` can be an empty string to represent all of the available exception types. When the action is ‘show’, role_name can also be specified as empty string to represent all of the roles. |
-|unblock_account(role_name)|role_name|Unblocks user after reaching `password_login_attempts`|
-|status()|n/a|Lists names and values of the active password policies.|
+|manage_exception_list(action, role_name, exception_type)|Adds, removes, and shows roles in the exception list for certain password features.<br> The value of `action` can be add, remove, or show.<br> The value of `exception_type` can be password_max_age, password_reuse_days, password_reuse_history, password_login_attempts, or an empty string to represent all of the available exception types. <br>When the action is show, you may specify `role_name` as an empty string to include all roles.|
+|unblock_account(role_name)|Unblocks a user.|
+|status()|Lists names and values of the password policies in place.|
 
 
 
