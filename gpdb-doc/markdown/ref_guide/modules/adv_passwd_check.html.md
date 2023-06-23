@@ -2,9 +2,7 @@
 title: advanced_password_check 
 ---
 
-The `advanced_password_check` module allows you to strenghten password policies for Greenplum Database.
-
-The Greenplum Database `advanced_password_check` module is based on the `passwordcheck_extra` module, which enhances the PostgreSQL `passwordcheck` module to support user-defined policies to strengthen `passwordcheck`'s minimum password requirements.
+The `advanced_password_check` module allows you to strenghten password policies for Greenplum Database. It is based on the `passwordcheck_extra` module, which enhances the PostgreSQL `passwordcheck` module to support user-defined policies to strengthen `passwordcheck`'s minimum password requirements.
 
 ## <a id="topic_reg"></a>Loading the Module 
 
@@ -74,11 +72,11 @@ SELECT manage_exception_list('add', 'test_user', 'password_max_age');
 ```
  
 
-|Function Signature|Arguments|Description|
+|Function Signature|Argument Values|Description|
 |--------|----------|-----------|
-|manage_exception_list(action, role_name, exception_type)|**action**: *add*<br>*remove*<br>*show* <br> **role_name** <br>**exception_type**: *password_max_age*<br>*password_reuse_days*<br>*password_reuse_history*<br>*password_login_attempts* |Adds, removes, and shows roles in the exception list for the different password features.|
-|unblock_account(role_name)|`role_name`|Unblocks a user.|
-|status()||Lists names and values of the password policies in place.|
+|`manage_exception_list(action, role_name, exception_type)`|`action` can be *add*, *remove*, or *show* <br>`role_name`<br>`exception_type` can be *password_max_age*, *password_reuse_days*, *password_reuse_history*, or *password_login_attempts*. |Adds, removes, and shows roles in the exception list for the different password features.|
+|`unblock_account(role_name)`|`role_name`|Unblocks a user.|
+|`status()`||Lists names and values of the password policies in place.|
 
 
 
