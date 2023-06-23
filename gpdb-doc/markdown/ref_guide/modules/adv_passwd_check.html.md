@@ -36,10 +36,10 @@ The `advanced_password_check` module defines server configuration parameters tha
 
 |Parameter Name|Type|Default Value|Description|
 |--------------|----|-------------|-----------|
-|lockout_duration|int|0|Number of minutes a user is locked after failing to log in the number of times set by password_login_attempts. If set to 0, user is locked indefinitely.|
+|lockout_duration|int|0|Number of minutes a user is locked after reaching password_login_attempts. If set to 0, user is locked indefinitely.|
 |minimum\_length|int|8|The minimum allowable length of a Greenplum Database password.|
 |maximum\_length|int|15|The maximum allowable length of Greenplum Database password.|
-|password_login_attempts|int|0|Number of failed log in attempts before user is locked. If set to 0, this feature is disable.|
+|password_login_attempts|int|0|Number of failed log in attempts before a user is locked. If set to 0, this feature is disabled.|
 |password_max_age|int|0|The maximum amount of days before the password expires. If set to 0, password does not expire.|
 |password_reuse_days|int|0|Number of days before a user can reuse a password. If set to 0, user can reuse any password.|
 |password_reuse_history|int|0|Number of previous passwords user must not reuse. If set to 0, user can reuse any password.|
@@ -92,7 +92,7 @@ Suppose that you have defined the following password policies:
 -   The are no requirements that the password contain a number.
 -   The password must not be the same as the current password.
 -   The password must expire after three months.
--   The user must be blocked during an hour after three failed log in attempts. 
+-   The user must be blocked during an hour after three unsuccessful log in attempts. 
 
 You would run the following commands to configure Greenplum Database to enforce these policies:
 
