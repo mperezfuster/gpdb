@@ -76,7 +76,7 @@ SELECT manage_exception_list('add', 'test_user', 'password_max_age');
 
 |Function Signature|Arguments|Description|
 |--------|----------|-----------|
-|`manage_exception_list(action, role_name, exception_type)`|`action`= `add`/`remove`/`show` <br> `role_name` <br>`exception_type`=`password_max_age`/`password_reuse_days`/`password_reuse_history`/`password_login_attempts` |Adds, removes, and shows roles in the exception list for the different password features.|
+|`manage_exception_list(action, role_name, exception_type)`|`action`: `add`<br>`remove`<br>`show` <br> `role_name` <br>`exception_type`: `password_max_age`<br>`password_reuse_days`<br>`password_reuse_history`<br>`password_login_attempts` |Adds, removes, and shows roles in the exception list for the different password features.|
 |unblock_account(role_name)|`role_name`|Unblocks a user.|
 |status()||Lists names and values of the password policies in place.|
 
