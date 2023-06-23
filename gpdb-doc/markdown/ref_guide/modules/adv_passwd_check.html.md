@@ -65,20 +65,20 @@ The `advanced_password_check` module provides the following user-defined functio
 
 |Function Signature|Argument Values|Description|
 |--------|----------|-----------|
-|`manage_exception_list(action, role_name, exception_type)`|- `action` can be *add*, *remove*, or *show* <br>- `role_name`<br>- `exception_type` can be *password_max_age*, *password_reuse_days*, *password_reuse_history*, or *password_login_attempts*. |Adds, removes, and shows roles in the exception list for the different password features.|
+|`manage_exception_list(action, role_name, exception_type)`|- `action` can be *add*, *remove*, or *show* <br>- `role_name`<br>- `exception_type` can be *password_max_age*, *password_reuse_days*, *password_reuse_history*, or *password_login_attempts*. |Adds, removes, and shows roles in the exception list for a policy.|
 |`unblock_account(role_name)`|`role_name`|Unblocks a user.|
-|`status()`||Lists names and values of the password policies in place.|
+|`status()`||Lists active password policies.|
 
-Use the `manage_exception_list()` user-defined function to manage exception lists for specific policies. The users within an exception list do not enforce the rules set for the policy.
+Use the `manage_exception_list()` user-defined function to manage the exception list for a password policy. The users within the exception list do not enforce the rules set for the policy.
 The function takes three arguments: the action to take, the role name and the name of the exception. The value of `action` can be `add`, `remove`, or `show`. The value of `exception_type` can be `password_max_age`, `password_reuse_days`, `password_reuse_history`, `password_login_attempts`, or an empty string to represent all of the available exception types. When the action is `show`, you may specify `role_name` as an empty string to include all roles.
 
-For example, add the user `sales` to the exception list for `password_max_age`, so the user does not have an expiration date for its password: 
+For example, add the user `sales` to the exception list for `password_max_age`, so the user does not have a password expiration date: 
 
 ```
-SELECT manage_exception_list('add', 'sales', 'password_max_age');
+SELECT advanced_password_check.manage_exception_list('add', 'sales', 'password_max_age');
 ```
 
-Use the `unblock_account_role()` user-defined function to unblock a user that has got blocked due to reaching too many failed log in attempts set by the configuration parameter `password_login_attempts`. 
+Use the `unblock_account_role()` user-defined function to manually unblock a user that reached the limit set by the configuration parameter `password_login_attempts`. 
 
 Use the `status()` user-defined function to view the values of all active password policies.
 
@@ -90,13 +90,20 @@ Suppose that you have defined the following password policies:
 -   The password must contain a mixture of upper case and lower case characters.
 -   The password must contain at least one of the default special characters.
 -   The are no requirements that the password contain a number.
+-   The password must not be the same as the current password.
+-   The password must expire after three months.
+-   The user must be blocked during an hour after three failed log in attempts. 
 
 You would run the following commands to configure Greenplum Database to enforce these policies:
 
 ```
-gpadmin@gpmaster$ gpconfig -c advanced_password_check.minimum_length -v 10
-gpadmin@gpmaster$ gpconfig -c advanced_password_check.maximum_length -v 18
-gpadmin@gpmaster$ gpconfig -c advanced_password_check.restrict_numbers -v false
+gpconfig -c advanced_password_check.minimum_length -v 10
+gpconfig -c advanced_password_check.maximum_length -v 18
+gpconfig -c advanced_password_check.restrict_numbers -v false
+gpconfig -c advanced_password_check.password_reuse_history -v 1
+gpconfig -c advanced_password_check.password_max_age -v 90
+gpconfig -c advanced_password_check.password_login_attempts -v 3
+gpconfig -c advanced_password_check.lockoout_duration -v 60
 gpadmin@gpmaster$ gpstop -u
 ```
 
