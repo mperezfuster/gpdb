@@ -30,6 +30,7 @@ Greenplum Database 7 requires the following software packages on RHEL systems. T
 -   bzip2
 -   curl
 -   krb5
+-   libcgroup
 -   libcgroup-tools
 -   libcurl
 -   libevent
