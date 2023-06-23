@@ -65,11 +65,20 @@ gpstop -u
 
 The `advanced_password_check` module provides the following user-defined functions (UDF):
 
-|Function Signature|Description|
+Use the `manage_exception_list()` user-defined function to ------. The function takes three arguments: the action to take, the role name and the name of the exception. The value of `action` can be add, remove, or show. The value of `exception_type` can be password_max_age, password_reuse_days, password_reuse_history, password_login_attempts, or an empty string to represent all of the available exception types. When the action is show, you may specify `role_name` as an empty string to include all roles.
+
+The following example 
+
+```
+SELECT manage_exception_list('add', 'test_user', 'password_max_age');
+```
+ 
+
+|Function Signature|Arguments|Description|
 |--------|----------|-----------|
-|manage_exception_list(action, role_name, exception_type)|Adds, removes, and shows roles in the exception list for certain password features.<br> The value of `action` can be add, remove, or show.<br> The value of `exception_type` can be password_max_age, password_reuse_days, password_reuse_history, password_login_attempts, or an empty string to represent all of the available exception types. <br>When the action is show, you may specify `role_name` as an empty string to include all roles.|
-|unblock_account(role_name)|Unblocks a user.|
-|status()|Lists names and values of the password policies in place.|
+|`manage_exception_list(action, role_name, exception_type)`|`action`= `add`/`remove`/`show` <br> `role_name` <br>`exception_type`=`password_max_age`/`password_reuse_days`/`password_reuse_history`/`password_login_attempts` |Adds, removes, and shows roles in the exception list for the different password features.|
+|unblock_account(role_name)|`role_name`|Unblocks a user.|
+|status()||Lists names and values of the password policies in place.|
 
 
 
