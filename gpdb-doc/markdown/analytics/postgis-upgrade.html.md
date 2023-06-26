@@ -4,8 +4,8 @@ title: Upgrading PostGIS 2.1.5 or 2.5.4
 
 For Greenplum Database 6, you can upgrade from PostGIS 2.1.5 to 2.5.4, or from a PostGIS 2.5.4 package to a newer PostGIS 2.5.4 package.
 
--   [Upgrading from PostGIS 2.1.5 to the PostGIS 2.5.4 pivotal.3 (and onwards) Package](#topic_zgw_v5x_3mb)
--   [Upgrade a PostGIS 2.5.4 Package from pivotal.1 or pivotal.2 to pivotal.3 (and onwards)](#topic_k4x_dp3_kmb)
+-   [Upgrading from PostGIS 2.1.5 to the PostGIS 2.5.4 pivotal.3 (and later) Package](#topic_zgw_v5x_3mb)
+-   [Upgrade a PostGIS 2.5.4 Package from pivotal.1 or pivotal.2 to pivotal.3 (and later)](#topic_k4x_dp3_kmb)
 -   [Checking the PostGIS Version](#topic_yzz_l3h_kmb)
 
 > **Note** For Greenplum Database 6, you can upgrade from PostGIS 2.1.5 to 2.5.4, or from a PostGIS 2.5.4 package to a newer PostGIS 2.5.4 package using the `postgis_manager.sh` script described in the upgrade instructions.
@@ -14,9 +14,9 @@ Upgrading PostGIS using the `postgis_manager.sh` script does not require you to 
 
 Removing PostGIS support from a database drops PostGIS database objects from the database without warning. Users accessing PostGIS objects might interfere with the dropping of PostGIS objects. See the Notes section in [Removing PostGIS Support](postGIS.html).
 
-## <a id="topic_zgw_v5x_3mb"></a>Upgrading from PostGIS 2.1.5 to the PostGIS 2.5.4 pivotal.3 (and onwards) Package 
+## <a id="topic_zgw_v5x_3mb"></a>Upgrading from PostGIS 2.1.5 to the PostGIS 2.5.4 pivotal.3 (and later) Package 
 
-A PostGIS 2.5.4 `pivotal.3` (and onwards) package contains PostGIS 2.5.4. Also, the PostGIS 2.5.4 `pivotal.3` (and onwards) package supports using the `CREATE EXTENSION` command and the `DROP EXTENSION` command to enable and remove PostGIS support in a database. See [Notes](#topic_hm5_3zk_jmb).
+A PostGIS 2.5.4 `pivotal.3` (and later) package contains PostGIS 2.5.4. Also, the PostGIS 2.5.4 `pivotal.3` (and later) package supports using the `CREATE EXTENSION` command and the `DROP EXTENSION` command to enable and remove PostGIS support in a database. See [Notes](#topic_hm5_3zk_jmb).
 
 After upgrading the Greenplum PostGIS package, you can remove the PostGIS 2.1.5 package \(`gppkg`\) from the Greenplum system. See [Removing the PostGIS 2.1.5 package](#topic_unj_v5n_kmb).
 
@@ -55,11 +55,11 @@ gppkg -r postgis-2.1.5+pivotal.2
 
 Run the `gppkg -q --all` command to list the installed Greenplum packages.
 
-## <a id="topic_k4x_dp3_kmb"></a>Upgrade a PostGIS 2.5.4 Package from pivotal.1 or pivotal.2 to pivotal.3 (and onwards)
+## <a id="topic_k4x_dp3_kmb"></a>Upgrade a PostGIS 2.5.4 Package from pivotal.1 or pivotal.2 to pivotal.3 (or later)
 
 You can upgrade the installed PostGIS 2.5.4 package from `pivotal.1` or `pivotal.2` to `pivotal.3` or later \(a minor release upgrade\). The upgrade updates the PostGIS 2.5.4 package to the minor release \(`pivotal.3`\ or later) that uses the same PostGIS version \(2.5.4\).
 
-The `pivotal.3` minor release and onwards supports using the `CREATE EXTENSION` command and the `DROP EXTENSION` command to enable and remove PostGIS support in a database. See [Notes](#topic_hm5_3zk_jmb).
+The `pivotal.3` minor release and later support using the `CREATE EXTENSION` command and the `DROP EXTENSION` command to enable and remove PostGIS support in a database. See [Notes](#topic_hm5_3zk_jmb).
 
 1.  Confirm you have a PostGIS 2.5.4 package `postgis-2.5.4+**pivotal.1**` or `postgis-2.5.4+**pivotal.2**` installed in a Greenplum Database system. See [Checking the PostGIS Version](#topic_yzz_l3h_kmb).
 2.  Upgrade the PostGIS package in the Greenplum Database system using the `gppkg` option `-u`. The following command updates the package to the `postgis-2.5.4+pivotal.3.build.1` package.
