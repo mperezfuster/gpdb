@@ -6,7 +6,7 @@ The `advanced_password_check` module allows you to strenghten password policies 
 
 ## <a id="topic_reg"></a>Loading the Module 
 
-The `advanced_password_check` module provides no SQL-accessible functions. To use it, enable the extension as a preloaded library and restart Greenplum Database server:
+The `advanced_password_check` module provides no SQL-accessible functions. To use it, enable the extension as a preloaded library and restart Greenplum Database:
 
 ```
 gpconfig -c shared_preload_libraries -v advanced_password_check 
@@ -25,9 +25,9 @@ CREATE EXTENSION advanced_password_check;
 
 -   Set a minimum password string length.
 -   Set a maximum password string length.
--   Set a maximum password age before it requires renewing.
--   Set rules for reusing an old password: number of days or number of previous passwords before a user can reuse a password.
--   Set maximum number of failed log in attempts before a user is locked, and number of minutes the user remains locked.
+-   Set a maximum password age before the password expires.
+-   Set rules for reusing an old password: the number of days or number of previous passwords before a user can reuse a password.
+-   Set the maximum number of failed log in attempts before a user is locked, and the number of minutes the user remains locked.
 -   Define a custom list of special characters.
 -   Define rules for special character, upper/lower case character, and number inclusion in the password string.
 -   Use UDFs to manage an exception list for each feature so certain users can bypass the current restrictions.
@@ -36,13 +36,13 @@ The `advanced_password_check` module defines server configuration parameters tha
 
 |Parameter Name|Type|Default Value|Description|
 |--------------|----|-------------|-----------|
-|lockout_duration|int|0|Number of minutes a user is locked after reaching password_login_attempts. If set to 0, user is locked indefinitely.|
+|lockout_duration|int|0|The number of minutes a user is locked after reaching password_login_attempts. If set to 0, the user is locked indefinitely.|
 |minimum\_length|int|8|The minimum allowable length of a Greenplum Database password.|
 |maximum\_length|int|15|The maximum allowable length of Greenplum Database password.|
-|password_login_attempts|int|0|Number of failed log in attempts before a user is locked. If set to 0, this feature is disabled.|
-|password_max_age|int|0|The maximum amount of days before the password expires. If set to 0, password does not expire.|
-|password_reuse_days|int|0|Number of days before a user can reuse a password. If set to 0, user can reuse any password.|
-|password_reuse_history|int|0|Number of previous passwords user must not reuse. If set to 0, user can reuse any password.|
+|password_login_attempts|int|0|The number of failed log in attempts before a user is locked. If set to 0, this feature is disabled.|
+|password_max_age|int|0|The maximum amount of days before the password expires. If set to 0, the password does not expire.|
+|password_reuse_days|int|0|The number of days before a user can reuse a password. If set to 0, the user can reuse any password.|
+|password_reuse_history|int|0|The number of previous passwords a user cannot reuse. If set to 0, the user can reuse any password.|
 |special\_chars|string|!@\#$%^&\*\(\)\_+\{\}\|<\>?=|The set of characters that Greenplum Database considers to be special characters in a password.|
 |restrict\_upper|bool|true|Specifies whether or not the password string must contain at least one upper case character.|
 |restrict\_lower|bool|true|Specifies whether or not the password string must contain at least one lower case character.|
@@ -66,13 +66,13 @@ The `advanced_password_check` module provides the following user-defined functio
 |Function Signature|Argument Values|Description|
 |--------|----------|-----------|
 |`manage_exception_list(action, role_name, exception_type)`|- `action` can be *add*, *remove*, or *show* <br>- `role_name`<br>- `exception_type` can be *password_max_age*, *password_reuse_days*, *password_reuse_history*, or *password_login_attempts*. |Adds, removes, and shows roles in the exception list for a policy.|
-|`unblock_account(role_name)`|`role_name`|Unblocks a user.|
+|`unblock_account(role_name)`|`role_name`|Unblocks a role|
 |`status()`||Lists active password policies.|
 
 Use the `manage_exception_list()` user-defined function to manage the exception list for a password policy. The users within the exception list do not enforce the rules set for the policy.
 The function takes three arguments: the action to take, the role name and the name of the exception. The value of `action` can be `add`, `remove`, or `show`. The value of `exception_type` can be `password_max_age`, `password_reuse_days`, `password_reuse_history`, `password_login_attempts`, or an empty string to represent all of the available exception types. When the action is `show`, you may specify `role_name` as an empty string to include all roles.
 
-For example, add the user `sales` to the exception list for `password_max_age`, so the user does not have a password expiration date: 
+For example, to add the user `sales` to the exception list for `password_max_age`, so the user does not have a password expiration date: 
 
 ```
 SELECT advanced_password_check.manage_exception_list('add', 'sales', 'password_max_age');
