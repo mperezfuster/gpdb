@@ -8,12 +8,20 @@ The `advanced_password_check` module allows you to strengthen password policies 
 
 The `advanced_password_check` module provides no SQL-accessible functions. To use it, enable the extension as a preloaded library and restart Greenplum Database:
 
+First, check if there are any preloaded shared libraries by running the following command:
+
 ```
-gpconfig -c shared_preload_libraries -v advanced_password_check 
+gpconfig -s shared_preload_libraries
+```
+
+Use the output of the above command to enable the `advanced_password_check` module, along any other shared libraries, and restart Greenplum Database:
+
+```
+gpconfig -c shared_preload_libraries -v <other_libraries>,advanced_password_check
 gpstop -ar 
 ```
 
-Then install the extension in your database:
+Finally, install the extension in your database:
 
 ```
 CREATE EXTENSION advanced_password_check;
