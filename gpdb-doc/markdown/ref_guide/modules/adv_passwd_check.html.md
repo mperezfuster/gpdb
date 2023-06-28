@@ -69,26 +69,72 @@ After you set or change module configuration in this manner, you must reload the
 gpstop -u
 ```
 
-The `advanced_password_check` module provides the following user-defined functions (UDF):
+The `advanced_password_check` module provides the following user-defined functions (UDF). Note that you must specify all function arguments as single-quoted strings.
 
 |Function Signature|Arguments|Description|
 |--------|----------|-----------|
-|`manage_exception_list(action, role_name, exception_type)`|- `action` can be `'add'`, `'remove'`, or `'show'` <br>- `role_name`<br>- `exception_type` can be `'password_max_age'`, `'password_reuse_days'`, `'password_reuse_history'`, or `'password_login_attempts'`. |Adds, removes, and shows roles in the exception list for a policy.|
+|`manage_exception_list(action, role_name, exception_type)`|- `action` can be `add`, `remove`, or `show`. <br>- `role_name`<br>- `exception_type` can be `password_max_age`, `password_reuse_days`, `password_reuse_history`, or `password_login_attempts`. |Adds, removes, and shows roles in the exception list for a policy.|
 |`unblock_account(role_name)`|`role_name`|Unblocks a role|
 |`status()`||Lists active password policies.|
 
 Use the `manage_exception_list()` function to manage the exception list for a password policy. Greenplum does not enforce the rules set for the policy for any users specified in the exception list.
 The function takes three arguments: the action to take, the role name and the name of the exception. The value of `action` can be `add`, `remove`, or `show`. The value of `exception_type` can be `password_max_age`, `password_reuse_days`, `password_reuse_history`, `password_login_attempts`, or an empty string to represent all of the available exception types. When the action is `show`, you may specify `role_name` as an empty string to include all roles.
 
-For example, to add the user `sales` to the exception list for `password_max_age`, so the user does not have a password expiration date: 
+For example, to add the role `user1` to the exception list for `password_max_age`, so the role does not have a password expiration date: 
 
 ```
-SELECT advanced_password_check.manage_exception_list('add', 'sales', 'password_max_age');
+SELECT advanced_password_check.manage_exception_list('add', 'user1', 'password_max_age');
+
+role_id | role_name | exception_type 
+---------+-----------+---------------- 
+(0 rows) 
 ```
 
-Use the `unblock_account_role()` function to manually unblock a user that reached the limit set by the configuration parameter `password_login_attempts`. 
+The following example checks all exception lists for all roles:
 
-Use the `status()` function to view the values of all active password policies.
+```
+SELECT * FROM advanced_password_check.manage_exception_list('show','', ''); 
+
+role_id | role_name |     exception_type 
+---------+-----------+------------------------- 
+1826266 | user1     | password_max_age 
+1826267 | user2     | password_reuse_history 
+1826266 | user1     | password_reuse_days 
+1826266 | user1     | password_login_attempts 
+(4 rows) 
+```
+
+Use the `unblock_account_role()` function to manually unblock a user that reached the limit set by the configuration parameter `password_login_attempts`. For example:
+
+```
+SELECT * FROM advanced_password_check.unblock_account('user1'); 
+
+unblock_account 
+----------------- 
+(1 row) 
+```
+
+Use the `status()` function to view the values of all active password policies. For example:
+
+```
+SELECT * FROM advanced_password_check.status(); 
+
+           guc           |        value 
+-------------------------+--------------------- 
+special_chars           | !@#$%^&*()_+{}|<>?= 
+restrict_lower          | t 
+restrict_upper          | t 
+restrict_numbers        | t 
+restrict_special        | t 
+minimum_length          | 8 
+maximum_length          | 15 
+password_max_age        | 192 
+password_reuse_days     | 0 
+password_reuse_history  | 0 
+password_login_attempts | 0 
+lockout_duration        | 0 
+(12 rows) 
+```
 
 ## <a id="topic_example"></a>Example 
 
