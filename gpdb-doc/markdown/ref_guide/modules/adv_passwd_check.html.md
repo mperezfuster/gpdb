@@ -69,7 +69,7 @@ After you set or change module configuration in this manner, you must reload the
 gpstop -u
 ```
 
-The `advanced_password_check` module provides the following user-defined functions (UDF). Note that you must specify all function arguments as single-quoted strings.
+The `advanced_password_check` module provides the following user-defined functions (UDF). Specify all function arguments as single-quoted strings.
 
 |Function Signature|Arguments|Description|
 |--------|----------|-----------|
