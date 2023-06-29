@@ -47,7 +47,7 @@ The `advanced_password_check` module defines server configuration parameters tha
 |lockout_duration|int|0|The number of minutes a user is locked after reaching password_login_attempts. If set to 0, the user is locked indefinitely.|
 |minimum\_length|int|8|The minimum allowable length of a Greenplum Database password.|
 |maximum\_length|int|15|The maximum allowable length of Greenplum Database password.|
-|password_login_attempts|int|0|The number of failed login attempts before a user is locked. If set to 0, this feature is disabled.|
+|password_login_attempts|int|0|The number of consecutive failed login attempts before a user is locked. If set to 0, this feature is disabled.|
 |password_max_age|int|0|The maximum number of days before the password expires. If set to 0, the password does not expire.|
 |password_reuse_days|int|0|The number of days before a user can reuse a password. If set to 0, the user can reuse any password.|
 |password_reuse_history|int|0|The number of previous passwords a user cannot reuse. If set to 0, the user can reuse any password.|
