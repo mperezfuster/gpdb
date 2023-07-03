@@ -105,13 +105,13 @@ The recovery process marks the segment as up again in the Greenplum Database sys
     Each line in the config file specifies a segment to recover. This line can have one of two formats. In the event of in-place \(incremental\) recovery, enter one group of pipe-delimited fields in the line. For example:
 
     ```
-    failedAddress|failedPort|failedDataDirectory
+    failedHostname|failedAddress|failedPort|failedDataDirectory
     ```
 
     For recovery to a new location, enter two groups of fields separated by a space in the line. The required space is indicated by <SPACE\>. Do not add additional spaces.
 
     ```
-    failedAddress|failedPort|failedDataDirectory<SPACE>newAddress|
+    failedHostname|failedAddress|failedPort|failedDataDirectory<SPACE>newAddress|
     newPort|newDataDirectory
     ```
 
