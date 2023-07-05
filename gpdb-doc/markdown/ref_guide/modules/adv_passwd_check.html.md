@@ -136,6 +136,8 @@ lockout_duration        | 0
 (12 rows) 
 ```
 
+> *Note* The password history information is stored in the Greenplum master host only. In the event of a primary master failure, if you activate the standby master host, the `advanced_password_module` will not be able to access the password history information, and it will affect any server configuration parameters or UDFs that involve password history information. For example, a role may reuse a password even if the `password_reuse_history` is set, as there is no information about previous passwords. If you switch back to the original master host, unless there is data corruption, the password history information will be accessible again.
+
 ## <a id="topic_example"></a>Example 
 
 Suppose that you have defined the following password policies:
