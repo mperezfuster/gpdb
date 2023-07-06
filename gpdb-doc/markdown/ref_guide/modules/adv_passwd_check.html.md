@@ -136,7 +136,7 @@ lockout_duration        | 0
 (12 rows) 
 ```
 
-> **Note** The password history information is stored in the Greenplum master host only. In the event of a primary master failure, if you activate the standby master host, the `advanced_password_check` module  will not be able to access the password history information, and it will affect any server configuration parameters or UDFs that involve password history information. For example, a role may reuse a password even if the `password_reuse_history` is set, as there is no information about previous passwords. If you switch back to the original master host, unless there is data corruption, the password history information will be accessible again.
+> **Note** The password history information is stored in the Greenplum coordinator host only. In the event of a primary coordinator failure, if you activate the standby coordinator host, the `advanced_password_check` module  will not be able to access the password history information, and it will affect any server configuration parameters or UDFs that involve password history information. For example, a role may reuse a password even if the `password_reuse_history` is set, as there is no information about previous passwords. If you switch back to the original coordinator host, unless there is data corruption, the password history information will be accessible again.
 
 ## <a id="topic_example"></a>Example 
 
@@ -160,7 +160,7 @@ gpconfig -c advanced_password_check.password_reuse_history -v 1
 gpconfig -c advanced_password_check.password_max_age -v 90
 gpconfig -c advanced_password_check.password_login_attempts -v 3
 gpconfig -c advanced_password_check.lockout_duration -v 60
-gpadmin@gpmaster$ gpstop -u
+gpstop -u
 ```
 
 After loading the new configuration, passwords that the Greenplum superuser sets must now follow the policies, and Greenplum returns an error for every policy that is not met. Note that Greenplum checks the password string against all of the policies, and concatenates together the messages for any errors that it encounters. For example \(line breaks added for better viewability\):
