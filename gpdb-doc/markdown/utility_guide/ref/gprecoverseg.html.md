@@ -47,7 +47,7 @@ By default, a failed segment is recovered in place, meaning that the system brin
 In some cases, this may not be possible \(for example, if a host was physically damaged and cannot be recovered\). In this situation, `gprecoverseg` allows you to recover failed segments to a completely new host \(using `-p`\), on an alternative data directory location on your remaining live segment hosts \(using `-s`\), or by supplying a recovery configuration file \(using `-i`\) in the following format. The word <SPACE\> indicates the location of a required space. Do not add additional spaces. The parameter `failed_host_name` is optional.
 
 ```
-<failed_host_name>|<failed_host_address>|<port>|<data_directory><SPACE><recovery_host_address>|<port>|<data_directory>
+<failed_host_name>|<failed_host_address>|<port>|<data_directory><SPACE><recovery_host_name>|<recovery_host_address>|<port>|<data_directory>
 
 ```
 
