@@ -10,8 +10,6 @@ This chapter contains the following information:
 -   [Usage](#topic7)
 -   [PostGIS Extension Support and Limitations](#postgis_support)
 
-For information about upgrading PostGIS on Greenplum Database 6 systems, see [Upgrading PostGIS 2.1.5 or 2.5.4](postgis-upgrade.html)
-
 ## <a id="topic2"></a>About PostGIS 
 
 PostGIS is a spatial database extension for PostgreSQL that allows GIS (Geographic Information Systems) objects to be stored in the database. The Greenplum PostGIS extension includes support for GiST-based R-Tree spatial indexes, and functions for analysis and processing of GIS objects.
@@ -26,20 +24,17 @@ For information about GDAL, see [https://gdal.org/](https://gdal.org/).
 
 ## <a id="topic3"></a>Greenplum PostGIS Extension 
 
-The Greenplum PostGIS extension package is available from [VMware Tanzu Network](https://network.pivotal.io/products/pivotal-gpdb). After you download the package, you can follow the instructions in [Verifying the Greenplum Database Software Download](../install_guide/verify_sw.html) to verify the integrity of the download. You can install the package using the Greenplum Package Manager (`gppkg`). For details, see [`gppkg`](../utility_guide/ref/gppkg.html) in the _Greenplum Database Utility Guide_.
+The Greenplum PostGIS extension package is available from [VMware Tanzu Network](https://network.tanzu.vmware.com/products/vmware-greenplum). After you download the package, you can follow the instructions in [Verifying the Greenplum Database Software Download](../install_guide/verify_sw.html) to verify the integrity of the download. You can install the package using the Greenplum Package Manager (`gppkg`). For details, see [`gppkg`](../utility_guide/ref/gppkg.html) in the _Greenplum Database Utility Guide_.
 
 Greenplum Database supports the following PostGIS extension versions and components:
 
-- PostGIS 2.5.4, and components Proj 4.8.0, Geos 3.10.2, GDAL 1.11.1, Json 0.12, Expat 2.4.4
-- PostGIS 2.1.5, and components Proj 4.8.0, Geos 3.4.2, GDAL 1.11.1, Json 0.12, Expat 2.1.0
+- PostGIS 3.3, and components Proj 4.8.0, Geos 3.10.2, GDAL 1.11.1, Json 0.12, Expat 2.4.4 --- To be edited
 
 For information about the supported Greenplum extension packages and software versions, see [Extensions](../install_guide/platform-requirements-overview.html#topic_eyc_l2h_zz).
 
-There are significant changes in PostGIS 2.5.4 compared with 2.1.5. For a list of new and enhanced functions in PostGIS 2.5, see the PostGIS documentation [PostGIS Functions new or enhanced in 2.5](https://postgis.net/docs/manual-2.5/PostGIS_Special_Functions_Index.html#NewFunctions_2_5) and [Release 2.5.4](https://postgis.net/docs/manual-2.5/release_notes.html).
+There are significant changes in PostGIS 2.5.4 compared with 2.1.5. For a list of new and enhanced functions in PostGIS 2.5, see the PostGIS documentation [PostGIS Functions new or enhanced in 2.5](https://postgis.net/docs/manual-2.5/PostGIS_Special_Functions_Index.html#NewFunctions_2_5) and [Release 2.5.4](https://postgis.net/docs/manual-2.5/release_notes.html). --- To be edited
 
-<p class="note"><strong>Note:</strong> To upgrade PostGIS refer to  <a href="./postgis-upgrade.html">Upgrading PostGIS 2.1.5 or 2.5.4</a>.</p>
-
-This table lists the PostGIS extensions support by Greenplum PostGIS.
+This table lists the PostGIS extensions support by Greenplum PostGIS. --- To be reviewed
 
 <div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" id="topic3__table_owt_4ml_xlb" class="table" frame="border" border="1" rules="all"><caption><span class="tablecap"><span class="table--title-label">Table 1. </span>Greenplum PostGIS Extensions</span></caption><colgroup><col style="width:32.786885245901644%" /><col style="width:67.21311475409836%" /></colgroup><thead class="thead" style="text-align:left;">
 <tr class="row">
@@ -100,7 +95,7 @@ This table lists the PostGIS extensions support by Greenplum PostGIS.
 
 > **Note** The PostGIS topology extension `postgis_topology` and the PostGIS 3D and geoprocessing extension `postgis_sfcgal` are not supported by Greenplum PostGIS and are not included in the Greenplum PostGIS extension package.
 
-For information about the PostGIS extensions, see the [PostGIS 2.5 documentation](https://postgis.net/documentation/).
+For information about the PostGIS extensions, see the [PostGIS documentation](https://postgis.net/documentation/).
 
 For information about Greenplum PostGIS feature support, see [PostGIS Extension Support and Limitations](#postgis_support).
 
@@ -113,8 +108,6 @@ This section describes how to enable and remove PostGIS and the supported PostGI
 -   [Enabling Out-of-Database Rasters](#topic_fx2_fpx_llb)
 -   [Removing PostGIS Support](#topic_bgz_vcl_r1b)
 
-For information about upgrading PostGIS on Greenplum Database 6 systems, see [Upgrading PostGIS 2.1.5 or 2.5.4](postgis-upgrade.html)
-
 ### <a id="topic_ln5_xcl_r1b"></a>Enabling PostGIS Support 
 
 To enable PostGIS support, install the Greenplum PostGIS extension package into the Greenplum Database system, and then use the `CREATE EXTENSION` command to enable PostGIS support for an individual database.
@@ -124,7 +117,7 @@ To enable PostGIS support, install the Greenplum PostGIS extension package into 
 Install Greenplum PostGIS extension package with the `gppkg` utility. For example, this command installs the package for RHEL 7.
 
 ```
-gppkg install postgis-2.5.4+pivotal.2.build.1-gp7-rhel8-x86_64.gppkg
+gppkg install postgis-3.3.2+pivotal.1.build.1-gp7-rhel8-x86_64.gppkg
 ```
 
 After installing the package, source the `greenplum_path.sh` file and restart Greenplum Database. This command restarts Greenplum Database.
@@ -267,7 +260,7 @@ Depending on the extensions you enabled for PostGIS, drop support for the extens
 After PostGIS support has been removed from all databases in the Greenplum Database system, you can remove the PostGIS extension package. For example, this `gppkg` command removes the PostGIS extension package.
 
 ```
-gppkg remove postgis-2.5.4+pivotal.2
+gppkg remove postgis-3.3.2+pivotal.1
 ```
 
 After removing the package, ensure that these lines for PostGIS Raster support are removed from the `greenplum_path.sh` file.
@@ -405,9 +398,9 @@ Greenplum PostGIS supports these PostGIS Raster data types.
 -   summarystats
 -   unionarg
 
-For information about PostGIS Raster data Management, queries, and applications, see [https://postgis.net/docs/manual-2.5/using\_raster\_dataman.html](https://postgis.net/docs/manual-2.5/using_raster_dataman.html).
+For information about PostGIS Raster data Management, queries, and applications, see the [PostGIS documentation](https://postgis.net/docs/manual-3.3/using_raster_dataman.html).
 
-For a list of PostGIS Raster data types, operators, and functions, see the [PostGIS Raster reference documentation](https://postgis.net/docs/manual-2.5/RT_reference.html).
+For a list of PostGIS Raster data types, operators, and functions, see the [PostGIS Raster reference documentation](https://postgis.net/docs/manual-3.3/RT_reference.html).
 
 ### <a id="topic_y5z_nkb_3p"></a>Supported PostGIS Index 
 
