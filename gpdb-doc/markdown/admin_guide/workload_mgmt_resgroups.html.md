@@ -121,7 +121,7 @@ Roles in `test` have a CPU ratio of 10/(10+30+10+10)=16%. However, as the hard l
 
 When you enable resource groups, memory usage is managed at the Greenplum Database segment and resource group levels. You can also manage memory at the transaction level. See [Greenplum Database Memory Overview](wlmgmt_intro.html) to estimate how much memory each Greenplum Database segment has available to use. This will help you estimate how much memory to assign to the resource groups. 
 
-Memory allocation is based on first-come-first-served principle for all queries. Greenplum Database uses the system memory to allocate memory for any incoming queries; there is no memory quota or pool for a resource group. The amount of memory allocated to a query is determined by the following parameters.
+The amount of memory allocated to a query is determined by the following parameters:
 
 The parameter `MEMORY_LIMIT` of a resource group sets the maximum amount of memory reserved for this resource group on a segment. This determines the total amount of memory that all worker processes for a query can consume on the segment host during query execution. The amount of memory allotted to a query is the group memory limit divided by the group concurrency limit: `MEMORY_LIMIT` / `CONCURRENCY`. 
 
