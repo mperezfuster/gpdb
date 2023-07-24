@@ -56,7 +56,7 @@ Configure the settings for the Greenplum Database.
 gpv config set database <setting>
 ```
 
-Settings:
+Where `setting` can be one of the following:
 
 deployment-type <type_name>
 :   Specifies whether the Greenplum deployment uses mirror segments or not. Valid values of `<type_name>` include `mirrored` and `mirrorless`. For example: `gpv config set database deployment-type mirrored`. 
@@ -72,15 +72,16 @@ Configure the network settings for the Greenplum cluster.
 gpv config set network <setting>
 ```
 
-Settings:
+Where `setting` can be one of the following:
 
 base-vm <subsetting>
 :   Configure the network settings for the base virtual machine. The possible sub-settings are:
 
-        - `gateway-ip <IP>`: Set the gateway Ip address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm gateway-ip 10.0.0.1`
-        - `ip <IP>`: Set the static IP address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm ip 10.0.0.5`.
-        - `netmask <NETMASK>`: Set the netmask to be used by the base VM to be used by the base VM when network-type is set to `static`. For example: `gpv config set network base-vm netmask 255.255.255.0`.
-        - `network-type <TYPE>`: Set the network type tp be used by the base VM. Specifies how the IP addresses are assigned to the base VM. Valid values for `<TYPE>` are `static` and `dhcp`. For example: `gpv config set network base-vm network-type dhcp`.
+The possible <subsettings> can be: 
+    - `gateway-ip <IP>`: Set the gateway Ip address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm gateway-ip 10.0.0.1`
+    - `ip <IP>`: Set the static IP address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm ip 10.0.0.5`.
+    - `netmask <NETMASK>`: Set the netmask to be used by the base VM to be used by the base VM when network-type is set to `static`. For example: `gpv config set network base-vm netmask 255.255.255.0`.
+    - `network-type <TYPE>`: Set the network type tp be used by the base VM. Specifies how the IP addresses are assigned to the base VM. Valid values for `<TYPE>` are `static` and `dhcp`. For example: `gpv config set network base-vm network-type dhcp`.
 
 gp-virtual-etl-bar <subsetting>
 :   Configure the network settings for ETL, backup and restore traffic. The possible sub-settings are:
