@@ -1,20 +1,8 @@
 ---
-title: Geospatial Analytics 
+title: Greenplum PostGIS Extension
 ---
 
-This chapter contains the following information:
-
--   [About PostGIS](#topic2)
--   [Greenplum PostGIS Extension](#topic3)
--   [Enabling and Removing PostGIS Support](#topic_b2l_hzw_q1b)
--   [Usage](#topic7)
--   [PostGIS Extension Support and Limitations](#postgis_support)
-
-## <a id="topic2"></a>About PostGIS 
-
-PostGIS is a spatial database extension for PostgreSQL that allows GIS (Geographic Information Systems) objects to be stored in the database. The Greenplum PostGIS extension includes support for GiST-based R-Tree spatial indexes, and functions for analysis and processing of GIS objects.
-
-The Greenplum PostGIS extension supports some PostGIS optional extensions and includes support for the PostGIS `raster` data type. With the PostGIS Raster objects, PostGIS `geometry` data type offers a single set of overlay SQL functions \(such as `ST_Intersects`\) operating seamlessly on vector and raster geospatial data. PostGIS Raster uses the GDAL \(Geospatial Data Abstraction Library\) translator library for raster geospatial data formats that presents a [single raster abstract data model](https://gdal.org/user/raster_data_model.html) to a calling application.
+PostGIS is a spatial database extension for PostgreSQL that allows you to store GIS (Geographic Information Systems) objects in the database. The Greenplum PostGIS extension supports som PostGIS optional extensions such as  GiST-based R-Tree spatial indexes, and functions for analysis and processing of GIS objects. It also includes support for the PostGIS `raster` data type. With the PostGIS Raster objects, PostGIS `geometry` data type offers a single set of overlay SQL functions \(such as `ST_Intersects`\) operating seamlessly on vector and raster geospatial data. PostGIS Raster uses the GDAL \(Geospatial Data Abstraction Library\) translator library for raster geospatial data formats that presents a [single raster abstract data model](https://gdal.org/user/raster_data_model.html) to a calling application.
 
 For information about Greenplum Database PostGIS extension support, see [PostGIS Extension Support and Limitations](#postgis_support).
 
@@ -26,15 +14,20 @@ For information about GDAL, see [https://gdal.org/](https://gdal.org/).
 
 The Greenplum PostGIS extension package is available from [VMware Tanzu Network](https://network.tanzu.vmware.com/products/vmware-greenplum). After you download the package, you can follow the instructions in [Verifying the Greenplum Database Software Download](../install_guide/verify_sw.html) to verify the integrity of the download. You can install the package using the Greenplum Package Manager (`gppkg`). For details, see [`gppkg`](../utility_guide/ref/gppkg.html) in the _Greenplum Database Utility Guide_.
 
-Greenplum Database supports the following PostGIS extension versions and components:
+Greenplum Database supports the PostGIS extension with these component versions:
 
-- PostGIS 3.3, and components Proj 4.8.0, Geos 3.10.2, GDAL 1.11.1, Json 0.12, Expat 2.4.4 --- To be edited
+- PostGIS 3.3.2
+- Proj 8.2.1 
+- Geos 3.10.2
+- GDAL 3.6.3
+- Json 0.12
+- Expat 2.5.0
 
 For information about the supported Greenplum extension packages and software versions, see [Extensions](../install_guide/platform-requirements-overview.html#topic_eyc_l2h_zz).
 
-There are significant changes in PostGIS 2.5.4 compared with 2.1.5. For a list of new and enhanced functions in PostGIS 2.5, see the PostGIS documentation [PostGIS Functions new or enhanced in 2.5](https://postgis.net/docs/manual-2.5/PostGIS_Special_Functions_Index.html#NewFunctions_2_5) and [Release 2.5.4](https://postgis.net/docs/manual-2.5/release_notes.html). --- To be edited
+There are significant changes in PostGIS 3.3.2 compared with earlier versions. For a list of new and enhanced functions in PostGIS 3.3, see the PostGIS documentation [PostGIS Functions new or enhanced in 3.3](https://postgis.net/docs/manual-3.3/PostGIS_Special_Functions_Index.html#NewFunctions_3_3) and [Release 3.3.2](https://postgis.net/docs/manual-3.3/release_notes.html#idm44622).
 
-This table lists the PostGIS extensions support by Greenplum PostGIS. --- To be reviewed
+This table lists the PostGIS extensions support by Greenplum PostGIS.
 
 <div class="tablenoborder"><table cellpadding="4" cellspacing="0" summary="" id="topic3__table_owt_4ml_xlb" class="table" frame="border" border="1" rules="all"><caption><span class="tablecap"><span class="table--title-label">Table 1. </span>Greenplum PostGIS Extensions</span></caption><colgroup><col style="width:32.786885245901644%" /><col style="width:67.21311475409836%" /></colgroup><thead class="thead" style="text-align:left;">
 <tr class="row">
@@ -102,11 +95,6 @@ For information about Greenplum PostGIS feature support, see [PostGIS Extension 
 ## <a id="topic_b2l_hzw_q1b"></a>Enabling and Removing PostGIS Support 
 
 This section describes how to enable and remove PostGIS and the supported PostGIS extensions, and how to configure PostGIS Raster.
-
--   [Enabling PostGIS Support](#topic_ln5_xcl_r1b)
--   [Enabling GDAL Raster Drivers](#topic_ydr_q5l_ybb)
--   [Enabling Out-of-Database Rasters](#topic_fx2_fpx_llb)
--   [Removing PostGIS Support](#topic_bgz_vcl_r1b)
 
 ### <a id="topic_ln5_xcl_r1b"></a>Enabling PostGIS Support 
 
@@ -359,14 +347,7 @@ CREATE INDEX indexname
 
 ## <a id="postgis_support"></a>PostGIS Extension Support and Limitations 
 
-This section describes Greenplum PostGIS extension feature support and limitations.
-
--   [Supported PostGIS Data Types](#topic_g2d_hkb_3p)
--   [Supported PostGIS Raster Data Types](#topic_bl3_4vy_d1b)
--   [Supported PostGIS Index](#topic_y5z_nkb_3p)
--   [PostGIS Extension Limitations](#topic_wy2_rkb_3p)
-
-In general, the Greenplum PostGIS extension does not support the following features:
+This section describes Greenplum PostGIS extension feature support and limitations. In general, the Greenplum PostGIS extension does not support the following features:
 
 -   The PostGIS topology extension `postgis_topology`
 -   The PostGIS 3D and geoprocessing extension `postgis_sfcgal`
@@ -384,7 +365,7 @@ Greenplum PostGIS extension supports these PostGIS data types:
 -   geometry
 -   geography
 
-For a list of PostGIS data types, operators, and functions, see the [PostGIS reference documentation](https://postgis.net/docs/manual-2.5/reference.html).
+For a list of PostGIS data types, operators, and functions, see the [PostGIS reference documentation](https://postgis.net/docs/manual-3.3/reference.html).
 
 ### <a id="topic_bl3_4vy_d1b"></a>Supported PostGIS Raster Data Types 
 
@@ -437,8 +418,8 @@ This section lists the Greenplum PostGIS extension limitations for user-defined 
     SELECT AddGeometryColumn('public', 'geometries', 'geom', 0, 'LINESTRING', 2);
     ```
 
--   The `_postgis_index_extent` function is not supported on Greenplum Database 6 due to its dependence on spatial index operations.
--   The `<->` operator \(`geometry <-> geometry`\) returns the centroid/centroid distance for Greenplum Database 6.
+-   The `_postgis_index_extent` function is not supported on Greenplum Database 7 due to its dependence on spatial index operations.
+-   The `<->` operator \(`geometry <-> geometry`\) returns the centroid/centroid distance for Greenplum Database 7.
 -   The TIGER geocoder extension is supported. However, upgrading the TIGER geocoder extension is not supported.
 -   The `standardize_address()` function uses `lex`, `gaz` or `rules` tables as parameters. If you are using tables apart from `us_lex`, `us_gaz` or `us_rules`, you should create them with the distribution policy `DISTRIBUTED REPLICATED` to work for Greenplum.
 
