@@ -1,8 +1,6 @@
 # gpv greenplum
 
-
-Manage the deployment of a Greenplum cluster. The gpv greenplum command group allows a user to deploy Greenplum, list the strings for connecting to Greenplum, and validate any Greenplum which has
-been deployed.
+Manage the deployment of a Greenplum Database on vSphere cluster. The `gpv greenplum` command group allows you to deploy a Greenplum cluster, list the connection string to the database, and validate any deployed Greenplum cluster.
 
 ## <a id="section2"></a>Usage
 
@@ -11,28 +9,29 @@ gpv config <command>
 ```
 ## <a id="opts"></a>Commands
 
-### <a id="deploy"></a>Deploy
+The available commands for `gpv config` are `deploy`, `list`, and `validate`.
 
-Deploy Greenplum based on a user's configuration. Deploy Greenplum based on a user's configuration. 
+### <a id="deploy"></a>deploy
+
+Deploy Greenplum based on your configuration. The `gpv greenplum deploy` command provisions and powers on all the virtual machines, initializes the Greenplum Database cluster, and enables and starts the Greenplum Virtual Service that manages high availability.
 
 ```
 gpv greenplum deploy
 ```
 
-The gpv greenplum deploy will perform the following operations:
+### <a id="list"></a>list
 
-provision and power-on all of the VMs based on the user's configuration
-initialize Greenplum
-enable and start the Greenplum Virtual Service (GPVS) for high availability
-
-### <a id="list"></a>List
-
-Display endpoints for clients to connect to Greenplum. The gpv greenplum list command displays the endpoints which a client must use to interact with Greenplum.  At the moment, the only endpoint which will be displayed is a postgresql connection URI.
+Display an endpoints to connect to Greenplum. The current available option is the PostgreSQL connection Uniform Resource Identifier (URI).
 
 ```
 gpv greenplum list
 ```
-### <a id="validate"></a>Validate
 
-Confirm that the Greenplum deployment is successful. The gpv greenplum validate confirms that the Greenplum cluster is functional and configured properly.
+### <a id="validate"></a>validate
+
+Confirm that the Greenplum Database cluster deployment is successful. 
+
+```
+gpv greenplum validate
+```
 
