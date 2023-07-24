@@ -1,8 +1,8 @@
 ---
-title: Greenplum PostGIS Extension
+title: Geospatial Analytics
 ---
 
-PostGIS is a spatial database extension for PostgreSQL that allows you to store GIS (Geographic Information Systems) objects in the database. The Greenplum PostGIS extension supports som PostGIS optional extensions such as  GiST-based R-Tree spatial indexes, and functions for analysis and processing of GIS objects. It also includes support for the PostGIS `raster` data type. With the PostGIS Raster objects, PostGIS `geometry` data type offers a single set of overlay SQL functions \(such as `ST_Intersects`\) operating seamlessly on vector and raster geospatial data. PostGIS Raster uses the GDAL \(Geospatial Data Abstraction Library\) translator library for raster geospatial data formats that presents a [single raster abstract data model](https://gdal.org/user/raster_data_model.html) to a calling application.
+PostGIS is a spatial database extension for PostgreSQL that allows you to store GIS (Geographic Information Systems) objects in the database. The Greenplum PostGIS extension supports some PostGIS optional extensions such as  GiST-based R-Tree spatial indexes, and functions for analysis and processing of GIS objects. It also includes support for the PostGIS `raster` data type. With the PostGIS Raster objects, PostGIS `geometry` data type offers a single set of overlay SQL functions \(such as `ST_Intersects`\) operating seamlessly on vector and raster geospatial data. PostGIS Raster uses the GDAL \(Geospatial Data Abstraction Library\) translator library for raster geospatial data formats that presents a [single raster abstract data model](https://gdal.org/user/raster_data_model.html) to a calling application.
 
 For information about Greenplum Database PostGIS extension support, see [PostGIS Extension Support and Limitations](#postgis_support).
 
