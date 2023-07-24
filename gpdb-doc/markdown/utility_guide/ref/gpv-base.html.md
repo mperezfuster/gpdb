@@ -1,7 +1,6 @@
 # gpv base
 
-Manages the base virtual machine for a deployment.
-The `gpv base` command group allows you to import and deploy the base virtual machine.
+Manage the base virtual machine for a deployment of Greenplum Database on vSphere. The `gpv base` command group allows you to import and deploy the base virtual machine.
 
 ## <a id="section2"></a>Usage
 
@@ -11,34 +10,36 @@ gpv base <command>
 
 ## <a id="opts"></a>Commands
 
-### <a id="deploy"></a>Deploy
+The available commands for `gpv base` are `deploy` and `import`.
 
-Configure the imported base VM for Greenplum deployment. The `gpv base deploy` command performs the following operations in the base vm:
+### <a id="deploy"></a>deploy
 
-- Copy and install Greenplum and Greenplum Virtual Service packages.
-- Configure the OS using the Greenplum Virtual Service.
-- Change secrets for `root` and `gpadmin` roles.
-- Validate that the base virtual machine is properly configured.
+Configure the imported base virtual machine for Greenplum deployment. The `gpv base deploy` command performs the following operations in the base virtual machine:
 
-### <a id="import"></a>Import
+- Copies and installs Greenplum and Greenplum Virtual Service packages.
+- Configures the OS using the Greenplum Virtual Service.
+- Changes secrets for the `root` and `gpadmin` roles.
+- Validates that the base virtual machine is configured correctly.
 
-Import an existing VM template or an OVA file as a new base VM. The `gpv base import` command creates a new base virtual machine. This virtual machine can be created from an existing virtual machine template provided by the user, usually already certified to follow all the existing policies. It may also be created from an OVA file. For example, the VMWare provided OVA with all the dependencies required for Greenplum deployment in an air-gaped environment.
+### <a id="import"></a>import
+
+Import an existing virtual machine template or an OVA file as a new base virtual machine. The `gpv base import` command creates a new base virtual machine from your own virtual machine template (certified to follow all the existing policies), or from an OVA file, such as the Greenplum Virtual Machine base template available on [VMware Tanzu Network](https://network.tanzu.vmware.com/products/vmware-greenplum).
 
 Options:
 
 -f, --ova=file_name
-:   Specify a local OVA file name to be uploaded to the target vSphere cluster.
+:   Specify a local OVA file name.
 
 -t, --template=template_name
-:   Specify an existing virtual machine template `template_name` to be cloned.
+:   Specify an existing virtual machine template `template_name`.
 
 
-## <a id="examples"></a>Examples
+#### <a id="examples"></a>Examples
 
-Import an existing VM template:
+Import an existing virtual machine template:
 
 ```
-gpv base import -t customer-provided-template
+gpv base import -t my-company-template
 ```
 
 Import a local OVA:

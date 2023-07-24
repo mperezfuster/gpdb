@@ -1,6 +1,6 @@
 # gpv config
 
-Manage the configuration of a Greenplum cluster. The `gpv config` command group allows a user to configure a Greenplum cluster, import an external configuration, and list the configuration.
+Manage the configuration of a Greenplum Database on vSphere cluster. The `gpv config` command group allows you to configure a Greenplum cluster, import an external configuration, and list the current configuration.
 
 ## <a id="section2"></a>Usage
 
@@ -10,24 +10,37 @@ gpv config <command>
 
 ## <a id="opts"></a>Commands
 
-### <a id="init"></a>Init
+The available commands for `gpv config` are `init`, `list`, and `set`.
 
-Initialize a configuration interactively or import an external configuration. The `gpv config init` command creates a configuration for deploying Greenplum. This configuration may be specified via the user entering each value interactively. It may also be created from an existing configuration yaml file, `file_name`.
+### <a id="init"></a>init
+
+Initialize a configuration interactively or import an external configuration from a file. The `gpv config init` command creates the configuration for deploying a Greenplum Database cluster. You may speficy the configuration parameters entering each value interactively, or from an existing configuration yaml file, `file_name`.
 
 ```
 gpv config init [<file_name>]
 ```
 
-For example, start a new configuration from scratch: gpv config init
-Import an existing configuration: gpv config init /path/to/config.yaml.
+#### <a id="ex_init"></a>Examples
 
-### <a id="list"></a>List
+Start a new configuration from scratch: 
 
-List the current configuration GPV settings. The `gpv config list` command displays the current configuration for deploying Greenplum.
+```
+gpv config init
+```
 
-### <a id="set"></a>Set
+Import an existing configuration from a file: 
 
-Set a single configuration setting. Set an individual setting for GPV deployments related to: database, vSphere, VM, and network.
+```
+gpv config init /tmp/config.yaml
+```
+
+### <a id="list"></a>list
+
+List the current configuration settings. The `gpv config list` command displays the current configuration for deploying Greenplum on vSphere.
+
+### <a id="set"></a>set
+
+Set an individual configuration setting. 
 
 ```
 gpv config set <area>
@@ -35,7 +48,7 @@ gpv config set <area>
 
 Where `area` can be one of the following:
 
-#### <a id="database"></a>Database
+#### <a id="database"></a>database
 
 Configure the settings for the Greenplum Database.
 
@@ -46,14 +59,14 @@ gpv config set database <setting>
 Settings:
 
 deployment-type <type_name>
-:   Specifies a `mirrored` or `mirrorless` deployment. The setting specifies whether the Greenplum deployment will use mirrors or not.  Valid values of TYPE include mirrored and mirrorless. For example: `gpv config set database deployment-type mirrored`. 
+:   Specifies whether the Greenplum deployment uses mirror segments or not. Valid values of `<type_name>` include `mirrored` and `mirrorless`. For example: `gpv config set database deployment-type mirrored`. 
 
 prefix <prefix_name>
-:   Specifies a prefix to be prepended to the resource pool and VM names. The gpv config set database prefix specifies a label which will serve as a prefix for the names of the resource pool and the VMs in the deployed GPV cluster. The resource pool name will be <PREFIX>-greenplum and the VM names will be like <PREFIX>-mdw, <PREFIX-smdw>, and PREFIX-sdw-001, etc.
+:   Specifies a label which serves as a prefix for the names of the resource pool and the virtual machines in the Greenplum cluster. 
 
-#### <a id="network"></a>Network
+#### <a id="network"></a>network
 
-Configure the network settings for Greenplum to interact with itself and the outside world. gpv config set network - Configure network-related settings.
+Configure the network settings for the Greenplum cluster.
 
 ```
 gpv config set network <setting>
@@ -63,6 +76,7 @@ Settings:
 
 base-vm <subsetting>
 :   Configure the network settings for the base virtual machine. The possible sub-settings are:
+
         - `gateway-ip <IP>`: Set the gateway Ip address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm gateway-ip 10.0.0.1`
         - `ip <IP>`: Set the static IP address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm ip 10.0.0.5`.
         - `netmask <NETMASK>`: Set the netmask to be used by the base VM to be used by the base VM when network-type is set to `static`. For example: `gpv config set network base-vm netmask 255.255.255.0`.
