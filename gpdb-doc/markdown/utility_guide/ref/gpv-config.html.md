@@ -76,8 +76,6 @@ Where `setting` can be one of the following:
 
 base-vm <subsetting>
 :   Configure the network settings for the base virtual machine. The possible sub-settings are:
-
-The possible <subsettings> can be: 
     - `gateway-ip <IP>`: Set the gateway Ip address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm gateway-ip 10.0.0.1`
     - `ip <IP>`: Set the static IP address to be used by the base VM when `network-type` is set to `static`. For example: `gpv config set network base-vm ip 10.0.0.5`.
     - `netmask <NETMASK>`: Set the netmask to be used by the base VM to be used by the base VM when network-type is set to `static`. For example: `gpv config set network base-vm netmask 255.255.255.0`.
