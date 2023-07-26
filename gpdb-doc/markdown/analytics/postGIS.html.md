@@ -2,7 +2,7 @@
 title: Geospatial Analytics
 ---
 
-PostGIS is a spatial database extension for PostgreSQL that allows you to store GIS (Geographic Information Systems) objects in the database. The Greenplum PostGIS extension supports some PostGIS optional extensions such as  GiST-based R-Tree spatial indexes, and functions for analysis and processing of GIS objects. It also includes support for the PostGIS `raster` data type. With the PostGIS Raster objects, PostGIS `geometry` data type offers a single set of overlay SQL functions \(such as `ST_Intersects`\) operating seamlessly on vector and raster geospatial data. PostGIS Raster uses the GDAL \(Geospatial Data Abstraction Library\) translator library for raster geospatial data formats that presents a [single raster abstract data model](https://gdal.org/user/raster_data_model.html) to a calling application.
+PostGIS is a spatial database extension for PostgreSQL that allows you to store GIS (Geographic Information Systems) objects in the database. The Greenplum PostGIS extension supports some PostGIS optional extensions such as  GiST-based R-Tree spatial indexes, and functions for analysis and processing of GIS objects. It also includes support for the PostGIS `raster` data type. With the PostGIS Raster objects, the PostGIS `geometry` data type offers a single set of overlay SQL functions \(such as `ST_Intersects`\) operating seamlessly on vector and raster geospatial data. PostGIS Raster uses the GDAL \(Geospatial Data Abstraction Library\) translator library for raster geospatial data formats that presents a [single raster abstract data model](https://gdal.org/user/raster_data_model.html) to a calling application.
 
 For information about Greenplum Database PostGIS extension support, see [PostGIS Extension Support and Limitations](#postgis_support).
 
@@ -272,13 +272,13 @@ Removing PostGIS support from a database drops PostGIS objects from the database
 For example, this `CREATE TABLE` command creates a table with column `b` that is defined with the PostGIS `geometry` data type.
 
 ```
-# CREATE TABLE test(a int, b geometry) DISTRIBUTED RANDOMLY;
+CREATE TABLE test(a int, b geometry) DISTRIBUTED RANDOMLY;
 ```
 
 This is the table definition in a database with PostGIS enabled.
 
 ```
-# \d test
+\d test
  Table "public.test"
  Column |   Type   | Modifiers
 --------+----------+-----------
@@ -290,7 +290,7 @@ Distributed randomly
 This is the table definition in a database after PostGIS support has been removed.
 
 ```
-# \d test
+\d test
   Table "public.test"
  Column |  Type   | Modifiers
 --------+---------+-----------
@@ -402,21 +402,6 @@ This section lists the Greenplum PostGIS extension limitations for user-defined 
 -   Greenplum Database does not support PostGIS long transactions.
 
     PostGIS relies on triggers and the PostGIS table `public.authorization_table` for long transaction support. When PostGIS attempts to acquire locks for long transactions, Greenplum Database reports errors citing that the function cannot access the relation, `authorization_table`.
-
--   Greenplum Database does not support type modifiers for user defined types.
-
-    The workaround is to use the `AddGeometryColumn` function for PostGIS geometry. For example, a table with PostGIS geometry cannot be created with the following SQL command:
-
-    ```
-    CREATE TABLE geometries(id INTEGER, geom geometry(LINESTRING));
-    ```
-
-    Use the `AddGeometryColumn` function to add PostGIS geometry to a table. For example, these following SQL statements create a table and add PostGIS geometry to the table:
-
-    ```
-    CREATE TABLE geometries(id INTEGER);
-    SELECT AddGeometryColumn('public', 'geometries', 'geom', 0, 'LINESTRING', 2);
-    ```
 
 -   The `_postgis_index_extent` function is not supported on Greenplum Database 7 due to its dependence on spatial index operations.
 -   The `<->` operator \(`geometry <-> geometry`\) returns the centroid/centroid distance for Greenplum Database 7.
