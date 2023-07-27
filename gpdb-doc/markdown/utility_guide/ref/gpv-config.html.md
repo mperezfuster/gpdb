@@ -5,7 +5,7 @@ Manage the configuration of a Greenplum Database on vSphere cluster.
 ## <a id="section2"></a>Synopsis
 
 ```
-gpv config init <file_name>
+gpv config init [<file_name>]
 gpv config list
 gpv config set <options>
 ```
@@ -50,13 +50,15 @@ Set an individual configuration setting.
 
 ```
 gpv config set database
-gpv config set vm
-gpv config set vsphere
 gpv config set network base-vm
 gpv config set network gp-virtual-etl-bar
 gpv config set network gp-virtual-external
 gpv config set network gp-virtual-internal
+gpv config set vm
+gpv config set vsphere
 ```
+
+Below are the available options for the `gpv config` subcommand:
 
 #### <a id="database"></a>database
 
@@ -74,38 +76,53 @@ deployment-type <type_name>
 prefix <prefix_name>
 :   Specifies a label which serves as a prefix for the names of the resource pool and the virtual machines in the Greenplum cluster. 
 
-#### <a id="network"></a>network
+#### <a id="network-base"></a>network base-vm
 
-Configure the network settings for the Greenplum cluster.
+Configure the network settings for the base virtual machine
 
 ```
-gpv config set network <setting>
+gpv config set network base-vm <setting>
 ```
 
 Where `setting` can be one of the following:
+- `gateway-ip <IP>`: Set the gateway IP address for the base virtual machine when `network-type` is set to `static`. For example: `gpv config set network base-vm gateway-ip 10.0.0.1`
+- `ip <IP>`: Set the static IP address for the base virtual machine when `network-type` is set to `static`. For example: `gpv config set network base-vm ip 10.0.0.5`.
+- `netmask <NETMASK>`: Set the netmask for the base virtual machine when network-type is set to `static`. For example: `gpv config set network base-vm netmask 255.255.255.0`.
+- `network-type <TYPE>`: Set the network type for base virtual machine. The possible values are `static` and `dhcp`. For example: `gpv config set network base-vm network-type dhcp`.
 
-base-vm <sub_setting>
-:   Configure the network settings for the base virtual machine. The possible sub-settings are:
-    - `gateway-ip <IP>`: Set the gateway IP address for the base virtual machine when `network-type` is set to `static`. For example: `gpv config set network base-vm gateway-ip 10.0.0.1`
-    - `ip <IP>`: Set the static IP address for the base virtual machine when `network-type` is set to `static`. For example: `gpv config set network base-vm ip 10.0.0.5`.
-    - `netmask <NETMASK>`: Set the netmask for the base virtual machine when network-type is set to `static`. For example: `gpv config set network base-vm netmask 255.255.255.0`.
-    - `network-type <TYPE>`: Set the network type for base virtual machine. The possible values are `static` and `dhcp`. For example: `gpv config set network base-vm network-type dhcp`.
+#### <a id="network-etl"></a>network gp-virtual-etl-bar
 
-gp-virtual-etl-bar <sub_subsetting>
-:   Configure the network settings for ETL, backup and restore traffic. The possible sub-settings are:
-    - `cidr <CIDR>`: Set the Classless Inter-Domain Routing (CIDR) for the `gp-virtual-etl-bar` network. For example: `gpv config set network gp-virtual-etl-bar cidr 192.168.2.1/24`.
+Configure the network settings for the ETL, backup and restore traffic.
 
-gp-virtual-external <sub_subsetting>
-:   Configure the network settings of the routable network for Greenplum clients. The possible sub-settings are:
-    - `cidr <CIDR>`: Set the CIDR for the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external cidr 10.0.1.1/24`.
-    - `dns-servers <DNS server1> <DNS server 2>`: Set the DNS servers of the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external dns-servers 8.8.8.8 8.8.4.4`.
-    - `gateway-ip <IP>`: Set the gateway IP of the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external gateway-ip 10.0.1.1`.
-    - `ips <IP1> <IP2>`: Set the static IPs of the `gp-virtual-external` network. If the Greenplum deployment type is `mirrorless`, you only need one IP address. If the Greenplum deployment type is `mirrored`, you need two IP addresses. For example: `gpv config set network gp-virtual-external ips 10.0.1.2 10.0.1.3`.
-    - `ntp-servers <NTP server1> <NTP server2>`: Set the NTP servers of the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external ntp-servers time.example1.com time.example2.com`.
+```
+gpv config set network gp-virtual-etl-bar cidr <CIDR>
+```
 
-gp-virtual-internal <sub_setting>
-:   Configure the network settings of the internal communications network among Greenplum virtual machines. The possible sub-settings are:
-    - `cidr <CIDR>`: Set the CIDR to be used by the `gp-virtual-internal` network. For example: `gpv config set network gp-virtual-internal cidr 192.168.2.1/24`.
+Set the Classless Inter-Domain Routing (CIDR) for the `gp-virtual-etl-bar` network. For example: `gpv config set network gp-virtual-etl-bar cidr 192.168.2.1/24`.
+
+#### <a id="network-external"></a>network gp-virtual-external
+
+Configure the network settings for the routable network for Greenplum clients.
+
+```
+gpv config set network gp-virtual-external <setting>
+```
+
+Where `setting` can be one of the following:
+- `cidr <CIDR>`: Set the CIDR for the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external cidr 10.0.1.1/24`.
+- `dns-servers <DNS server1> <DNS server 2>`: Set the DNS servers of the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external dns-servers 8.8.8.8 8.8.4.4`.
+- `gateway-ip <IP>`: Set the gateway IP of the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external gateway-ip 10.0.1.1`.
+- `ips <IP1> <IP2>`: Set the static IPs of the `gp-virtual-external` network. If the Greenplum deployment type is `mirrorless`, you only need one IP address. If the Greenplum deployment type is `mirrored`, you need two IP addresses. For example: `gpv config set network gp-virtual-external ips 10.0.1.2 10.0.1.3`.
+- `ntp-servers <NTP server1> <NTP server2>`: Set the NTP servers of the `gp-virtual-external` network. For example: `gpv config set network gp-virtual-external ntp-servers time.example1.com time.example2.com`.
+
+#### <a id="network-internal"></a>network gp-virtual-internal
+
+Configure the network settings for the internal communications network among Greenplum virtual machines.
+
+```
+gpv config set network gp-virtual-internal cidr <CIDR>
+```
+Set the CIDR to be used by the `gp-virtual-internal` network. For example: `gpv config set network gp-virtual-internal cidr 192.168.2.1/24`.
 
 #### <a id="vm"></a>vm
 
