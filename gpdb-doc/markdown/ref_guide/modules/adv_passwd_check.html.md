@@ -174,7 +174,7 @@ missing, special character missing (needs to be one listed in "<list-of-special-
 
 ## <a id="topic_upgrade"></a>Upgrading the Module
 
-You may upgrade the module from a previous version by following th steps below.
+You may upgrade the module from a previous version by following the steps below.
 
 1. Check your existing version of the module by running `\dx` from your database.
 
