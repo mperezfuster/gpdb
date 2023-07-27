@@ -1,8 +1,8 @@
 # gpv config
 
-Manage the configuration of a Greenplum Database on vSphere cluster. The `gpv config` command group allows you to configure a Greenplum cluster, import an external configuration, and list the current configuration.
+Manage the configuration of a Greenplum Database on vSphere cluster. 
 
-## <a id="section2"></a>Usage
+## <a id="section2"></a>Synopsis
 
 ```
 gpv config init <file_name>
@@ -10,9 +10,13 @@ gpv config list
 gpv config set <options>
 ```
 
-## <a id="opts"></a>Commands
+## <a id="section3"></a>Description
 
-The available commands for `gpv config` are `init`, `list`, and `set`.
+The `gpv config` command allows you to configure a Greenplum cluster on VMware vSphere, import an external configuration, and list the current configuration.
+
+## <a id="opts"></a>Sub-commands
+
+The available sub-commands for `gpv config` are `init`, `list`, and `set`.
 
 ### <a id="init"></a>init
 
@@ -46,12 +50,12 @@ Set an individual configuration setting.
 
 ```
 gpv config set database
-| config set vm
-| config set vsphere
-| config set network base-vm
-| config set network gp-virtual-etl-bar
-| config set network gp-virtual-external
-| config set network gp-virtual-internal
+gpv config set vm
+gpv config set vsphere
+gpv config set network base-vm
+gpv config set network gp-virtual-etl-bar
+gpv config set network gp-virtual-external
+gpv config set network gp-virtual-internal
 ```
 
 #### <a id="database"></a>database

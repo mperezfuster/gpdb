@@ -16,15 +16,6 @@ gpv -h | --help
 
 The `gpv` utility automates the deployment of a Greenplum Database cluster on top of virtual platforms such as vSphere. You use `gpv` to specify a Greenplum cluster's configuration; automate the deployment of a base virtual machine, clone the base virtual machine to create a cluster, and initialize a Greenplum Database on the set of virtual machines. See [VMware Greenplum on vSphere](/gpvirtual/vsphere/index.html) for more details.
 
-[gpv base](gpv-base.html)
-:   The base virtual machine commands.
-
-[gpv config](gpv-config.html)
-:   The commands to manage the configuration of the Greenplum deployment.
-
-[gpv greenplum](gpv-greenplum.html)
-:   The Greenplum initialization and validation commands. 
-
 ## <a id="section4"></a>Options
 
 [gpv base](gpv-base.html)

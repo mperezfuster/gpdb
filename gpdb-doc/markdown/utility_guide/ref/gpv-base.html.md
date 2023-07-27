@@ -1,17 +1,21 @@
 # gpv base
 
-Manage the base virtual machine for a deployment of Greenplum Database on vSphere. The `gpv base` command group allows you to import and deploy the base virtual machine.
+Manage the base virtual machine for a deployment of Greenplum Database on vSphere. 
 
-## <a id="section2"></a>Usage
+## <a id="section2"></a>Synopsis
 
 ```
 gpv base deploy
 gpv base import [ -f <file_name> | --ova=<file_name> ] [ -t <template_name> | --template=<template_name> ]
 ```
 
-## <a id="opts"></a>Commands
+## <a id="section3"></a>Description
 
-The available commands for `gpv base` are `deploy` and `import`.
+The `gpv base` command allows you to import and deploy the base virtual machine for your Greenplum Database cluster on VMware vSphere.
+
+## <a id="opts"></a>Sub-commands
+
+The available sub-commands for `gpv base` are `deploy` and `import`.
 
 ### <a id="deploy"></a>deploy
 

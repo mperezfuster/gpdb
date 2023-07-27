@@ -1,15 +1,22 @@
 # gpv greenplum
 
-Manage the deployment of a Greenplum Database on vSphere cluster. The `gpv greenplum` command group allows you to deploy a Greenplum cluster, list the connection string to the database, and validate any deployed Greenplum cluster.
+Manage the deployment of a Greenplum Database on vSphere cluster. 
 
-## <a id="section2"></a>Usage
+## <a id="section2"></a>Synopsis
 
 ```
-gpv config <command>
+gpv greenplum deploy
+gpv greenplum list
+gpv greenplum validate
 ```
-## <a id="opts"></a>Commands
 
-The available commands for `gpv config` are `deploy`, `list`, and `validate`.
+## <a id="section3"></a>Description
+
+The `gpv greenplum` sub-command allows you to deploy a Greenplum Database cluster on VMware vSphere, list the connection string to the database, and validate any deployed Greenplum cluster.
+
+## <a id="opts"></a>Sub-commands
+
+The available sub-commands for `gpv config` are `deploy`, `list`, and `validate`.
 
 ### <a id="deploy"></a>deploy
 
