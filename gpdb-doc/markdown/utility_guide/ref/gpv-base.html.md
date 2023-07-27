@@ -5,7 +5,8 @@ Manage the base virtual machine for a deployment of Greenplum Database on vSpher
 ## <a id="section2"></a>Usage
 
 ```
-gpv base <command>
+gpv base deploy
+gpv base import [ -f <file_name> | --ova=<file_name> ] [ -t <template_name> | --template=<template_name> ]
 ```
 
 ## <a id="opts"></a>Commands

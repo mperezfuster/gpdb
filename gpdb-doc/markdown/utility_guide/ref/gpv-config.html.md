@@ -5,7 +5,9 @@ Manage the configuration of a Greenplum Database on vSphere cluster. The `gpv co
 ## <a id="section2"></a>Usage
 
 ```
-gpv config <command>
+gpv config init <file_name>
+gpv config list
+gpv config set <options>
 ```
 
 ## <a id="opts"></a>Commands
@@ -43,10 +45,14 @@ List the current configuration settings. The `gpv config list` command displays 
 Set an individual configuration setting. 
 
 ```
-gpv config set <area>
+gpv config set database
+| config set vm
+| config set vsphere
+| config set network base-vm
+| config set network gp-virtual-etl-bar
+| config set network gp-virtual-external
+| config set network gp-virtual-internal
 ```
-
-Where `area` can be one of the following:
 
 #### <a id="database"></a>database
 

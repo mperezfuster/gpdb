@@ -5,14 +5,42 @@ Configures, deploys, and manages Greenplum Database clusters on top of a virtual
 ## <a id="section2"></a>Synopsis 
 
 ```
-gpv <group> <group_options> 
+gpv base <base_options>
+gpv config <config_options>
+gpv greenplum <greenplum_options>
 gpv version
-gpv -h, --help
+gpv -h | --help
 ```
 
 ## <a id="section3"></a>Description 
 
 The `gpv` utility automates the deployment of a Greenplum Database cluster on top of virtual platforms such as vSphere. You use `gpv` to specify a Greenplum cluster's configuration; automate the deployment of a base virtual machine, clone the base virtual machine to create a cluster, and initialize a Greenplum Database on the set of virtual machines. See [VMware Greenplum on vSphere](/gpvirtual/vsphere/index.html) for more details.
+
+[gpv base](gpv-base.html)
+:   The base virtual machine commands.
+
+[gpv config](gpv-config.html)
+:   The commands to manage the configuration of the Greenplum deployment.
+
+[gpv greenplum](gpv-greenplum.html)
+:   The Greenplum initialization and validation commands. 
+
+## <a id="section4"></a>Options
+
+[gpv base](gpv-base.html)
+:   The base virtual machine commands.
+
+[gpv config](gpv-config.html)
+:   The commands to manage the configuration of the Greenplum deployment.
+
+[gpv greenplum](gpv-greenplum.html)
+:   The Greenplum initialization and validation commands.
+
+-version
+:   Print the version information for the `gpv` utility.
+
+-h, --help
+:   Display the online help. 
 
 ## <a id="info"></a>Required Inputs
 
@@ -56,25 +84,6 @@ The following table lists all the information you require in order to configure 
 |||
 
 *Greenplum performs best with jumbo frames. The recommended MTU is 9000 if the VDS supports it. If it's less than 9000, you need to adjust the server configuration parameter [gp_max_packet_size](../../ref_guide/config_params/guc-list.html#gp_max_packet_size) manually.
-
-## <a id="section4"></a>Groups
-
-[gpv base](gpv-base.html)
-:   The base virtual machine commands.
-
-[gpv config](gpv-config.html)
-:   The commands to manage the configuration of the Greenplum deployment.
-
-[gpv greenplum](gpv-greenplum.html)
-:   The Greenplum initialization and validation commands.
-
-## <a id="section4"></a>Global Options
-
--version
-:   Print the version information for the `gpv` utility.
-
--h, --help
-:   Display the online help.
 
 ## <a id="exs"></a>Examples 
 
