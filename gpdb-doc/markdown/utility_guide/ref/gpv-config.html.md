@@ -49,16 +49,16 @@ List the current configuration settings. The `gpv config list` command displays 
 Set an individual configuration setting. 
 
 ```
-gpv config set database
-gpv config set network base-vm
-gpv config set network gp-virtual-etl-bar
-gpv config set network gp-virtual-external
-gpv config set network gp-virtual-internal
-gpv config set vm
-gpv config set vsphere
+gpv config set database <setting>
+gpv config set network base-vm <setting>
+gpv config set network gp-virtual-etl-bar <setting>
+gpv config set network gp-virtual-external <setting>
+gpv config set network gp-virtual-internal <setting>
+gpv config set vm <setting>
+gpv config set vsphere <setting>
 ```
 
-Below are the available options for the `gpv config` subcommand:
+The available options for `gpv config set` are:
 
 #### <a id="database"></a>database
 
@@ -74,7 +74,7 @@ deployment-type <type_name>
 :   Specifies whether the Greenplum deployment uses mirror segments or not. Valid values of `<type_name>` include `mirrored` and `mirrorless`. For example: `gpv config set database deployment-type mirrored`. 
 
 prefix <prefix_name>
-:   Specifies a label which serves as a prefix for the names of the resource pool and the virtual machines in the Greenplum cluster. 
+:   Specifies a label which serves as a prefix for the names of the resource pool and the virtual machines in the Greenplum cluster. For example, `gpv config set database prefix gpdb` prepends `gpdb` to virtual machines and resource pool names.
 
 #### <a id="network-base"></a>network base-vm
 
