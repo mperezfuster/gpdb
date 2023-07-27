@@ -14,7 +14,7 @@ The size of the block range is determined at index creation time by the `pages_p
 
 At the time of creation, Greenplum Database scans all existing heap pages and creates a summary index tuple for each range, including the possibly-incomplete range at the end. As new pages are filled with data, page ranges that are already summarized will cause the summary information to be updated with data from the new tuples. When a new page is created that does not fall within the last summarized range, the range that the new page belongs into does not automatically acquire a summary tuple; those tuples remain unsummarized until a summarization run is invoked later, creating the initial summary for that range.
 
-There are several ways to trigger the initial summarization of a page range. If the table is vacuumed, either manually or by `autovacuum`, all existing unsummarized page ranges are summarized. 
+There are several ways to trigger the initial summarization of a page range. If the table is vacuumed, all existing unsummarized page ranges are summarized. 
 
 You may use the following functions:
 
@@ -32,6 +32,8 @@ The following table lists the functions available for index maintenance tasks. Y
 |brin_desummarize_range(index regclass, blockNumber bigint) | integer |	de-summarize the page range covering the given block, if summarized|
 
 `brin_summarize_new_values` accepts the OID or name of a BRIN index and inspects the index to find page ranges in the base table that are not currently summarized by the index; for any such range it creates a new summary index tuple by scanning the table pages. It returns the number of new page range summaries that were inserted into the index. `brin_summarize_range` does the same, except it only summarizes the range that covers the given block number.
+
+> **Note** `brin_summarize_range` and `brin_desummarize_range` only operate on ranges that exist. If you provide a block number that does not exist in the table, the functions return 0. Additionally, a specific range may only exist on some segments, due to data skew. In this case, the functions return the number of segments for which they were able to summarize or desummarize the range.
 
 ## <a id="opclasses"></a>Built-in Operator Classes
 
