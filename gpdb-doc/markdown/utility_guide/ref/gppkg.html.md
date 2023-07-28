@@ -1,6 +1,6 @@
 # gppkg 
 
-Installs Greenplum Database extensions in `.gppkg` format, such as PL/Java, PL/R, PostGIS, and MADlib, along with their dependencies, across an entire cluster.
+Greenplum Package Manager installs, upgrades, migrates, and removes Greenplum Database extensions in `.gppkg` format, such as PL/Java, PL/R, PostGIS, and MADlib, along with their dependencies, across an entire cluster.
 
 ## <a id="synopsis"></a>Synopsis 
 
@@ -29,36 +29,37 @@ Examples of database extensions and packages software that are delivered using t
 -   PostGIS
 -   MADlib
 
+> **Note** Be sure that `/usr/local/greenplum*` is owned by `gpadmin` user and group.
+
 ## <a id="commands"></a>Commands
 
 help 
-:   Displays the help for the command.
+:   Display the help for the command.
 
 install <package-name> [<global_options>]
-:   Installs or upgrades the specified package in the cluster. This includes any pre/post installation steps and installation of any dependencies.
+:   Install or upgrade the specified package in the cluster. This includes any pre/post installation steps and installation of any dependencies.
 
-migrate --source <source> --destination <destination> [--pkglibs <pkglibs>] [global_options]
-:   Migrates all packages from one minor version of Greenplum Database to another. The option `--source <source>` specifies the path of the source `$GPHOME`, the option `--destination <destination>` specifies the path of the destination `$GPHOME`. Additionally, the option `--pkglibs <pkglibs>` allows you to point to a location where you may place newer version packages to install in the destination Greenplum version, `gppkg` will upgrade these packages automatically. 
+migrate --source <source_path> --destination <destination-path> [--pkglibs <pkglibs_path>] [<global_options>]
+:   Migrate all packages from one minor version of Greenplum Database to another. The option `--source <source_path>` specifies the path of the source `$GPHOME`, and the option `--destination <destination_path>` specifies the path of the destination `$GPHOME`. Additionally, the option `--pkglibs <pkglibs_path>` allows you to point to a location where you may place newer version packages for the destination Greenplum version; `gppkg` will upgrade these packages automatically. 
 
-query [<query>] [<query_option>]
-:   Displays information about the extensions installed in the cluster. <query> is a string that specifies the package name. If it is an empty string, it will match all packages. If it is a simple word, it will match all packages which the word included in the name. Use `–-exact` to specify the exact package name.
+query [<query_text>] [<query_option>] [<global_options>]
+:   Display information about the extensions installed in the cluster. <query_text> is a string that specifies the package name. If it is an empty string, it will match all packages. If it is a simple word, it will match all packages which the word included in the name. Use `–-exact` to specify the exact package name.
 
     |query_option|Returns|
     |-------------|-------|
-    |`--exact`|The provided <query> must match exactly a package name|
+    |`--exact`|The provided <query_text> must match exactly a package name|
     |`--detail`|Provide detailed information about the package|
     |`--verify`|Verify the package installation|
     |`--local`|Do not query at cluster level|
 
-remove <package-name> [<global_options>]
-:    Uninstalls the specified package from the cluster. 
+remove <package_name> [<global_options>]
+:    Uninstall the specified package from the cluster. 
 
-upgrade
-:    Upgrades an existing package. Does a fresh install if the package does not exist.
-gppkg upgrade pkg-name.gppkg
+upgrade <package-name> [<global_options>]
+:    Upgrade an existing package. Do a fresh install if the package does not exist.
 
-sync [global_options]
-:    Reconciles the package state of the cluster to match the state of the master host. Running this option after a failed or partial install/uninstall ensures that the package installation state is consistent across the cluster.
+sync [<global_options>]
+:    Reconcile the package state of the cluster to match the state of the master host. Running this option after a failed or partial install/uninstall ensures that the package installation state is consistent across the cluster.
 
 ## <a id="options"></a>Global Options 
 
@@ -83,10 +84,10 @@ ing command:
 :   Display the online help.
 
 -V | --version
-:   Displays the version of this utility.
+:   Display the version of this utility.
 
 -v | --verbose
-:   Sets the logging level to verbose.
+:   Set the logging level to verbose.
 
 ## <a id="examples"></a>Examples
 
