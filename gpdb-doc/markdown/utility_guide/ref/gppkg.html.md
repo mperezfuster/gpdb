@@ -34,28 +34,41 @@ Examples of database extensions and packages software that are delivered using t
 help 
 :   Displays the help for the command.
 
-install [--tmpdir] <package-name>
-:   Installs the specified package in the cluster. This includes any pre/post installation steps and installation of any dependencies.
+install <package-name> [<global_options>]
+:   Installs or upgrades the specified package in the cluster. This includes any pre/post installation steps and installation of any dependencies.
 
-migrate [options] --source <SOURCE> --destination <DESTINATION> 
+migrate --source <source> --destination <destination> [--pkglibs <pkglibs>] [global_options]
+:   Migrates all packages from one minor version of Greenplum Database to another. The option `--source <source>` specifies the path of the source `$GPHOME`, the option `--destination <destination>` specifies the path of the destination `$GPHOME`. Additionally, the option `--pkglibs <pkglibs>` allows you to point to a location where you may place newer version packages to install in the destination Greenplum version, `gppkg` will upgrade these packages automatically. 
 
-:   Migrates packages from a separate $GPHOME. Carries over packages from one version of Greenplum Database to another.
+query [<query>] [<query_option>]
+:   Displays information about the extensions installed in the cluster. <query> is a string that specifies the package name. If it is an empty string, it will match all packages. If it is a simple word, it will match all packages which the word included in the name. Use `–-exact` to specify the exact package name.
 
-For example: `gppkg --migrate /usr/local/greenplum-db-<old-version> /usr/local/greenplum-db-<new-version>`.
+    |query_option|Returns|
+    |-------------|-------|
+    |`--exact`|The provided <query> must match exactly a package name|
+    |`--detail`|Provide detailed information about the package|
+    |`--verify`|Verify the package installation|
+    |`--local`|Do not query at cluster level|
 
-> **Note** In general, it is best to avoid using the --migrate option, you should reinstall packages instead of migrating them.
-
-query
-:   Displays which extensions are installed in the cluster.
-
-remove <package-name>
+remove <package-name> [<global_options>]
 :    Uninstalls the specified package from the cluster. 
 
 upgrade
 :    Upgrades an existing package. Does a fresh install if the package does not exist.
 gppkg upgrade pkg-name.gppkg
 
-## <a id="options"></a>Options 
+sync [global_options]
+:    Reconciles the package state of the cluster to match the state of the master host. Running this option after a failed or partial install/uninstall ensures that the package installation state is consistent across the cluster.
+
+## <a id="options"></a>Global Options 
+
+--cluster_info <cluster_info>
+:   Use this option when Greenplum Database is not running. The input file `<cluster_info>` contains information about the database cluster. You may generate the file by running the follow
+ing command:
+
+    ```
+    psql postgres -Xc 'select dbid, content, role, preferred_role, mode, status, hostname, address, port, datadir from gp_segment_configuration order by content, preferred_role desc;' | sed -n '3,7p' | tr -d " " > cluster_info
+    ```
 
 -a | --accept 
 :   Do not prompt the user for confirmation.
@@ -74,4 +87,39 @@ gppkg upgrade pkg-name.gppkg
 
 -v | --verbose
 :   Sets the logging level to verbose.
+
+## <a id="examples"></a>Examples
+
+Install the Greenplum Database PL/Java extension:
+
+```
+gppkg install /tmp/pljava-2.0.7-gp7-rhel8_x86_64.gppkg 
+```
+
+Migrate packages installed from Greenplum Database version 7.0.0 to Greenplum Database version 7.1.0 while the cluster is not running.
+
+```
+gppkg migrate --cluster-info /tmp/cluster_info --source /usr/local/greenplum-db-7.0.0 --destination /usr/local/greenplum-db-7.1.0
+```
+
+Where the file `/tmp/cluster_info` contains the following information:
+
+```
+1|-1|p|p|n|u|cdw|cdw|5432|/data/coordinator/gpseg-1
+2|0|p|p|s|u|seg-02|sdw1|6000|/data/primary/gpseg0
+6|0|m|m|s|u|seg-03|sdw2|7000|/data/mirror/gpseg0
+3|1|p|p|s|u|seg-02|sdw1|6001|/data/primary/gpseg1
+7|1|m|m|s|u|seg-03|sdw2|7001|/data/mirror/gpseg1
+```
+
+Query all packages that are installed in a cluster:
+
+```
+$gppkg query 
+
+Detecting network topology:    [=========================================] [OK] 
+Detect result 
+ 3 unique hosts found 
+DataSciencePython3.9 - 1.1.0 
+```
 
