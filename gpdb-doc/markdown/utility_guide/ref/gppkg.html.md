@@ -29,25 +29,23 @@ Examples of database extensions and packages software that are delivered using t
 -   PostGIS
 -   MADlib
 
-> **Note** Be sure that `/usr/local/greenplum*` is owned by `gpadmin` user and group.
-
 ## <a id="commands"></a>Commands
 
 help 
 :   Display the help for the command.
 
-install <package-name> [<global_options>]
+install <package_name> [<global_options>]
 :   Install or upgrade the specified package in the cluster. This includes any pre/post installation steps and installation of any dependencies.
 
-migrate --source <source_path> --destination <destination-path> [--pkglibs <pkglibs_path>] [<global_options>]
+migrate --source <source_path> --destination <destination_path> [--pkglibs <pkglibs_path>] [<global_options>]
 :   Migrate all packages from one minor version of Greenplum Database to another. The option `--source <source_path>` specifies the path of the source `$GPHOME`, and the option `--destination <destination_path>` specifies the path of the destination `$GPHOME`. Additionally, the option `--pkglibs <pkglibs_path>` allows you to point to a location where you may place newer version packages for the destination Greenplum version; `gppkg` will upgrade these packages automatically. 
 
 query [<query_text>] [<query_option>] [<global_options>]
-:   Display information about the extensions installed in the cluster. <query_text> is a string that specifies the package name. If it is an empty string, it will match all packages. If it is a simple word, it will match all packages which the word included in the name. Use `–-exact` to specify the exact package name.
+:   Display information about the extensions installed in the cluster. `<query_text>` is a string that specifies the package name. If it is an empty string, it will match all packages. If it is a simple word, it will match all packages which the word included in the name. Use `–-exact` to specify the exact package name.
 
     |query_option|Returns|
     |-------------|-------|
-    |`--exact`|The provided <query_text> must match exactly a package name|
+    |`--exact`|The provided `<query_text>` must match exactly a package name|
     |`--detail`|Provide detailed information about the package|
     |`--verify`|Verify the package installation|
     |`--local`|Do not query at cluster level|
@@ -55,7 +53,7 @@ query [<query_text>] [<query_option>] [<global_options>]
 remove <package_name> [<global_options>]
 :    Uninstall the specified package from the cluster. 
 
-upgrade <package-name> [<global_options>]
+upgrade <package_name> [<global_options>]
 :    Upgrade an existing package. Do a fresh install if the package does not exist.
 
 sync [<global_options>]
@@ -64,8 +62,7 @@ sync [<global_options>]
 ## <a id="options"></a>Global Options 
 
 --cluster_info <cluster_info>
-:   Use this option when Greenplum Database is not running. The input file `<cluster_info>` contains information about the database cluster. You may generate the file by running the follow
-ing command:
+:   Use this option when Greenplum Database is not running. The input file `<cluster_info>` contains information about the database cluster. You may generate the file by running the following command:
 
     ```
     psql postgres -Xc 'select dbid, content, role, preferred_role, mode, status, hostname, address, port, datadir from gp_segment_configuration order by content, preferred_role desc;' | sed -n '3,7p' | tr -d " " > cluster_info
@@ -97,13 +94,13 @@ Install the Greenplum Database PL/Java extension:
 gppkg install /tmp/pljava-2.0.7-gp7-rhel8_x86_64.gppkg 
 ```
 
-Migrate packages installed from Greenplum Database version 7.0.0 to Greenplum Database version 7.1.0 while the cluster is not running.
+Migrate all installed packages from Greenplum Database version 7.0.0 to Greenplum Database version 7.1.0 while the cluster is not running.
 
 ```
 gppkg migrate --cluster-info /tmp/cluster_info --source /usr/local/greenplum-db-7.0.0 --destination /usr/local/greenplum-db-7.1.0
 ```
 
-Where the file `/tmp/cluster_info` contains the following information:
+where the file `/tmp/cluster_info` contains the following information:
 
 ```
 1|-1|p|p|n|u|cdw|cdw|5432|/data/coordinator/gpseg-1
@@ -116,7 +113,7 @@ Where the file `/tmp/cluster_info` contains the following information:
 Query all packages that are installed in a cluster:
 
 ```
-$gppkg query 
+gppkg query 
 
 Detecting network topology:    [=========================================] [OK] 
 Detect result 
