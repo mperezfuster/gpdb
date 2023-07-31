@@ -41,7 +41,7 @@ migrate --source <source_path> --destination <destination_path> [--pkglibs <pkgl
 :   Migrate all packages from one minor version of Greenplum Database to another. The option `--source <source_path>` specifies the path of the source `$GPHOME`, and the option `--destination <destination_path>` specifies the path of the destination `$GPHOME`. Additionally, the option `--pkglibs <pkglibs_path>` allows you to point to a location where you may place newer version packages for the destination Greenplum version; `gppkg` will upgrade these packages automatically. 
 
 query [<package_name_string>] [<query_option>] [<command_options>]
-:   Display information about the extensions installed in the cluster. `<package_name_string>` is a string that specifies the package name. If it is an empty string, it will match all packages. If it is a simple word, it will match all packages which the word included in the name. Use `–-exact` to specify the exact package name.
+:   Display information about the extensions installed in the cluster. `<package_name_string>` is a string that specifies the package name. If it is an empty string, it will match all packages. If it is a simple word, it will match all packages with the word included in the name. Use `–-exact` to specify the exact package name.
 
     |query_option|Returns|
     |-------------|-------|
