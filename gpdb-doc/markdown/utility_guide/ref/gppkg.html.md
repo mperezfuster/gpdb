@@ -91,16 +91,16 @@ sync [<command_options>]
 Install the Greenplum Database PL/Java extension:
 
 ```
-gppkg install /tmp/pljava-2.0.7-gp7-rhel8_x86_64.gppkg 
+gppkg install ./pljava-2.0.7-gp7-rhel8_x86_64.gppkg
 ```
 
 Migrate all installed packages from Greenplum Database version 7.0.0 to Greenplum Database version 7.1.0 while the cluster is not running.
 
 ```
-gppkg migrate --cluster-info /tmp/cluster_info --source /usr/local/greenplum-db-7.0.0 --destination /usr/local/greenplum-db-7.1.0
+gppkg migrate --cluster-info ./cluster_info --source /usr/local/greenplum-db-7.0.0 --destination /usr/local/greenplum-db-7.1.0
 ```
 
-where the file `/tmp/cluster_info` contains the following information:
+where the file `./cluster_info` contains the following information:
 
 ```
 1|-1|p|p|n|u|cdw|cdw|5432|/data/coordinator/gpseg-1
