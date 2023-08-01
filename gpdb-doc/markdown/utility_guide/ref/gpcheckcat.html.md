@@ -22,7 +22,7 @@ gpcheckcat [ <options<] [ <dbname>]
      -B <parallel_processes>
      -v
      -A
-     -x "<parameter_name>=value"
+     -x "<parameter_name>=<value>"
 
 gpcheckcat  -l 
 
@@ -126,7 +126,7 @@ Catalog inconsistencies are inconsistencies that occur between Greenplum Databas
 -v \(verbose\)
 :   Displays detailed information about the tests that are performed.
 
--x "<parameter_name>=value"
+-x "<parameter_name>=<value>"
 :   Set a server configuration parameter, such as `log_min_messages`, at a session level. To set multiple configuration parameters, use the `-x` option multiple times. 
 
 ## <a id="notes"></a>Notes 
