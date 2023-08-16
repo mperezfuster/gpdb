@@ -74,7 +74,7 @@ The following table lists all the information you require in order to configure 
 |number of primary segment VMs|The number of virtual machines for the primary segments. <br/> - for `mirrored` the total number of virtual machines is `number of primary segments * 2 + 2`. <br/> - for `mirrorless` the total number of virtual machines is `number of primary segments + 1`.|
 |||
 
-*Greenplum performs best with jumbo frames. The recommended MTU is 9000 if the VDS supports it. If it's less than 9000, you need to adjust the server configuration parameter [gp_max_packet_size](../../ref_guide/config_params/guc-list.html#gp_max_packet_size) manually.
+*Greenplum performs best with jumbo frames. The recommended MTU is 9000 if the vSphere distributed switch supports it. If it is less than 9000, you must adjust the server configuration parameter [gp_max_packet_size](../../ref_guide/config_params/guc-list.html#gp_max_packet_size) manually. See [Configuring Your Systems](../../install_guide/prep_os.html#networking) for more information about MTU.
 
 ## <a id="exs"></a>Examples 
 
