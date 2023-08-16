@@ -480,7 +480,7 @@ You may control the value of the MTU at various locations:
 - The physical switch MTU settings.
 - The virtual switch MTU setting when using vSphere.
 
-These settings are connected, in that they should always be either the same, or close to the same, value, or otherwise in the order of Greenplum < OS < switch for MTU size.
+These settings are connected, in that they should always be either the same, or close to the same, value, or otherwise in the order of Greenplum < Operating System < Virtual or Physical switch for MTU size.
 
 9000 is a common supported setting for switches, and is the recommended OS and rack switch MTU setting for your Greenplum Database hosts.
 
