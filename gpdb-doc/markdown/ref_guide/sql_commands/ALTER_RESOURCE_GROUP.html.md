@@ -11,10 +11,11 @@ ALTER RESOURCE GROUP <name> SET <group_attribute> <value>
 where group_attribute is one of:
 
 ```
-CPU_MAX_PERCENT=<integer> | CPUSET=<coordinator_cores>;<segment_cores>
-[ MEMORY_LIMIT=<integer> ]
-[ CPU_WEIGHT=<integer> ]
 [ CONCURRENCY=<integer> ]
+CPU_MAX_PERCENT=<integer> | CPUSET=<coordinator_cores>;<segment_cores>
+[ CPU_WEIGHT=<integer> ]
+[IO_LIMIT='<tablespace_name>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
+[ MEMORY_LIMIT=<integer> ]
 [ MIN_COST=<integer> ]
 ```
 
@@ -59,6 +60,18 @@ CPUSET <coordinator_cores>;<segment_cores>
 :   Specify cores as a comma-separated list of single core numbers or core number intervals. Define the coordinator host cores first, followed by segment host cores, and separate the two with a semicolon. You must enclose the full core configuration in single quotes. For example, '1;1,3-4' configures core 1 for the coordinator host, and cores 1, 3, and 4 for the segment hosts.
 
 :   > **Note** You can configure `CPUSET` for a resource group only after you have enabled resource group-based resource management for your Greenplum Database cluster.
+
+IO_LIMIT '<tablespace_name>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
+
+:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. When you use this parameter, you must speficy:
+
+    - The name of the tablespace you set the limits for.
+
+    - `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit.
+
+    - `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit.
+
+    > **Note** If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
 
 MEMORY_LIMIT integer
 :   The maximum available memory, in MB, to reserve for this resource group. This value determines the total amount of memory that all worker processes within a resource group can consume on a segment host during query execution. 
@@ -106,6 +119,12 @@ Reserve CPU core 1 for a resource group on the coordinator host and all segment 
 
 ```
 ALTER RESOURCE GROUP rgroup5 SET CPUSET '1;1';
+```
+
+Set disk I/O limits for tablespaces `tablespace1` and `tablespace2`:
+
+```
+ALTER RESOURCE GROUP admin_group SET IO_LIMIT 'tablespace1:wbps=2000,wiops=2000;tablespace2:rbps=2024,riops=2024';
 ```
 
 ## <a id="compatibility"></a>Compatibility 
