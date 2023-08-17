@@ -1,4 +1,4 @@
-# Platform Requirements
+t# Platform Requirements
 
 This topic describes the Greenplum Database 7 platform and operating system software requirements for deploying the software to on-premise hardware, or to public cloud services such as AWS, GCP, or Azure.
 
@@ -66,6 +66,16 @@ Greenplum Databased 7 supports these Java versions for PL/Java and PXF:
 
 -   Open JDK 8 or Open JDK 11, available from [AdoptOpenJDK](https://adoptopenjdk.net)
 -   Oracle JDK 8 or Oracle JDK 11
+
+#### <a id="topic_xbl_mkx_python"></a>Python
+
+If you are installing Greenplum Database on Rocky Linux 8.x, the default Python3 version included is `python3.6`. You must run the following commands in order to support `python3.9`:
+
+```
+sudo yum install python39-psycopg2 python39-pyyaml python39-psutil
+sudo update-alternatives set python3 /usr/bin/python39
+sudo update-alternatives set python /usr/bin/python39
+```
 
 ### <a id="topic_tnl_3mx_zgb"></a>Hardware and Network 
 
