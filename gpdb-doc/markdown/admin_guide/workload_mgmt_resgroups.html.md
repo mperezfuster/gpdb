@@ -2,7 +2,7 @@
 title: Using Resource Groups 
 ---
 
-You use resource groups to set and enforce CPU, memory, concurrent transaction limits and disk I/O in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
+You use resource groups to set and enforce CPU, memory, concurrent transaction limits, and disk I/O in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
 
 When you assign a resource group to a role, the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
 
