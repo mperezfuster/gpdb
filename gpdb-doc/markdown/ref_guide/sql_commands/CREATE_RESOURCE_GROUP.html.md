@@ -63,7 +63,7 @@ CPUSET <coordinator_cores>;<segment_cores>
 
 IO_LIMIT '<tablespace_name>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
 
-:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. When you use this parameter, you must speficy:
+:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group. When you use this parameter, you must speficy:
 
     - The name of the tablespace you set the limits for.
 

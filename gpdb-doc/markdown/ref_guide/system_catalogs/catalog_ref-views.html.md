@@ -282,11 +282,11 @@ The `gp_toolkit.gp_resgroup_config` view allows administrators to see the curren
 |`groupname`|name|pg\_resgroup.rsgname|The name of the resource group.|
 |`concurrency`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 1|The concurrency \(`CONCURRENCY`\) value specified for the resource group.|
 |`cpu_max_percent`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 2|The CPU limit \(`CPU_MAX_PERCENT`\) value specified for the resource group, or -1.|
-|`memory_limit`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 3|The memory limit \(`MEMORY_LIMIT`\) value specified for the resource group.|
-|`memory_shared_quota`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 4|The shared memory quota \(`MEMORY_SHARED_QUOTA`\) value specified for the resource group.|
-|`memory_spill_ratio`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 5|The memory spill ratio \(`MEMORY_SPILL_RATIO`\) value specified for the resource group.|
-|`memory_auditor`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 6|The memory auditor in use for the resource group.|
-|`cpuset`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 7|The CPU cores reserved for the resource group, or -1.|
+|`cpu_weight`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 3|The scheduling priority of the resource group (CPU_WEIGHT).|
+|`cpuset`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 4|The CPU cores reserved for the resource group (CPUSET), or -1.|
+|`memory_limit`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 5|The memory limit \(`MEMORY_LIMIT`\) value specified for the resource group.|
+|`min_cost`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 6|The minimum cost of a query plan to be included in the resource group (MIN_COST).|
+|`io_limit`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 7|The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group (IO_LIMIT).|
 
 ## <a id="gp_resgroup_iostats_per_host"></a>gp_resgroup_iostats_per_host
 
@@ -298,28 +298,26 @@ Memory amounts are specified in MBs.
 
 |column|type|references|description|
 |------|----|----------|-----------|
-|`rsgname`|name| pg_resgroup.rsgname|The name of the resource group.|
-|`hostname`|text|gp_segment_configuration.hostname|The hostname of the segment host.|
-|`tablespace`|
-|`rbps`|
-|`
-
-
-
-|`cpu_usage`|float| |The real-time CPU core usage by the resource group on a host. The value is the sum of the percentages of the CPU cores that are used by the resource group on the host.|
-|`memory_usage`|float| |The real-time memory usage of the resource group on each Greenplum Database segment's host, in MB.|
+|`rsgname`|name| pg_resgroup.rsgname|The name of the resource group|
+|`hostname`|text|gp_segment_configuration.hostname|The hostname of the segment host|
+|`tablespace`|name|pg_tablespace.spcname|The name of the tablespace|
+|`rbps`|bigint||The real-time read sequential disk I/O throughput by the resource group on a host, in MB/S|
+|`wbps`|bigint||The real-time write sequential disk I/O throughput by the resource group on a host, in MB/S|
+|`riops`|bigint||The real-time read I/O operations per second by the resource group on a host|
+|`wiops`|bigint||The real-time write I/O operations per second by the resource group on a host|
 
 Sample output for the `gp_resgroup_iostats_per_host` view:
 
 ```
-select * from gp_toolkit.gp_resgroup_status_per_host;
- rsgname       | hostname | tablespace | rbps (MB_read/s)
----------------+----------+-----------+--------------
- admin_group   | zero     | pg_default | 80
- default_group | zero     | pg_default | 500
- system_group  | zero     | pg_default | 300
- rg_new_group  | zero     | 
-(4 rows)
+SELECT * from gp_toolkit.gp_resgroup_iostats_per_host;
+ rsgname        | hostname | tablespace       | rbps (MB_read/s) | wbps (MB_wrtn/s) | riops (r/s) | wiops (w/s) 
+----------------+----------+------------------+------------------+------------------+-------------+-------------
+ rg_test_group1 | mtspc    | pg_default       | 0                | 0                | 0           | 0           
+ rg_test_group2 | mtspc    | pg_default       | 0                | 0                | 0           | 0           
+ rg_test_group3 | mtspc    | pg_default       | 0                | 0                | 0           | 0           
+ rg_test_group4 | mtspc    | *                | 0                | 0                | 0           | 0           
+ rg_test_group5 | mtspc    | rg_io_limit_ts_1 | 0                | 0                | 0           | 0           
+(5 rows)
 ```
 
 ## <a id="gp_resgroup_status"></a>gp_resgroup_status
