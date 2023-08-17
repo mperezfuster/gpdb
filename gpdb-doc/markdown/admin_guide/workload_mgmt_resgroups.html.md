@@ -2,7 +2,7 @@
 title: Using Resource Groups 
 ---
 
-You use resource groups to set and enforce CPU, memory, concurrent transaction limits and disk I/O in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
+You use resource groups to set and enforce CPU, memory, concurrent transaction limits, and disk I/O in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
 
 When you assign a resource group to a role, the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
 
@@ -30,7 +30,7 @@ When you create a resource group, you provide a set of limits that determine the
 |CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [0-100] | -1 (not set)|
 |CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
-|IO_LIMIT| The limit for the maximum read/write sequential disk I/O throughput, or maximum read/write I/O operations per second. Set the value per tablespace basis.| rpbs/wpbs and riops/wiops| -1 |
+|IO_LIMIT| The limit for the maximum read/write sequential disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [0-MAX] | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set) | 
 |MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer | 0 |
 
@@ -150,17 +150,17 @@ There are some special usage considerations regarding memory limits:
 - The maximum value of `statement_mem` is capped at [max_statement_mem](../ref_guide/config_params/guc-list.html#max_statement_mem).
 - Queries whose plan cost is less than the limit `MIN_COST` use a memory quota of `statement_mem`. 
 
-### <a id="diskio"></a>Disk I/O
+### <a id="diskio"></a>Disk I/O Limits
 
-Greenplum Database leverages Linux control groups to implement disk I/O limits. The parameter `IO_LIMIT` limits the maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. It allocates bandwidth, ensures the use of high-priority resource groups, and avoids excessive use of disk bandwidth. The value of the parameter is set on a tablespace basis. 
+Greenplum Database leverages Linux control groups to implement disk I/O limits. The parameter `IO_LIMIT` limits the maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. It allocates bandwidth, ensures the use of high-priority resource groups, and avoids excessive use of disk bandwidth. The value of the parameter is set on a per-tablespace basis. 
 
 When you limit disk I/O you speficy:
 
 - The name of the tablespace you set the limits for.
 
-- `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit. 
+- The values for `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit. 
 
-- `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit. 
+- The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit. 
 
 > **Note** If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
 
@@ -333,7 +333,8 @@ When you create a resource group for a role, you must provide a `CPU_MAX_PERCENT
 For example, to create a resource group named *rgroup1* with a CPU limit of 20, a memory limit of 25, a CPU soft priority of 500, a minimum cost of 50, and disk I/O limits for the `pg_default` tablespace:
 
 ```
-CREATE RESOURCE GROUP rgroup1 WITH (CPU_MAX_PERCENT=20, MEMORY_LIMIT=25, CPU_WEIGHT=500, MIN_COST=50, IO_LIMIT=’pg_default: wbps=1000, rbps=1000, wiops=100, riops=100’);
+CREATE RESOURCE GROUP rgroup1 WITH (CPU_MAX_PERCENT=20, MEMORY_LIMIT=25, CPU_WEIGHT=500, MIN_COST=50, 
+  IO_LIMIT=’pg_default: wbps=1000, rbps=1000, wiops=100, riops=100’);
 ```
 
 The CPU limit of 20 is shared by every role to which `rgroup1` is assigned. Similarly, the memory limit of 25 is shared by every role to which `rgroup1` is assigned. `rgroup1` utilizes the default `CONCURRENCY` setting of 20.
@@ -404,7 +405,7 @@ The [gp\_resgroup\_status](../ref_guide/system_catalogs/catalog_ref-views.html#g
 SELECT * FROM gp_toolkit.gp_resgroup_status;
 ```
 
-#### <a id="topic23a"></a>Viewing Resource Group CPU/Memory Usage Per Host 
+### <a id="topic23a"></a>Viewing Resource Group CPU/Memory Usage Per Host 
 
 The [gp\_resgroup\_status\_per\_host](../ref_guide/system_catalogs/catalog_ref-views.html#gp_resgroup_status_per_host) `gp_toolkit` system view enables you to view the real-time CPU and memory usage of a resource group on a per-host basis. To view this information:
 
