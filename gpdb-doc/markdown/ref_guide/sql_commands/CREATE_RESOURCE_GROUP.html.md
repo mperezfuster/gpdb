@@ -23,7 +23,7 @@ CPU_MAX_PERCENT=<integer> | CPUSET=<coordinator_cores>;<segment_cores>
 
 Creates a new resource group for Greenplum Database resource management. 
 
-A resource group that you create to manage a user role identifies concurrent transaction, memory, CPU and disk I/O limits for the role when resource groups are enabled. You may assign such resource groups to one or more roles.
+A resource group that you create to manage a user role identifies concurrent transaction, memory, CPU, and disk I/O limits for the role when resource groups are enabled. You may assign such resource groups to one or more roles.
 
 You must have `SUPERUSER` privileges to create a resource group. The maximum number of resource groups allowed in your Greenplum Database cluster is 100.
 
@@ -63,7 +63,7 @@ CPUSET <coordinator_cores>;<segment_cores>
 
 IO_LIMIT '<tablespace_name>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
 
-:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group. When you use this parameter, you may speficy:
+:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group. When you use this parameter, you may specify:
 
     - The name of the tablespace you set the limits for.
 
