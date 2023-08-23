@@ -310,7 +310,7 @@ Sample output for the `gp_resgroup_iostats_per_host` view:
 
 ```
 SELECT * from gp_toolkit.gp_resgroup_iostats_per_host;
- rsgname        | hostname | tablespace       | rbps (MB_read/s) | wbps (MB_wrtn/s) | riops (r/s) | wiops (w/s) 
+ rsgname        | hostname | tablespace       | rbps | wbps | riops | wiops  
 ----------------+----------+------------------+------------------+------------------+-------------+-------------
  rg_test_group1 | mtspc    | pg_default       | 0                | 0                | 0           | 0           
  rg_test_group2 | mtspc    | pg_default       | 0                | 0                | 0           | 0           

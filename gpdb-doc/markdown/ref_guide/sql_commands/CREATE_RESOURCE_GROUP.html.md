@@ -14,7 +14,7 @@ where group_attribute is one of:
 [ CONCURRENCY=<integer> ]
 CPU_MAX_PERCENT=<integer> | CPUSET=<coordinator_cores>;<segment_cores>
 [ CPU_WEIGHT=<integer> ]
-[IO_LIMIT='<tablespace_name>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
+[IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
 [ MEMORY_LIMIT=<integer> ]
 [ MIN_COST=<integer> ]
 ```
@@ -61,17 +61,19 @@ CPUSET <coordinator_cores>;<segment_cores>
 
 :   > **Note** You can configure `CPUSET` for a resource group only after you have enabled resource group-based resource management for your Greenplum Database cluster.
 
-IO_LIMIT '<tablespace_name>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
+IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
 
-:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group. When you use this parameter, you may specify:
+:   Optional. The maximum read/write disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group. When you use this parameter, you may specify:
 
-    - The name of the tablespace you set the limits for.
+    - The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
 
-    - The values for `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit.
+    - The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit.
 
     - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit.
 
-    > **Note** If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
+:   If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
+
+> **Note** The parameter `IO_LIMIT` is only available when you use Linux Control Groups v2. See [Configuring and Using Resource Groups](../../admin_guide/workload_mgmt_resgroups.html#topic71717999) for more information.
 
 MEMORY_LIMIT integer
 :   Optional. The maximum available memory, in MB, to reserve for this resource group. This value determines the total amount of memory that all worker processes within a resource group can consume on a segment host during query execution. 

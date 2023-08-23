@@ -30,7 +30,7 @@ When you create a resource group, you provide a set of limits that determine the
 |CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [0-100] | -1 (not set)|
 |CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
-|IO_LIMIT| The limit for the maximum read/write sequential disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [0-MAX] | -1 |
+|IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [0-MAX] | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set) | 
 |MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer | 0 |
 
@@ -152,17 +152,19 @@ There are some special usage considerations regarding memory limits:
 
 ### <a id="diskio"></a>Disk I/O Limits
 
-Greenplum Database leverages Linux control groups to implement disk I/O limits. The parameter `IO_LIMIT` limits the maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. It allocates bandwidth, ensures the use of high-priority resource groups, and avoids excessive use of disk bandwidth. The value of the parameter is set on a per-tablespace basis. 
+Greenplum Database leverages Linux control groups to implement disk I/O limits. The parameter `IO_LIMIT` limits the maximum read/write disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. It allocates bandwidth, ensures the use of high-priority resource groups, and avoids excessive use of disk bandwidth. The value of the parameter is set on a per-tablespace basis. 
+
+> **Note** Disk I/O limits are only available when you use Linux Control Groups v2. See [Configuring and Using Resource Groups](#topic71717999) for more information.
 
 When you limit disk I/O you speficy:
 
-- The name of the tablespace you set the limits for.
+- The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
 
-- The values for `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit. 
+- The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit. 
 
 - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit. 
 
-> **Note** If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
+If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
 
 ## <a id="topic71717999"></a>Configuring and Using Resource Groups 
 
