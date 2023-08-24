@@ -30,7 +30,7 @@ When you create a resource group, you provide a set of limits that determine the
 |CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [0-100] | -1 (not set)|
 |CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
-|IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [0-MAX] | -1 |
+|IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [[2 - 4294967295 or `MAX`] | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set) | 
 |MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer | 0 |
 

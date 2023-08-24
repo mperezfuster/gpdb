@@ -380,7 +380,7 @@ select * from gp_toolkit.gp_resgroup_status_per_host;
 
 ## <a id="gp_resgroup_status_per_segment"></a>gp_resgroup_status_per_segment
 
-The `gp_toolkit.gp_resgroup_status_per_segment` view allows administrators to see current memory and CPU usage and allocation for each resource group on a per-host and per-segment basis.
+The `gp_toolkit.gp_resgroup_status_per_segment` view allows administrators to see current memory usage usage calculated by vmem tracker and grouped by segment.
 
 Memory amounts are specified in MBs.
 
@@ -388,17 +388,10 @@ Memory amounts are specified in MBs.
 
 |column|type|references|description|
 |------|----|----------|-----------|
-|`rsgname`|name|pg\_resgroup.rsgname|The name of the resource group.|
 |`groupid`|oid|pg\_resgroup.oid|The ID of the resource group.|
-|`hostname`|text|gp\_segment\_configuration.hostname|The hostname of the segment host.|
+|`groupname`|name|pg\_resgroup.rsgname|The name of the resource group.|
 |`segment_id`|smallint|gp\_segment\_configuration.content|The content ID for a segment instance on the segment host.|
-|`cpu`|numeric| |The real-time, per-segment instance CPU core usage by the resource group on the host. The value is the sum of the percentages \(as a decimal value\) of the CPU cores that are used by the resource group for the segment instance.|
-|`memory_used`|integer| |The real-time memory usage of the resource group for the segment instance on the host. This total includes resource group fixed and shared memory. It also includes global shared memory used by the resource group.|
-|`memory_available`|integer| |The unused fixed and shared memory for the resource group for the segment instance on the host.|
-|`memory_quota_used`|integer| |The real-time fixed memory usage for the resource group for the segment instance on the host.|
-|`memory_quota_available`|integer| |The fixed memory available to the resource group for the segment instance on the host.|
-|`memory_shared_used`|integer| |The group shared memory used by the resource group for the segment instance on the host.|
-|`memory_shared_available`|integer| |The amount of group shared memory available for the segment instance on the host. Resource group global shared memory is not included in this total.|
+|`vmem_usage`|The real-time memory usage of the resource group on each segment, in MB.|
 
 ## <a id="gp_resqueue_status"></a>gp_resqueue_status
 
