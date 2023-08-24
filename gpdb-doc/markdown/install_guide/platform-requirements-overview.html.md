@@ -69,7 +69,7 @@ Greenplum Databased 7 supports these Java versions for PL/Java and PXF:
 
 #### <a id="topic_xbl_mkx_python"></a>Python
 
-Greenplum Database requires `python3.9` as the default version of `python` in order to use the Greenplum utilities. If you are installing Greenplum Database on Rocky Linux 8.x, the default Python3 version included is `python3.6`. Run the following commands in order to support `python3.9` for Greenplum utilities:
+Greenplum Database uses the system default `python3` for the Greenplum management utilities, and `python3.9` for the [PL/Python module](../analytics/pl_python.html). For most of the supported OS versions, the system default `python3` is `python3.9`. If you are installing Greenplum Database on Rocky Linux 8, the default `python3` version included is `python3.6`. You may want to unify the `python3` versions to `python3.9` by running the following commands:
 
 ```
 sudo yum install python39-psycopg2 python39-pyyaml python39-psutil
