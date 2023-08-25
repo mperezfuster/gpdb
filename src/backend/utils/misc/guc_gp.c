@@ -2255,7 +2255,7 @@ struct config_bool ConfigureNamesBool_gp[] =
 
 	{
 		{"optimizer_enable_hashagg", PGC_USERSET, QUERY_TUNING_METHOD,
-			gettext_noop("Enables Pivotal Optimizer (GPORCA) to use hash aggregates."),
+			gettext_noop("Enables GPORCA to use hash aggregates."),
 			NULL,
 			GUC_NOT_IN_SAMPLE
 		},
@@ -2266,7 +2266,7 @@ struct config_bool ConfigureNamesBool_gp[] =
 
 	{
 		{"optimizer_enable_groupagg", PGC_USERSET, QUERY_TUNING_METHOD,
-			gettext_noop("Enables Pivotal Optimizer (GPORCA) to use group aggregates."),
+			gettext_noop("Enables GPORCA to use group aggregates."),
 			NULL,
 			GUC_NOT_IN_SAMPLE
 		},
@@ -2597,7 +2597,7 @@ struct config_bool ConfigureNamesBool_gp[] =
 
 	{
 		{"optimizer_enable_dml", PGC_USERSET, QUERY_TUNING_METHOD,
-			gettext_noop("Enable DML plans in Pivotal Optimizer (GPORCA)."),
+			gettext_noop("Enable DML plans in GPORCA."),
 			NULL,
 			GUC_NOT_IN_SAMPLE
 		},
@@ -4418,17 +4418,6 @@ struct config_string ConfigureNamesString_gp[] =
 		&memory_profiler_query_id,
 		"none",
 		NULL, NULL, NULL
-	},
-
-	{
-		{"gp_session_role", PGC_BACKEND, COMPAT_OPTIONS_PREVIOUS,
-			gettext_noop("Alias of gp_role for compatibility."),
-			gettext_noop("Valid values are DISPATCH, EXECUTE, and UTILITY."),
-			GUC_NOT_IN_SAMPLE | GUC_DISALLOW_IN_FILE
-		},
-		&gp_session_role_string,
-		"undefined",
-		check_gp_role, assign_gp_role, show_gp_role
 	},
 
 	{

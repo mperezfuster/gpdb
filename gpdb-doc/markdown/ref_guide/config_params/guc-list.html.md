@@ -909,7 +909,7 @@ The Greenplum Database metrics collection extension, when enabled, sends the col
 
 Enables GPORCA and the Postgres Planner to use the estimated size of a table \(`pg_relation_size` function\) if there are no statistics for the table. By default, GPORCA and the planner use a default value to estimate the number of rows if statistics are not available. The default behavior improves query optimization time and reduces resource queue usage in heavy workloads, but can lead to suboptimal plans.
 
-This parameter is ignored for a root partition of a partitioned table. When GPORCA is enabled and the root partition does not have statistics, GPORCA always uses the default value. You can use `ANALZYE ROOTPARTITION` to collect statistics on the root partition. See [ANALYZE](../sql_commands/ANALYZE.html).
+This parameter is ignored for a root partitioned table. When GPORCA is enabled and the root partition does not have statistics, GPORCA always uses the default value. You can use `ANALZYE ROOTPARTITION` to collect statistics on the root partition. See [ANALYZE](../sql_commands/ANALYZE.html).
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
@@ -2261,7 +2261,7 @@ For information about the Postgres Planner and GPORCA, see [Querying Data](../..
 
 For a partitioned table, controls whether the `ROOTPARTITION` keyword is required to collect root partition statistics when the `ANALYZE` command is run on the table. GPORCA uses the root partition statistics when generating a query plan. The Postgres Planner does not use these statistics.
 
-The default setting for the parameter is `on`, the `ANALYZE` command can collect root partition statistics without the `ROOTPARTITION` keyword. Root partition statistics are collected when you run `ANALYZE` on the root partition, or when you run `ANALYZE` on a child leaf partition of the partitioned table and the other child leaf partitions have statistics. When the value is `off`, you must run `ANALZYE ROOTPARTITION` to collect root partition statistics.
+The default setting for the parameter is `on`, the `ANALYZE` command can collect root partition statistics without the `ROOTPARTITION` keyword. Root partition statistics are collected when you run `ANALYZE` on the root partition, or when you run `ANALYZE` on a leaf partition of the partitioned table and the other leaf partitions have statistics. When the value is `off`, you must run `ANALZYE ROOTPARTITION` to collect root partition statistics.
 
 When the value of the server configuration parameter [optimizer](#optimizer) is `on` \(the default\), the value of this parameter should also be `on`. For information about collecting table statistics on partitioned tables, see [ANALYZE](../sql_commands/ANALYZE.html).
 
@@ -2367,6 +2367,20 @@ For information about GPORCA, see [About GPORCA](../../admin_guide/query/topics/
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
 |Boolean|true|coordinator, session, reload|
+
+## <a id="optimizer_enable_dynamicindexonlyscan"></a>optimizer\_enable\_dynamicindexonlyscan
+
+When GPORCA is enabled \(the default\), the `optimizer_enable_dynamicindexonlyscan` parameter controls generation of dynamic index-only scan plan types.
+
+The default value is `on`, GPORCA may generate a dynamic index only scan alternative when planning a query on a partitioned table that does not include single row volatile (SIRV) functions.
+
+When set to `off`, GPORCA does not generate dynamic index-only scan plan alternatives.
+
+The parameter can be set for a database system, an individual database, or a session or query.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Boolean|on|coordinator, session, reload|
 
 ## <a id="optimizer_enable_foreign_table"></a>optimizer\_enable\_foreign\_table
 
