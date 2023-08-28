@@ -2,7 +2,7 @@
 title: Using Resource Groups 
 ---
 
-You use resource groups to set and enforce CPU, memory, and concurrent transaction limits in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
+You use resource groups to set and enforce CPU, memory, concurrent transaction limits, and disk I/O in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
 
 When you assign a resource group to a role, the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
 
@@ -14,7 +14,7 @@ When using resource groups to control resources like CPU cores, review the Hyper
 
 ## <a id="topic8339intro"></a>Understanding Role and Component Resource Groups 
 
-The most common application for resource groups is to manage the number of active queries that different roles may run concurrently in your Greenplum Database cluster. You can also manage the amount of CPU and memory resources that Greenplum allocates to each query.
+The most common application for resource groups is to manage the number of active queries that different roles may run concurrently in your Greenplum Database cluster. You can also manage the amount of CPU, memory resources, and disk I/O that Greenplum allocates to each query.
 
 When a user runs a query, Greenplum Database evaluates the query against a set of limits defined for the resource group. Greenplum Database runs the query immediately if the group's resource limits have not yet been reached and the query does not cause the group to exceed the concurrent transaction limit. If these conditions are not met, Greenplum Database queues the query. For example, if the maximum number of concurrent transactions for the resource group has already been reached, a subsequent query is queued and must wait until other queries complete before it runs. Greenplum Database may also run a pending query when the resource group's concurrency and memory limits are altered to large enough values.
 
@@ -30,6 +30,7 @@ When you create a resource group, you provide a set of limits that determine the
 |CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [0-100] | -1 (not set)|
 |CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
+|IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [[2 - 4294967295 or `MAX`] | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set) | 
 |MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer | 0 |
 
@@ -149,11 +150,27 @@ There are some special usage considerations regarding memory limits:
 - The maximum value of `statement_mem` is capped at [max_statement_mem](../ref_guide/config_params/guc-list.html#max_statement_mem).
 - Queries whose plan cost is less than the limit `MIN_COST` use a memory quota of `statement_mem`. 
 
+### <a id="diskio"></a>Disk I/O Limits
+
+Greenplum Database leverages Linux control groups to implement disk I/O limits. The parameter `IO_LIMIT` limits the maximum read/write disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. It allocates bandwidth, ensures the use of high-priority resource groups, and avoids excessive use of disk bandwidth. The value of the parameter is set on a per-tablespace basis. 
+
+> **Note** Disk I/O limits are only available when you use Linux Control Groups v2. See [Configuring and Using Resource Groups](#topic71717999) for more information.
+
+When you limit disk I/O you speficy:
+
+- The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
+
+- The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit. 
+
+- The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit. 
+
+If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
+
 ## <a id="topic71717999"></a>Configuring and Using Resource Groups 
 
 ### <a id="topic833"></a>Prerequisites
 
-Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources. There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database uses cgroup v2 by default. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
+Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources and disk I/O. There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database uses cgroup v2 by default. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
 
 Verify what version of cgroup is configured in your environment by checking what filesystem is mounted by default during system boot:
 
@@ -360,7 +377,7 @@ When you install Greenplum Database, no resource management policy is enabled by
     gpstart
     ```
 
-Once enabled, any transaction submitted by a role is directed to the resource group assigned to the role, and is governed by that resource group's concurrency, memory, and CPU limits. 
+Once enabled, any transaction submitted by a role is directed to the resource group assigned to the role, and is governed by that resource group's concurrency, memory, CPU, and disk I/O limits. 
 
 Greenplum Database creates three default resource groups for roles named `admin_group`, `default_group`, and `system_group`. When you enable resources groups, any role that was not explicitly assigned a resource group is assigned the default group for the role's capability. `SUPERUSER` roles are assigned the `admin_group`, non-admin roles are assigned the group named `default_group`. The resources of the Greenplum Database system processes are assigned to the `system_group`. You cannot manually assign any roles to the `system_group`.
 
@@ -372,19 +389,21 @@ The default resource groups `admin_group`, `default_group`, and `system_group`  
 |CPU_MAX_PERCENT|10|20|10|
 |CPU_WEIGHT|100|100|100|
 |CPUSET|-1|-1|-1|
+|IO_LIMIT|-1|-1|-1|
 |MEMORY\_LIMIT|-1|-1|-1|
 |MIN_COST|0|0|0|
 
 ## <a id="topic10"></a>Creating Resource Groups 
 
-When you create a resource group for a role, you provide a name and a CPU resource allocation mode (core or percentage). You can optionally provide a concurrent transaction limit, a memory limit, a CPU soft priority, and a minimum cost. Use the [CREATE RESOURCE GROUP](../ref_guide/sql_commands/CREATE_RESOURCE_GROUP.html) command to create a new resource group.
+When you create a resource group for a role, you provide a name and a CPU resource allocation mode (core or percentage). You can optionally provide a concurrent transaction limit, a memory limit, a CPU soft priority, disk I/O limits, and a minimum cost. Use the [CREATE RESOURCE GROUP](../ref_guide/sql_commands/CREATE_RESOURCE_GROUP.html) command to create a new resource group.
 
 When you create a resource group for a role, you must provide a `CPU_MAX_PERCENT` or `CPUSET` limit value. These limits identify the percentage of Greenplum Database CPU resources to allocate to this resource group. You may specify a `MEMORY_LIMIT` to reserve a fixed amount of memory for the resource group. 
 
-For example, to create a resource group named *rgroup1* with a CPU limit of 20, a memory limit of 25, a CPU soft priority of 500 and a minimum cost of 50:
+For example, to create a resource group named *rgroup1* with a CPU limit of 20, a memory limit of 25, a CPU soft priority of 500, a minimum cost of 50, and disk I/O limits for the `pg_default` tablespace:
 
 ```
-CREATE RESOURCE GROUP rgroup1 WITH (CONCURRENCY=20, CPU_MAX_PERCENT=20, MEMORY_LIMIT=25, CPU_WEIGHT=500, MIN_COST=50);
+CREATE RESOURCE GROUP rgroup1 WITH (CONCURRENCY=20, CPU_MAX_PERCENT=20, MEMORY_LIMIT=25, CPU_WEIGHT=500, MIN_COST=50, 
+  IO_LIMIT=’pg_default: wbps=1000, rbps=1000, wiops=100, riops=100’);
 ```
 
 The CPU limit of 20 is shared by every role to which `rgroup1` is assigned. Similarly, the memory limit of 25 is shared by every role to which `rgroup1` is assigned. `rgroup1` utilizes the default `CONCURRENCY` setting of 20.
@@ -395,6 +414,7 @@ The [ALTER RESOURCE GROUP](../ref_guide/sql_commands/ALTER_RESOURCE_GROUP.html) 
 ALTER RESOURCE GROUP rg_role_light SET CONCURRENCY 7;
 ALTER RESOURCE GROUP exec SET MEMORY_LIMIT 30;
 ALTER RESOURCE GROUP rgroup1 SET CPUSET '1;2,4';
+ALTER RESOURCE GROUP sales SET IO_LIMIT 'tablespace1:wbps=2000,wiops=2000;tablespace2:rbps=2024,riops=2024'; 
 ```
 
 > **Note** You cannot set or alter the `CONCURRENCY` value for the `admin_group` to zero \(0\).
@@ -454,7 +474,7 @@ The [gp\_resgroup\_status](../ref_guide/system_catalogs/catalog_ref-views.html#g
 SELECT * FROM gp_toolkit.gp_resgroup_status;
 ```
 
-#### <a id="topic23a"></a>Viewing Resource Group CPU/Memory Usage Per Host 
+### <a id="topic23a"></a>Viewing Resource Group CPU/Memory Usage Per Host 
 
 The [gp\_resgroup\_status\_per\_host](../ref_guide/system_catalogs/catalog_ref-views.html#gp_resgroup_status_per_host) `gp_toolkit` system view enables you to view the real-time CPU and memory usage of a resource group on a per-host basis. To view this information:
 
@@ -469,6 +489,14 @@ To view the resource group-to-role assignments, perform the following query on t
 ```
 SELECT rolname, rsgname FROM pg_roles, pg_resgroup
 WHERE pg_roles.rolresgroup=pg_resgroup.oid;
+```
+
+### <a id="topic25"></a>Viewing Resource Group Disk I/O Usage Per Host
+
+The [gp_resgroup_iostats_per_host](../ref_guide/system_catalogs/catalog_ref-views.html#gp_resgroup_iostats_per_host) `gp_toolkit` system view enables you to view the real-time disk I/O usage of a resource group on a per-host basis. To view this information:
+
+```
+SELECT * FROM gp_toolkit.gp_resgroup_iostats_per_host;
 ```
 
 ### <a id="topic252525"></a>Viewing a Resource Group's Running and Pending Queries 
@@ -502,8 +530,8 @@ Sample partial query output:
 ```
  rolname | rsgname  | pid     | waiting | state  |          query           | datname 
 ---------+----------+---------+---------+--------+------------------------ -+---------
-  sammy  | rg_light |  31861  |    f    | idle   | SELECT * FROM mytesttbl; | testdb
-  billy  | rg_light |  31905  |    t    | active | SELECT * FROM topten;    | testdb
+  sammy  | rg_light |  31861  |    f    | idle   | SELECT * FROM mytesttbl; | testdb
+  billy  | rg_light |  31905  |    t    | active | SELECT * FROM topten;    | testdb
 ```
 
 Use this output to identify the process id \(`pid`\) of the transaction you want to cancel, and then cancel the process. For example, to cancel the pending query identified in the sample output above:
