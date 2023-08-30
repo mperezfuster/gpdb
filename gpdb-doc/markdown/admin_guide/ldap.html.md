@@ -15,16 +15,16 @@ To use LDAP authentication, the Greenplum Database coordinator host must be conf
 
 ## <a id="enldap"></a>Enabling LDAP Authentication with STARTTLS and TLS 
 
-To enable STARTTLS with the TLS protocol, in the pg\_hba.conf file, add an `ldap` line and specify the `ldaptls` parameter with the value `true`. The default port is 389. In this example, the authentication method parameters include the `ldaptls` parameter.
+To enable STARTTLS with the TLS protocol, in the pg\_hba.conf file, add an `ldap` line and specify the `ldaptls` parameter with the value 1. The default port is 389. In this example, the authentication method parameters include the `ldaptls` parameter.
 
 ```
-ldap ldapserver=myldap.com ldaptls=true ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com"
+ldap ldapserver=myldap.com ldaptls=1 ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com"
 ```
 
 Specify a non-default port with the `ldapport` parameter. In this example, the authentication method includes the `ldaptls` parameter and the `ldapport` parameter to specify the port 500.
 
 ```
-ldap ldapserver=myldap.com ldaptls=true ldapport=500 ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com"
+ldap ldapserver=myldap.com ldaptls=1 ldapport=500 ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com"
 ```
 
 ## <a id="enldapauth"></a>Enabling LDAP Authentication with a Secure Connection and TLS/SSL 
@@ -87,7 +87,7 @@ To use an existing OpenLDAP system for authentication, Greenplum Database must b
 
 Greenplum Database logs an error if the following are specified in an pg\_hba.conf file entry:
 
--   If both the `ldaps://` prefix and the `ldaptls=true` parameter are specified.
+-   If both the `ldaps://` prefix and the `ldaptls=1` parameter are specified.
 -   If both the `ldaps://` prefix and the `ldapport` parameter are specified.
 
 Enabling encrypted communication for LDAP authentication only encrypts the communication between Greenplum Database and the LDAP server.
@@ -107,13 +107,19 @@ host all plainuser 0.0.0.0/0 ldap ldapserver=myldap.com ldapprefix="uid=" ldapsu
 This example specifies LDAP authentication with the STARTTLS and TLS protocol between Greenplum Database and the LDAP server.
 
 ```
-host all tlsuser 0.0.0.0/0 ldap ldapserver=myldap.com ldaptls=true ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com" 
+host all tlsuser 0.0.0.0/0 ldap ldapserver=myldap.com ldaptls=1 ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com" 
 ```
 
 This example specifies LDAP authentication with a secure connection and TLS/SSL protocol between Greenplum Database and the LDAP server.
 
 ```
 host all ldapsuser 0.0.0.0/0 ldap ldapserver=myldap.com ldapscheme=ldaps ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com"
+```
+
+This example also specifies LDAP authentication with a secure connection and TLS/SSL protocol between Greenplum Database and the LDAP server, using an alternative syntax.
+
+```
+host all ldapsuser 0.0.0.0/0 ldap ldapurl=ldaps://myldap.com ldapprefix="uid=" ldapsuffix=",ou=People,dc=example,dc=com" 
 ```
 
 **Parent topic:** [Configuring Client Authentication](client_auth.html)
