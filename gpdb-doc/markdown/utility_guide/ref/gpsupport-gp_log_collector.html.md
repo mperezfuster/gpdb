@@ -4,6 +4,8 @@ This tool collects Greenplum and system log files, along with the relevant confi
 
 ## <a id="usage"></a>Usage 
 
+asd
+
 ```
 gpsupport gp_log_collector [-failed-segs | -c <ID1,ID2,...>| -hostfile <file> | -h <host1, host2,...>]
 [ -start <YYYY-MM-DD> ] [ -end <YYYY-MM-DD> ]
