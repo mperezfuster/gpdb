@@ -31,6 +31,8 @@ The following new server configuration parameters are available in Greenplum 7:
 - `optimizer_jit_optimize_above_cost`
 - `vacuum_cleanup_index_scale_factor`
 - `track_wal_io_timing`
+- `gp_resgroup_memory_query_fixed_mem`
+- `gp_resource_group_bypass_direct_dispatch`
 
 
 ### <a id="removed"></a>Removed Parameters
