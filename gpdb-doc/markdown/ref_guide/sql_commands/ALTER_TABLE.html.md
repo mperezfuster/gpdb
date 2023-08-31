@@ -64,6 +64,7 @@ where <action> is one of:
   FORCE ROW LEVEL SECURITY
   NO FORCE ROW LEVEL SECURITY
   CLUSTER ON <index_name>
+  REPACK BY COLUMNS <colum_name_1 [ASC|DESC], column_name_2 [ASC|DESC], ...>
   SET WITHOUT CLUSTER
   SET WITHOUT OIDS
   SET TABLESPACE <new_tablespace>
@@ -301,6 +302,11 @@ CLUSTER ON
 :   Selects the default index for future [CLUSTER](CLUSTER.html) operations. It does not actually re-cluster the table.
 
 :   Changing cluster options acquires a `SHARE UPDATE EXCLUSIVE` lock.
+
+REPACK BY COLUMNS
+:   Physically reorders a table based on one or more columns to improve physical correlation. You specify one or more columns, and an optional column order. If not specified, the default is `ASC`. The command is equivalent to the [CLUSTER](CLUSTER.html) command, but it uses columns instead of an index. 
+
+:   The command is especially useful for tables that are loaded in small batches. You may combine `REPACK BY COLUMNS` with most other `ALTER TABLE` commands that do not require a rewrite of the table. You may also combine it with `SET` to change the compression in order to achieve better compression.
 
 SET WITHOUT CLUSTER
 :   Removes the most recently used [CLUSTER](CLUSTER.html) index specification from the table. This affects future cluster operations that do not specify an index.
@@ -806,6 +812,12 @@ Change the distribution policy of a table to random and force a table rewrite:
 
 ```
 ALTER TABLE distributors SET WITH (REORGANIZE=true) SET DISTRIBUTED RANDOMLY;
+```
+
+Physically reorder the table by column `i`:
+
+```
+ALTER TABLE distributors REPACK BY COLUMNS (i ASC);
 ```
 
 ### <a id="examples_modern"></a>Modern Syntax Partioning Examples
