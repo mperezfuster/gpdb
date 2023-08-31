@@ -2,9 +2,7 @@
 title: About Changes to Resource Groups in Greenplum 7
 ---
 
-VMware Greenplum 7 introduces substantial changes to resource group-based resource management. 
-
-This topic describes the Greenplum 7 resource group and compares with resource groups 6.
+VMware Greenplum 7 introduces substantial changes to resource group-based resource management. This topic describes the Greenplum 7 resource group and compares with resource groups 6.
 
 |Metric|Resource Groups in Greenplum 6|Resource Groups in Greenplum 7|
 |------|---------------|---------------|
@@ -24,9 +22,14 @@ The possible settings for the `gp_resource_manager` server configuration paramet
 - `group-v2` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v2 version of Linux cgroup functionality.
 - `queue` - Configures Greenplum Database to use resource queues.
 
-Greenplum Database now includes a new server configuration parameter -- `gp_resgroup_memory_query_fixed_mem` -- which allows you to override at a session level the fixed amount of memory reserved for all queries in a resource group.
-- The `gp_resgroup_status_per_segment` system view has been removed from Greenplum Database.
+The new server configuration parameter `gp_resgroup_memory_query_fixed_mem` allows you to override at a session level the fixed amount of memory reserved for all queries in a resource group.
+
+
+Changes to system views:
+
+- The `gp_resgroup_status_per_segment` system view has been removed.
 - The `cpu_usage` and `memory_usage` fields have been moved from the `gp_resgroup_status` system view to the `gp_resgroup_status_per_host` system view.
+- The `gp_resgroup_iostats_per_host` system view has been added.
 
 You may configure three new resource group attributes using the `CREATE RESOURCE GROUP` and `ALTER RESOURCE GROUP` SQL commands:
 - `CPU_MAX_PERCENT`, which configures the maximum amount of CPU resources the resource group can use.
