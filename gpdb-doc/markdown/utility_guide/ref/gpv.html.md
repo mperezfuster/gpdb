@@ -47,11 +47,11 @@ The following table lists all the information you require in order to configure 
 |Compute cluster name|The virtual compute cluster name|
 |Storage type |The storage provider type (`powerflex` or `vsan`)|
 |Storage name|The datastore name for this deployment|
+|Storage policy|The storage policy name|
 |vSphere distributed switch MTU size|The Maximum Transmission Unit (MTU) configured for the vSphere distributed switch*|
 |**Database**|**Configuration parameters for Greenplum Database**|
 |Deployment type|Greenplum deployment type (`mirrored` or `mirrorless`)|
 |Greenplum database cluster prefix |Prefix to prepend to the resource pool and virtual machine names. Default is `gpv`|
-|Number of Primay Segment virtual machines | The number of virtual machines for the primary segments. <br/> - For a `mirrored` deployment type the value is `number of primary segments * 2 + 2`. <br/> - For a `mirrorless` deployment type the value is `number of primary segments + 1`|
 |**Base-vm**|**Configuration parameters for the base virtual machine**|
 |Base VM network type |Available options are `dhcp` or `static` IP for the **base virtual machine only**. <br/> - For `dhcp`, the DHCP server assigns the network settings <br/> - For `static` IP, you must specify the virtual machine IP, the gateway IP, and the netmask|
 |Base VM IP| The IP to use if the network type is `static`|
@@ -71,8 +71,7 @@ The following table lists all the information you require in order to configure 
 |base-VM-name|The name of the base virtual machine, provisioned in the next section|
 |boot password for the root user|The password for the `root` user on the base virtual machine|
 |boot password for the gpadmin user|The password for the `gpadmin` user on the base virtual machine. The `gpadmin` user is required for the Greenplum cluster initialization and management.|
-|number of primary segment VMs|The number of virtual machines for the primary segments. <br/> - for `mirrored` the total number of virtual machines is `number of primary segments * 2 + 2`. <br/> - for `mirrorless` the total number of virtual machines is `number of primary segments + 1`.|
-|||
+|Number of primary segment VMs|The number of virtual machines for the primary segments. For `mirrored`, use `number of primary segments * 2 + 2`. For `mirrorless`, use `number of primary segments + 1`.|
 
 *Greenplum performs best with jumbo frames. The recommended MTU is 9000 if the vSphere distributed switch supports it. If it is less than 9000, you must adjust the server configuration parameter [gp_max_packet_size](../../ref_guide/config_params/guc-list.html#gp_max_packet_size) manually. See [Configuring Your Systems](../../install_guide/prep_os.html#networking) for more information about MTU.
 
