@@ -565,12 +565,12 @@ For detailed information about SSH configuration options, refer to the SSH docum
 
 You must use NTP (Network Time Protocol) to synchronize the system clocks on all hosts that comprise your Greenplum Database system. Accurate time keeping is essential to ensure reliable operations on the database and data integrity.
 
-There are two possible architectures you may choose from to implement NTP:
+There are many different architectures you may choose from to implement NTP. We recommend you use one of the following:
 
 - Configure coordinator as the NTP primary source and the other hosts in the cluster connect to it.
 - Configure an external NTP primary source and all hosts in the cluster connect to it.
 
-Depending on your operating system version, the NTP protocol may be implemented by the `ntpd` daemon or the `chronyd` daemon.
+Depending on your operating system version, the NTP protocol may be implemented by the `ntpd` daemon, the `chronyd` daemon, or other. Refer to your preferred NTP protocol documentation for more details.
 
 ### <a id="ji162603"></a>Option 1: Configure System Clocks with the Coordinator as the Primary Source
 
@@ -594,18 +594,18 @@ Depending on your operating system version, the NTP protocol may be implemented 
     server 10.6.220.20
     ```
 
-4.  On the coordinator host, use your NTP daemon to synchronize the system clocks on all Greenplum hosts. For example, using [gpssh](../utility_guide/ref/gpssh.html):
+4.  Synchronize the system clocks on all Greenplum hosts as root.
 
     If you are using the `ntpd` daemon:
 
     ```
-    gpssh -f hostfile_gpssh_allhosts -v -e 'ntpd'
+    systemctl restart ntp
     ```
 
     If you are using the `chronyd` daemon:
 
     ```
-    gpssh -f hostfile_gpssh_allhosts -v -e 'chronyd'
+    systemctl restart chronyd
     ``` 
 
 ### <a id="ji162603"></a>Option 2: Configure System Clocks with an External Primary Source
