@@ -16,6 +16,12 @@ VMware Greenplum 7 introduces substantial changes to resource group-based resour
 |Limit Bypass|Limits are not enforced on `SET`, `RESET`, and `SHOW` commands|Limits are not enforced on `SET`, `RESET`, and `SHOW` commands. Additionally, certain queries may be configured to bypass the concurrency limit|
 |External Components|Manage PL/Container CPU and memory resources|None|
 
+
+CPU management
+Memory management
+
+Changes to server configuration parameters:
+
 The possible settings for the `gp_resource_manager` server configuration parameter have changed. They now include the following:
 - `none` - Configures Greenplum Database to not use any resource manager. This is the default.
 - `group` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v1 version of Linux cgroup functionality.
@@ -24,6 +30,7 @@ The possible settings for the `gp_resource_manager` server configuration paramet
 
 The new server configuration parameter `gp_resgroup_memory_query_fixed_mem` allows you to override at a session level the fixed amount of memory reserved for all queries in a resource group.
 
+The new server configuration parameter `gp_resource_group_bypass_direct_dispatch` bypasses the resource group's limits for a direct dispatch query so it can run immediately.
 
 Changes to system views:
 
@@ -31,22 +38,20 @@ Changes to system views:
 - The `cpu_usage` and `memory_usage` fields have been moved from the `gp_resgroup_status` system view to the `gp_resgroup_status_per_host` system view.
 - The `gp_resgroup_iostats_per_host` system view has been added.
 
-You may configure three new resource group attributes using the `CREATE RESOURCE GROUP` and `ALTER RESOURCE GROUP` SQL commands:
+
+Changes to resource group attributes and limits:
+
+You may configure four new resource group attributes using the `CREATE RESOURCE GROUP` and `ALTER RESOURCE GROUP` SQL commands:
 - `CPU_MAX_PERCENT`, which configures the maximum amount of CPU resources the resource group can use.
 - `CPU_WEIGHT`, which configures the scheduling priority of the resource group.
 - `MIN_COST`, which configures the minimum amount a query's query plan cost for the query to remain in the resource group.
+- `IO_LIMIT`, which configures device I/O usage at the resource group level to manage the maximum throughput of read/write operations, and the maximum read/write operations per second.
 
 The following resource group attributes have been removed:
 - `CPU_RATE_LIMIT`
 - `MEMORY_AUDITOR`
 - `MEMORY_SPILL_RATIO`
 - `MEMORY_SHARED_QUOTA`
-
-You may now configure device I/O usage at the resource group level via the new `IO_LIMIT` resource group attribute. Specifically, you can control for processes in a resource group:
-- the maximum bandwidth of read/write operations from the disk per second
-- the maximum number of IO read/write operations from the disk per second
-
-You may control this for particular tablespaces or across all tablespaces.
 
 Refer to [Using Resource Groups](/oss/admin_guide/workload_mgmt_resgroups.html) for more information about resource groups.
 
