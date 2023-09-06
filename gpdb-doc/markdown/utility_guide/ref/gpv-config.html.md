@@ -14,6 +14,48 @@ gpv config set <options>
 
 The `gpv config` command allows you to configure a Greenplum cluster on VMware vSphere, import an external configuration, and list the current configuration.
 
+## <a id="info"></a>Required Inputs
+
+The following table lists all the information you require in order to configure the a base virtual machine template using the `gpv` utility. Be sure you have this information available before you start with the configuration.
+
+|Configuration|Description|
+|-|-| 
+|**vSphere**|**Configuration parameters for vSphere**|
+|vSphere admin username|An administrator account with enough permissions to deploy the Greenplum cluster|
+|vSphere admin password|The password for the administrator account| 
+|vCenter address|The FQDN or IP address of the vCenter (do not include `https://`)|
+|Datacenter name|The virtual data center name|
+|Compute cluster name|The virtual compute cluster name|
+|Storage type |The storage provider type (`powerflex` or `vsan`)|
+|Storage name|The datastore name for this deployment|
+|Storage policy|The storage policy name|
+|vSphere distributed switch MTU size|The Maximum Transmission Unit (MTU) configured for the vSphere distributed switch*|
+|**Database**|**Configuration parameters for Greenplum Database**|
+|Deployment type|Greenplum deployment type (`mirrored` or `mirrorless`)|
+|Greenplum database cluster prefix |Prefix to prepend to the resource pool and virtual machine names. Default is `gpv`|
+|**Base-vm**|**Configuration parameters for the base virtual machine**|
+|Base VM network type |Available options are `dhcp` or `static` IP for the **base virtual machine only**. <br/> - For `dhcp`, the DHCP server assigns the network settings <br/> - For `static` IP, you must specify the virtual machine IP, the gateway IP, and the netmask|
+|Base VM IP| The IP to use if the network type is `static`|
+|Base VM gateway IP|The gateway to use if the network type is `static`|
+|Base VM netmask|The Netmask to use if the network type is `static`|
+|**gp-virtual-external**|**Configuration parameters for the routable network**|
+|gp-virtual-external CIDR|The Classless Inter-Domain Routing (CIDR) of the routable network connected to the `mdw` and `smdw` virtual machines to provide the Greenplum database service to the user clients|
+|gp-virtual-external available IPs|The space separated IP addresses used for `mdw` and `smdw`. The second IP (for `smdw`) is only required for `mirrored` deployment.|
+|gp-virtual-external DNS servers|Space separated IP addresses of the DNS servers on the routable network|
+|gp-virtual-external NTP servers|Space separated addresses of the NTP servers|
+|gp-virtual-external gateway IP|The gateway IP address|
+|**gp-virtual-internal**|**Configuration parameters for the Greenplum internal network**|
+|gp-virtual-internal CIDR|The internal network The Classless Inter-Domain Routing (CIDR) for the interconnect communications between Greenplum virtual machines|
+|**gp-virtual-etl-bar**|**Configuration parameters for the ETL-BAR network**|
+|gp-virtual-etl-bar CIDR|The network The Classless Inter-Domain Routing (CIDR) for Extraction Transformation Load (`etl`) and/or Backup and Restore (`bar`) network. Usually this network is not routable to the database user clients, but routable to the backup or staging servers. This network allows access to all segments within the Greenplum cluster to ensure maximum throughput for heavy data movement workloads.|
+|**Virtual machine options**|**Configuration parameters for the virtual machines**|
+|base-VM-name|The name of the base virtual machine, provisioned in the next section|
+|boot password for the root user|The password for the `root` user on the base virtual machine|
+|boot password for the gpadmin user|The password for the `gpadmin` user on the base virtual machine. The `gpadmin` user is required for the Greenplum cluster initialization and management.|
+|Number of primary segment VMs|The number of virtual machines for the primary segments. For `mirrored`, use `number of primary segments * 2 + 2`. For `mirrorless`, use `number of primary segments + 1`.|
+
+*Greenplum performs best with jumbo frames. The recommended MTU is 9000 if the vSphere distributed switch supports it. If it is less than 9000, you must adjust the server configuration parameter [gp_max_packet_size](../../ref_guide/config_params/guc-list.html#gp_max_packet_size) manually. See [Configuring Your Systems](../../install_guide/prep_os.html#networking) for more information about MTU.
+
 ## <a id="opts"></a>Sub-commands
 
 The available sub-commands for `gpv config` are `init`, `list`, and `set`.
