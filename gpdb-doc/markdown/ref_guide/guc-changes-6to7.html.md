@@ -68,3 +68,4 @@ These server configuration parameters are changed in Greenplum 7:
 - The default value for the server configuration parameter `gp_interconnect_address_type` changed from `wildcard` to `unicast`.
 - The `wal_keep_segments` server configuration parameter has been replaced by the `wal_keep_size` parameter.
 - The `autovacuum` server configuration parameter is now enabled for all databases by default, rather than just for the `template0` and `template1` databases.
+- The `gp_autostats_mode` server configuration parameter default value has been changed to `none`.
