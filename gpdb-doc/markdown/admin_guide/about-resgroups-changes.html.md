@@ -2,7 +2,9 @@
 title: About Changes to Resource Groups in Greenplum 7
 ---
 
-VMware Greenplum 7 introduces substantial changes to resource group-based resource management. This topic describes the Greenplum 7 resource group and compares with resource groups 6.
+VMware Greenplum 7 introduces substantial changes to resource group-based resource management. This topic compares the differences between resource groups with Greenplum 6 and Greenplum 7. Visit [Using Resource Groups](workload_mgmt_resgroups.html) for more information about how resource groups work in Greenplum 7.
+
+The following table compares the main concepts of resource management and how each version of Greenplum Database implements them:
 
 |Metric|Resource Groups in Greenplum 6|Resource Groups in Greenplum 7|
 |------|---------------|---------------|
@@ -17,43 +19,49 @@ VMware Greenplum 7 introduces substantial changes to resource group-based resour
 |External Components|Manage PL/Container CPU and memory resources|None|
 
 
-CPU management
-Memory management
-
-Changes to server configuration parameters:
-
-The possible settings for the `gp_resource_manager` server configuration parameter have changed. They now include the following:
-- `none` - Configures Greenplum Database to not use any resource manager. This is the default.
-- `group` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v1 version of Linux cgroup functionality.
-- `group-v2` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v2 version of Linux cgroup functionality.
-- `queue` - Configures Greenplum Database to use resource queues.
-
-The new server configuration parameter `gp_resgroup_memory_query_fixed_mem` allows you to override at a session level the fixed amount of memory reserved for all queries in a resource group.
-
-The new server configuration parameter `gp_resource_group_bypass_direct_dispatch` bypasses the resource group's limits for a direct dispatch query so it can run immediately.
-
-Changes to system views:
-
-- The `gp_resgroup_status_per_segment` system view has been removed.
-- The `cpu_usage` and `memory_usage` fields have been moved from the `gp_resgroup_status` system view to the `gp_resgroup_status_per_host` system view.
-- The `gp_resgroup_iostats_per_host` system view has been added.
-
-
-Changes to resource group attributes and limits:
+### <a id="attributes"></a>Changes to Resource Groups Attributes
 
 You may configure four new resource group attributes using the `CREATE RESOURCE GROUP` and `ALTER RESOURCE GROUP` SQL commands:
 - `CPU_MAX_PERCENT`, which configures the maximum amount of CPU resources the resource group can use.
 - `CPU_WEIGHT`, which configures the scheduling priority of the resource group.
 - `MIN_COST`, which configures the minimum amount a query's query plan cost for the query to remain in the resource group.
-- `IO_LIMIT`, which configures device I/O usage at the resource group level to manage the maximum throughput of read/write operations, and the maximum read/write operations per second.
+- `IO_LIMIT`, which configures device I/O usage at the resource group level to manage the maximum throughput of read/write operations, and the maximum read/write operations per second. 
 
 The following resource group attributes have been removed:
 - `CPU_RATE_LIMIT`
 - `MEMORY_AUDITOR`
 - `MEMORY_SPILL_RATIO`
-- `MEMORY_SHARED_QUOTA`
+- `MEMORY_SHARED_QUOTA
 
-Refer to [Using Resource Groups](/oss/admin_guide/workload_mgmt_resgroups.html) for more information about resource groups.
+### <a id="gucs"></a>Changes to Server Configuration Parameters
 
+Greenplum 7 resource group management introduces the following changes to server configuration parameters:
 
+- The possible settings for the `gp_resource_manager` server configuration parameter have changed. They now include the following:
+    - `none` - Configures Greenplum Database to not use any resource manager. This is the default.
+    - `group` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v1 version of Linux cgroup functionality.
+    - `group-v2` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v2 version of Linux cgroup functionality.
+    - `queue` - Configures Greenplum Database to use resource queues.
 
+- The new server configuration parameter `gp_resgroup_memory_query_fixed_mem` allows you to override at a session level the fixed amount of memory reserved for all queries in a resource group.
+
+- The new server configuration parameter `gp_resource_group_move_timeout`
+
+- The new server configuration parameter `gp_resource_group_bypass_direct_dispatch` bypasses the resource group's limits for a direct dispatch query so it can run immediately. A direct dispatch query is a special type of query that only requires a single segment to participate in the execution.
+
+- The server configuration parameter `gp_resource_group_cpu_ceiling_enforcement` has been removed.
+
+- The server configuration parameter `gp_resource_group_enable_recalculate_query_mem` has been removed.
+
+- The server configuration parameter `gp_resource_group_memory_limit` has been removed.
+
+### <a id="views"></a>Changes to System Views
+
+The following system views have changes:
+
+- The fields `cpu_rate_limit`, `memory_shared_quota`, `memory_spill_ratio`, and `memory_auditor` have been replaced by `cpu_max_percent`, `cpu_weight`, `cpuset`, `min_cost`, and `io_limit` in the `gp_resgroups_config` system view.
+- The field `rsgname` has been renamed to `groupname` in the `gp_resgroup_status` system view. 
+- The fields `cpu_usage` and `memory_usage` have been removed from the `gp_resgroup_status` system view to the `gp_resgroup_status_per_host` system view.
+- The fields `hostname`, `cpu`, `memory_used`, `memory_available`, `memory_quota_used`, `memory_quota_available`, `memory_shared_used`, and `memory_shared_available` have been removed from the system view `gp_resgroup_status_per_host`. The fields `segment_id`, `cpu_usage` and `memory_usage` have been added to the view.
+- The fields `rsgname`, `hostname`, `cpu`, `memory_used`, `memory_available`, `memory_quota_used`, `memory_quota_available`, `memory_shared_used`, and `memory_shared_available` have been removed from the system view `gp_resgroup_status_per_segment`. The fields `groupname`, and `vmem_usage` have been added to the view.
+- The `gp_resgroup_iostats_per_host` system view has been added.
