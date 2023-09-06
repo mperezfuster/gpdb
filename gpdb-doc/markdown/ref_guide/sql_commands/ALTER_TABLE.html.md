@@ -306,7 +306,7 @@ CLUSTER ON
 REPACK BY COLUMNS
 :   Physically reorders a table based on one or more columns to improve physical correlation. You specify one or more columns, and an optional column order. If not specified, the default is `ASC`. The command is equivalent to the [CLUSTER](CLUSTER.html) command, but it uses the provided column list instead of an index to determine the sorting order. 
 
-:   The command is especially useful for tables that are loaded in small batches. You may combine `REPACK BY COLUMNS` with most other `ALTER TABLE` commands that do not require a rewrite of the table. You may use `REPACK BY COLUMNS` to add compression or change the existing compression settings of a table while phyisically reordering the table, which results in better compression and storage. See [Examples](#section6) for more details.
+:   The command is especially useful for tables that are loaded in small batches. You may combine `REPACK BY COLUMNS` with most other `ALTER TABLE` commands that do not require a rewrite of the table. You may use `REPACK BY COLUMNS` to add compression or change the existing compression settings of a table while physically reordering the table, which results in better compression and storage. See [Examples](#section6) for more details.
 
 SET WITHOUT CLUSTER
 :   Removes the most recently used [CLUSTER](CLUSTER.html) index specification from the table. This affects future cluster operations that do not specify an index.
