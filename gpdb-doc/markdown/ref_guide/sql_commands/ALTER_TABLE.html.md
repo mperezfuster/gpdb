@@ -64,7 +64,7 @@ where <action> is one of:
   FORCE ROW LEVEL SECURITY
   NO FORCE ROW LEVEL SECURITY
   CLUSTER ON <index_name>
-  REPACK BY COLUMNS <colum_name_1 [ASC|DESC], column_name_2 [ASC|DESC], ...>
+  REPACK BY COLUMNS (<colum_name_1> [ASC|DESC], <column_name_2> [ASC|DESC], ...)
   SET WITHOUT CLUSTER
   SET WITHOUT OIDS
   SET TABLESPACE <new_tablespace>
@@ -304,9 +304,9 @@ CLUSTER ON
 :   Changing cluster options acquires a `SHARE UPDATE EXCLUSIVE` lock.
 
 REPACK BY COLUMNS
-:   Physically reorders a table based on one or more columns to improve physical correlation. You specify one or more columns, and an optional column order. If not specified, the default is `ASC`. The command is equivalent to the [CLUSTER](CLUSTER.html) command, but it uses columns instead of an index. 
+:   Physically reorders a table based on one or more columns to improve physical correlation. You specify one or more columns, and an optional column order. If not specified, the default is `ASC`. The command is equivalent to the [CLUSTER](CLUSTER.html) command, but it uses the provided column list instead of an index to determine the sorting order. 
 
-:   The command is especially useful for tables that are loaded in small batches. You may combine `REPACK BY COLUMNS` with most other `ALTER TABLE` commands that do not require a rewrite of the table. You may also combine it with `SET` to change the compression in order to achieve better compression.
+:   The command is especially useful for tables that are loaded in small batches. You may combine `REPACK BY COLUMNS` with most other `ALTER TABLE` commands that do not require a rewrite of the table. You may use `REPACK BY COLUMNS` to add compression or change the existing compression settings of a table while phyisically reordering the table, which results in better compression and storage. See [Examples](#section6) for more details.
 
 SET WITHOUT CLUSTER
 :   Removes the most recently used [CLUSTER](CLUSTER.html) index specification from the table. This affects future cluster operations that do not specify an index.
@@ -814,10 +814,12 @@ Change the distribution policy of a table to random and force a table rewrite:
 ALTER TABLE distributors SET WITH (REORGANIZE=true) SET DISTRIBUTED RANDOMLY;
 ```
 
-Physically reorder the table by column `i`:
+Set compression for a table and physically reorder the table by column `i`:
 
 ```
-ALTER TABLE distributors REPACK BY COLUMNS (i ASC);
+ALTER TABLE distributors 
+    REPACK BY COLUMNS (i),
+    SET (compresstype=zstd, compresslevel=3);
 ```
 
 ### <a id="examples_modern"></a>Modern Syntax Partioning Examples
