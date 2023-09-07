@@ -67,11 +67,11 @@ IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops
 
     - The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
 
-    - The values for `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit.
+    - The values for `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `max`, which means there is no limit.
 
-    - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit.
+    - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `max`, which means there is no limit.
 
-:   If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
+:   If the parameter `IO_LIMIT` is not set, the default value for `rbps`, `wpbs`, `riops`, and `wiops`s is set to `max`, which means that there are no disk I/O limits. In this scenario, the `gp_toolkit.gp_resgroup_config` system view displays its value as `-1`.
 
 > **Note** The parameter `IO_LIMIT` is only available when you use Linux Control Groups v2. See [Configuring and Using Resource Groups](../../admin_guide/workload_mgmt_resgroups.html#topic71717999) for more information.
 
@@ -114,7 +114,7 @@ ALTER RESOURCE GROUP rgroup2 SET CPU_MAX_PERCENT 45;
 Update the memory limit for a resource group:
 
 ```
-ALTER RESOURCE GROUP rgroup3 SET MEMORY_LIMIT 30;
+ALTER RESOURCE GROUP rgroup3 SET MEMORY_LIMIT 300;
 ```
 
 Reserve CPU core 1 for a resource group on the coordinator host and all segment hosts:

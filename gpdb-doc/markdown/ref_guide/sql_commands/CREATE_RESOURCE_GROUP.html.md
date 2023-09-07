@@ -67,11 +67,11 @@ IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops
 
     - The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
 
-    - The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `MAX`, which means there is no limit.
+    - The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `max`, which means there is no limit.
 
-    - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `MAX`, which means there is no limit.
+    - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `max`, which means there is no limit.
 
-:   If the parameter `IO_LIMIT` is set to -1, it means that `rbps`, `wpbs`, `riops`, and `wiops` are set to `MAX`, which means that there are no disk I/O limits.
+:   If the parameter `IO_LIMIT` is not set, the default value for `rbps`, `wpbs`, `riops`, and `wiops`s is set to `max`, which means that there are no disk I/O limits. In this scenario, the `gp_toolkit.gp_resgroup_config` system view displays its value as `-1`.
 
 > **Note** The parameter `IO_LIMIT` is only available when you use Linux Control Groups v2. See [Configuring and Using Resource Groups](../../admin_guide/workload_mgmt_resgroups.html#topic71717999) for more information.
 
@@ -106,7 +106,7 @@ SELECT * FROM gp_toolkit.gp_resgroup_config;
 Create a resource group with CPU and memory limit percentages of 35:
 
 ```
-CREATE RESOURCE GROUP rgroup1 WITH (CPU_MAX_PERCENT=35, MEMORY_LIMIT=35);
+CREATE RESOURCE GROUP rgroup1 WITH (CPU_MAX_PERCENT=35, MEMORY_LIMIT=350);
 ```
 
 Create a resource group with a concurrent transaction limit of 20, a memory limit of 15, a CPU limit of 25, and disk I/O limits for the `pg_default` tablespace:
@@ -114,21 +114,21 @@ Create a resource group with a concurrent transaction limit of 20, a memory limi
 
 ```
 CREATE RESOURCE GROUP rgroup2 WITH (CONCURRENCY=20, 
-  MEMORY_LIMIT=15, CPU_MAX_PERCENT=25,
+  MEMORY_LIMIT=150, CPU_MAX_PERCENT=25,
   IO_LIMIT=’pg_default: wbps=1000, rbps=1000, wiops=100, riops=100’);
 ```
 
 Create a resource group to manage PL/Container resources specifying a memory limit of 10, and a CPU limit of 10:
 
 ```
-CREATE RESOURCE GROUP plc_run1 WITH (MEMORY_LIMIT=10, CPU_MAX_PERCENT=10,
+CREATE RESOURCE GROUP plc_run1 WITH (MEMORY_LIMIT=100, CPU_MAX_PERCENT=10,
   CONCURRENCY=0);
 ```
 
 Create a resource group with a memory limit percentage of 11 to which you assign CPU core 1 on the coordinator host, and cores 1 to 3 on segment hosts:
 
 ```
-CREATE RESOURCE GROUP rgroup3 WITH (CPUSET='1;1-3', MEMORY_LIMIT=11);
+CREATE RESOURCE GROUP rgroup3 WITH (CPUSET='1;1-3', MEMORY_LIMIT=110);
 ```
 
 ## <a id="section7"></a>Compatibility 
