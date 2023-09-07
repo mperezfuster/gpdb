@@ -31,7 +31,7 @@ The following resource group attributes have been removed:
 - `CPU_RATE_LIMIT`
 - `MEMORY_AUDITOR`
 - `MEMORY_SPILL_RATIO`
-- `MEMORY_SHARED_QUOTA
+- `MEMORY_SHARED_QUOTA`
 
 ### <a id="gucs"></a>Changes to Server Configuration Parameters
 
