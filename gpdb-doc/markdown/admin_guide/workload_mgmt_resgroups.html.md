@@ -170,7 +170,7 @@ If the parameter `IO_LIMIT` is not set, the default value for `rbps`, `wpbs`, `r
 
 ### <a id="topic833"></a>Prerequisites
 
-Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources and disk I/O. There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database 7 supports both versions, but it uses cgroup v2 by default, and it only supports the parameter `IO_LIMIT` for cgroup v2. However, the version of Linux Control Groups shipped by default with your Linux distribution depends on the operating system version. For Enterprise Linux 8 and older, the default version is v1. For Enterprise Linux 9 and later, the default version is v2. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
+Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources and disk I/O. There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database 7 supports both versions, but it uses cgroup v2 by default, and it only supports the parameter `IO_LIMIT` for cgroup v2. The version of Linux Control Groups shipped by default with your Linux distribution depends on the operating system version. For Enterprise Linux 8 and older, the default version is v1. For Enterprise Linux 9 and later, the default version is v2. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
 
 Verify what version of cgroup is configured in your environment by checking what filesystem is mounted by default during system boot:
 
