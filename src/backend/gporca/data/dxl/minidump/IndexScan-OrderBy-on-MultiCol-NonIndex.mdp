@@ -42,7 +42,7 @@
       <dxl:TraceFlags Value="102001,102002,102003,102043,102074,102120,102144,102162,102163,103001,103014,103015,103022,103026,103027,103029,103033,103038,103040,104002,104003,104004,104005,105000,106000"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
-      <dxl:Index Mdid="7.37053.1.0" Name="index_dbea" IsClustered="false" AmCanOrder="true" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="3,1,4,0" IncludedColumns="" KeyColumnsSortOrder="ASC,DESC,ASC,DESC" KeyColumnsNullsOrder="LAST,FIRST,FIRST,FIRST">
+      <dxl:Index Mdid="7.37053.1.0" Name="index_dbea" IsClustered="false" AmCanOrder="true" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="3,1,4,0" IncludedColumns="" KeyColumnsSortOrder="ASC,DESC,ASC,DESC" KeyColumnsNullsOrder="LAST,FIRST,FIRST,FIRST" ReturnableColumns="3,1,4,0">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1970.1.0"/>
           <dxl:Opfamily Mdid="0.1994.1.0"/>
@@ -50,7 +50,7 @@
           <dxl:Opfamily Mdid="0.1976.1.0"/>
         </dxl:Opfamilies>
       </dxl:Index>
-      <dxl:Index Mdid="7.37052.1.0" Name="index_c" IsClustered="false" AmCanOrder="true" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="2" IncludedColumns="" KeyColumnsSortOrder="DESC" KeyColumnsNullsOrder="LAST">
+      <dxl:Index Mdid="7.37052.1.0" Name="index_c" IsClustered="false" AmCanOrder="true" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="2" IncludedColumns="" KeyColumnsSortOrder="DESC" KeyColumnsNullsOrder="LAST" ReturnableColumns="2">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1976.1.0"/>
         </dxl:Opfamilies>
@@ -334,7 +334,7 @@
     <dxl:Plan Id="0" SpaceSize="4">
       <dxl:Limit>
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="431.000182" Rows="1.000000" Width="32"/>
+          <dxl:Cost StartupCost="0" TotalCost="431.000545" Rows="1.000000" Width="32"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="a">
@@ -355,7 +355,7 @@
         </dxl:ProjList>
         <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="431.000150" Rows="1.000000" Width="32"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.000513" Rows="1.000000" Width="32"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="a">
@@ -382,7 +382,7 @@
           </dxl:SortingColumnList>
           <dxl:Sort SortDiscardDuplicates="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="431.000031" Rows="1.000000" Width="32"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.000394" Rows="1.000000" Width="32"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="a">

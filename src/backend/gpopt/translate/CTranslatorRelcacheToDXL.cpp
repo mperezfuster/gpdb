@@ -703,16 +703,21 @@ CTranslatorRelcacheToDXL::RetrieveRelColumns(CMemoryPool *mp,
 		else
 		{
 			// This is expensive, but luckily we don't need it for most types
-			int32 avg_width = gpdb::GetAttAvgWidth(rel->rd_id, ul + 1);
+			HeapTuple stats_tup = gpdb::GetAttStats(rel->rd_id, ul + 1);
 
 			// Column width priority for non-fixed width:
 			// 1. If there is average width kept in the stats for that column, pick that value.
 			// 2. If not, if it is a fixed length text type, pick the size of it. E.g if it is
 			//    varchar(10), assign 10 as the column length.
 			// 3. Otherwise, assign it to default column width which is 8.
-			if (avg_width > 0)
+			if (HeapTupleIsValid(stats_tup))
 			{
-				col_len = avg_width;
+				Form_pg_statistic form_pg_stats =
+					(Form_pg_statistic) GETSTRUCT(stats_tup);
+
+				// column width
+				col_len = form_pg_stats->stawidth;
+				gpdb::FreeHeapTuple(stats_tup);
 			}
 			else if ((mdid_col->Equals(&CMDIdGPDB::m_mdid_bpchar) ||
 					  mdid_col->Equals(&CMDIdGPDB::m_mdid_varchar)) &&
@@ -1023,6 +1028,7 @@ CTranslatorRelcacheToDXL::RetrieveIndex(CMemoryPool *mp,
 	// extract the position of the key columns
 	index_key_cols_array = GPOS_NEW(mp) ULongPtrArray(mp);
 	ULongPtrArray *included_cols = GPOS_NEW(mp) ULongPtrArray(mp);
+	ULongPtrArray *returnable_cols = GPOS_NEW(mp) ULongPtrArray(mp);
 
 	for (int i = 0; i < form_pg_index->indnatts; i++)
 	{
@@ -1039,6 +1045,13 @@ CTranslatorRelcacheToDXL::RetrieveIndex(CMemoryPool *mp,
 		else
 		{
 			included_cols->Append(
+				GPOS_NEW(mp) ULONG(GetAttributePosition(attno, attno_mapping)));
+		}
+
+		// check if index can return column for index-only scans
+		if (gpdb::IndexCanReturn(index_rel.get(), attno))
+		{
+			returnable_cols->Append(
 				GPOS_NEW(mp) ULONG(GetAttributePosition(attno, attno_mapping)));
 		}
 	}
@@ -1099,11 +1112,11 @@ CTranslatorRelcacheToDXL::RetrieveIndex(CMemoryPool *mp,
 		child_index_oids = GPOS_NEW(mp) IMdIdArray(mp);
 	}
 
-	CMDIndexGPDB *index = GPOS_NEW(mp)
-		CMDIndexGPDB(mp, mdid_index, mdname, index_clustered, index_partitioned,
-					 index_amcanorder, index_type, mdid_item_type,
-					 index_key_cols_array, included_cols, op_families_mdids,
-					 child_index_oids, sort_direction, nulls_direction);
+	CMDIndexGPDB *index = GPOS_NEW(mp) CMDIndexGPDB(
+		mp, mdid_index, mdname, index_clustered, index_partitioned,
+		index_amcanorder, index_type, mdid_item_type, index_key_cols_array,
+		included_cols, returnable_cols, op_families_mdids, child_index_oids,
+		sort_direction, nulls_direction);
 
 	GPOS_DELETE_ARRAY(attno_mapping);
 	return index;

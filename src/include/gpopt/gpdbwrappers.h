@@ -210,9 +210,6 @@ void FreeAttrStatsSlot(AttStatsSlot *sslot);
 // attribute statistics
 HeapTuple GetAttStats(Oid relid, AttrNumber attnum);
 
-// attribute width
-int32 GetAttAvgWidth(Oid relid, AttrNumber attnum);
-
 List *GetExtStats(Relation rel);
 
 char *GetExtStatsName(Oid statOid);
@@ -574,6 +571,9 @@ bool HasUpdateTriggers(Oid relid);
 // get index operator family properties
 void IndexOpProperties(Oid opno, Oid opfamily, StrategyNumber *strategynumber,
 					   Oid *righttype);
+
+// check whether index column is returnable (for index-only scans)
+gpos::BOOL IndexCanReturn(Relation index, int attno);
 
 // get oids of families this operator belongs to
 List *GetOpFamiliesForScOp(Oid opno);

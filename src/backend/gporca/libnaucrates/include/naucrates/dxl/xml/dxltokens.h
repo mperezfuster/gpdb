@@ -268,6 +268,13 @@ enum Edxltoken
 	EdxltokenWindowrefStageRowKey,
 	EdxltokenWindowrefWinSpecPos,
 
+	// FIELDSELECT
+	EdxltokenScalarFieldSelect,
+	EdxltokenScalarFieldSelectFieldType,
+	EdxltokenScalarFieldSelectFieldCollation,
+	EdxltokenScalarFieldSelectFieldNumber,
+	EdxltokenScalarFieldSelectTypeModifier,
+
 	EdxltokenValue,
 	EdxltokenTypeId,
 	EdxltokenTypeIds,
@@ -511,6 +518,7 @@ enum Edxltoken
 
 	EdxltokenIndexKeyCols,
 	EdxltokenIndexIncludedCols,
+	EdxltokenIndexReturnableCols,
 	EdxltokenIndexClustered,
 	EdxltokenIndexAmCanOrder,
 	EdxltokenIndexPartial,

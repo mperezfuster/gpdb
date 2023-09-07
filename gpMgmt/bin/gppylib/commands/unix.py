@@ -167,6 +167,20 @@ def terminate_proc_tree(pid, sig=signal.SIGTERM, include_parent=True, timeout=No
         process.kill()
 
 
+def get_remote_link_path(path, host):
+    """
+      Function to get symlink target path for a given path on given host.
+      :param  path: path for which symlink has to be found
+      :param  host: host on which the given path is available
+      :return: returns symlink target path
+    """
+
+    cmdStr = """python3 -c 'import os; print(os.readlink("%s"))'""" % path
+    cmd = Command('get remote link path', cmdStr=cmdStr, ctxt=REMOTE,
+                       remoteHost=host)
+    cmd.run(validateAfter=True)
+    return cmd.get_stdout()
+
 # ---------------Platform Framework--------------------
 
 """ The following platform framework is used to handle any differences between
@@ -737,6 +751,6 @@ elif curr_platform == DARWIN:
 elif curr_platform == FREEBSD:
     SYSTEM = FreeBsdPlatform()
 elif curr_platform == OPENBSD:
-    SYSTEM = OpenBSDPlatform();
+    SYSTEM = OpenBSDPlatform()
 else:
     raise Exception("Platform %s is not supported.  Supported platforms are: %s", SYSTEM, str(platform_list))

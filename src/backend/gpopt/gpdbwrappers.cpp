@@ -35,6 +35,7 @@
 extern "C" {
 #include "access/amapi.h"
 #include "access/external.h"
+#include "access/genam.h"
 #include "catalog/pg_inherits.h"
 #include "foreign/fdwapi.h"
 #include "nodes/nodeFuncs.h"
@@ -749,18 +750,6 @@ gpdb::GetAttStats(Oid relid, AttrNumber attnum)
 	}
 	GP_WRAP_END;
 	return nullptr;
-}
-
-int32
-gpdb::GetAttAvgWidth(Oid relid, AttrNumber attnum)
-{
-	GP_WRAP_START;
-	{
-		/* catalog tables: pg_statistic */
-		return get_attavgwidth(relid, attnum);
-	}
-	GP_WRAP_END;
-	return 0;
 }
 
 List *
@@ -2107,6 +2096,17 @@ gpdb::IndexOpProperties(Oid opno, Oid opfamily, StrategyNumber *strategynumber,
 					strategy <= std::numeric_limits<StrategyNumber>::max());
 		*strategynumber = static_cast<StrategyNumber>(strategy);
 		return;
+	}
+	GP_WRAP_END;
+}
+
+// check whether index column is returnable (for index-only scans)
+gpos::BOOL
+gpdb::IndexCanReturn(Relation index, int attno)
+{
+	GP_WRAP_START;
+	{
+		return index_can_return(index, attno);
 	}
 	GP_WRAP_END;
 }

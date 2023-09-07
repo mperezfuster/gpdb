@@ -52,6 +52,11 @@ DEFAULT_COORDINATOR_NUM_WORKERS=16
 #max batch size of thread pool on coordinator
 MAX_COORDINATOR_NUM_WORKERS=64
 
+# Maximum replay lag (in GBs) allowed on mirror when rebalancing the segments
+# The default value for ALLOWED_REPLAY_LAG has been decided to be 10 GBs as mirror
+# took 5 mins to replay 10 GB lag on a local demo cluster.
+ALLOWED_REPLAY_LAG = 10
+
 # Application name used by the pg_rewind instance that gprecoverseg starts
 # during incremental recovery. gpstate uses this to figure out when incremental
 # recovery is active.
@@ -336,7 +341,7 @@ class CoordinatorStart(Command):
 
         # build pg_ctl command
         c = PgCtlStartArgs(dataDir, b, era, wrapper, wrapper_args, wait, timeout)
-        logger.info("CoordinatorStart pg_ctl cmd is %s", c);
+        logger.info("CoordinatorStart pg_ctl cmd is %s", c)
         self.cmdStr = str(c)
 
         Command.__init__(self, name, self.cmdStr, ctxt, remoteHost)
@@ -393,7 +398,7 @@ class SegmentStart(Command):
 
         # build pg_ctl command
         c = PgCtlStartArgs(datadir, b, era, wrapper, wrapper_args, pg_ctl_wait, timeout)
-        logger.info("SegmentStart pg_ctl cmd is %s", c);
+        logger.info("SegmentStart pg_ctl cmd is %s", c)
         self.cmdStr = str(c) + ' 2>&1'
 
         Command.__init__(self, name, self.cmdStr, ctxt, remoteHost)

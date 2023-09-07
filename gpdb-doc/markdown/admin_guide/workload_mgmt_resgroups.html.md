@@ -206,6 +206,8 @@ If you want to switch from cgroup v2 to v1, run the following commands as root:
     update-grub && reboot now
     ```
 
+After that, reboot your host and make the changes take effect.
+
 #### <a id="cgroupv1"></a>Configuring cgroup v1
 
 Complete the following tasks on each node in your Greenplum Database cluster to set up cgroups v1 for use with resource groups:
@@ -306,14 +308,15 @@ Complete the following tasks on each node in your Greenplum Database cluster to 
    ```
    echo "+cpuset +io +cpu +memory" | tee -a /sys/fs/cgroup/cgroup.subtree_control
    ```
-
 Since resource groups manually manage cgroup files, the above settings will become ineffective after a system reboot. Add the following bash script for systemd so it runs automatically during system startup. Perform the following steps as user root:
 
 1. Create `greenplum-cgroup-v2-config.service`.
    ```
    vim /etc/systemd/system/greenplum-cgroup-v2-config.service
    ```
-1. Write the following content into `greenplum-cgroup-v2-config.service`.
+
+2. Write the following content into `greenplum-cgroup-v2-config.service`, if the user is not `gpadmin`, please replace it to your own.
+
    ```
    [Unit]
    Description=Greenplum Cgroup v2 Configuration Service
@@ -326,10 +329,9 @@ Since resource groups manually manage cgroup files, the above settings will beco
    
    ExecStart=/bin/sh -c " \
                        mkdir -p /sys/fs/cgroup/gpdb; \
+                       echo '+cpuset +io +cpu +memory' | tee -a /sys/fs/cgroup/cgroup.subtree_control; \
                        chown -R gpadmin:gpadmin /sys/fs/cgroup/gpdb; \
-                       echo '+cpuset +io +cpu +memory' | sudo tee -a /sys/fs/cgroup/cgroup.subtree_control; \
-                       usermod -aG root gpadmin; \
-                       chmod g+w /sys/fs/cgroup/cgroup.procs;"
+                       chmod a+w /sys/fs/cgroup/cgroup.procs;"
    ExecStop=
    
    # Specifies the maximum file descriptor number that can be opened by this process
