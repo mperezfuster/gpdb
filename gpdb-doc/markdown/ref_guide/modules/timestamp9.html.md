@@ -412,7 +412,7 @@ testdb=# SELECT now()::timestamp9;
 
 The `timestamp9` module defines two server configuration parameters that you set to enable date/time functions defined in the `pg_catalog` schema on `timestamp` types. Visit the [PostgreSQL Documentation](https://www.postgresql.org/docs/12/functions-datetime.html#:~:text=Table%C2%A09.31.%C2%A0Date/Time%20Functions) for a list of the supported date/time functions. The parameters are:
 
-- `timestamp9.enable_implicit_cast_timestamp9_ltz_to_timestamptz`: when enabled, casting a `timestamp with time zone` value to `timestamp9_ltz` becomes implicit.
+- `timestamp9.enable_implicit_cast_timestamp9_ltz_to_timestamptz`: when enabled, casting a `timestamp9_ltz` value to `timestamp with time zone` becomes implicit.
 - `timestamp9.enable_implicit_cast_timestamp9_ntz_to_timestamp`: when enabled, casting a `timestamp9_ntz` value to `timestamp without time zone` becomes implicit.
 
 The default value for both configuration parameters is `off`. For example, if you try use the `date` function with `timestamp9` and `timestamp9.enable_implicit_cast_timestamp9_ltz_to_timestamptz` is set to `off`:
