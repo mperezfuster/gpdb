@@ -10,6 +10,10 @@ The following new server configuration parameters are available in Greenplum 7:
 - `autovacuum_vacuum_cost_delay`
 - `autovacuum_vacuum_scale_factor` 
 - `autovacuum_vacuum_threshold`
+- `checkpoint_completion_target`
+- `checkpoint_flush_after`
+- `checkpoint_timeout`
+- `checkpoint_warning`
 - `gp_autovacuum_scope`
 - `gp_quicklz_fallback`
 - `vacuum_cleanup_index_scale_factor`
@@ -26,10 +30,13 @@ The following new server configuration parameters are available in Greenplum 7:
 - `jit_profiling_support`
 - `jit_provider`
 - `jit_tuple_deforming`
+- `max_wal_size`
+- `min_wal_size`
 - `optimizer_jit_above_cost`
 - `optimizer_jit_inline_above_cost`
 - `optimizer_jit_optimize_above_cost`
 - `vacuum_cleanup_index_scale_factor`
+- `wal_buffers`
 - `track_wal_io_timing`
 - `gp_resgroup_memory_query_fixed_mem`
 - `gp_resource_group_bypass_direct_dispatch`
