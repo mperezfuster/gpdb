@@ -1278,6 +1278,7 @@ The maximum length of the query text string stored in the column `query` can be 
 
 > **Note**
 > When resource groups are enabled. Only query dispatcher (QD) processes will have a `rsgid` and `rsgname`. Other server processes such as a query executer (QE) process or session connection processes will have a `rsgid` value of `0` and a `rsgname` value of `unknown`. QE processes are managed by the same resource group as the dispatching QD process.
+> If the query is configured to bypass the resource group limits, or unassigned from its resource group, the column `rsgname` displays `<bypass>` appended to the resource group name. See [Bypass and Unassign from Resource Groups](../../admin_guide/workload_mgmt_resgroups.html#bypass) for more details.
 
 ## <a id="pg_stat_all_indexes"></a>pg_stat_all_indexes
 

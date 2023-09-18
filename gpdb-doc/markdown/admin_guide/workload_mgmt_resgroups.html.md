@@ -480,6 +480,10 @@ SELECT query, waiting, rsgname, rsgqueueduration
 FROM pg_stat_activity;
 ```
 
+If a query is configured to bypass the resource group limits, or unassigned from its resource group, the column `rsgname` displays `<bypass>` appended to the resource group name. See [Bypass and Unassign from Resource Groups](#bypass) for more details.
+
+
+
 ### <a id="topic27"></a>Cancelling a Running or Queued Transaction in a Resource Group 
 
 There may be cases when you want to cancel a running or queued transaction in a resource group. For example, you may want to remove a query that is waiting in the resource group queue but has not yet been run. Or, you may want to stop a running query that is taking too long to run, or one that is sitting idle in a transaction and taking up resource group transaction slots that are needed by other users.
