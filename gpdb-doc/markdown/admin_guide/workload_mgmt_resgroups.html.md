@@ -315,7 +315,7 @@ Since resource groups manually manage cgroup files, the above settings will beco
    vim /etc/systemd/system/greenplum-cgroup-v2-config.service
    ```
 
-2. Write the following content into `greenplum-cgroup-v2-config.service`, if the user is not `gpadmin`, please replace it to your own.
+2. Write the following content into `greenplum-cgroup-v2-config.service`, if the user is not `gpadmin`, replace it with the appropriate user.
 
    ```
    [Unit]
