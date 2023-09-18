@@ -14,7 +14,7 @@ where group_attribute is one of:
 [ CONCURRENCY=<integer> ]
 CPU_MAX_PERCENT=<integer> | CPUSET=<coordinator_cores>;<segment_cores>
 [ CPU_WEIGHT=<integer> ]
-[IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
+[IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_oid_3>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
 [ MEMORY_LIMIT=<integer> ]
 [ MIN_COST=<integer> ]
 ```
@@ -61,11 +61,11 @@ CPUSET <coordinator_cores>;<segment_cores>
 
 :   > **Note** You can configure `CPUSET` for a resource group only after you have enabled resource group-based resource management for your Greenplum Database cluster.
 
-IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
+IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_oid_3>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
 
 :   Optional. The maximum read/write disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group. When you use this parameter, you may specify:
 
-    - The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
+    - The tablespace name or the tablespace object ID (OID) you set the limits for. Use `*` to set limits for all tablespaces.
 
     - The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `max`, which means there is no limit.
 
@@ -111,18 +111,18 @@ CREATE RESOURCE GROUP rgroup1 WITH (CPU_MAX_PERCENT=35, MEMORY_LIMIT=350);
 
 Create a resource group with a concurrent transaction limit of 20, a memory limit of 15, a CPU limit of 25, and disk I/O limits for the `pg_default` tablespace:
 
-
 ```
 CREATE RESOURCE GROUP rgroup2 WITH (CONCURRENCY=20, 
   MEMORY_LIMIT=150, CPU_MAX_PERCENT=25,
   IO_LIMIT=’pg_default: wbps=1000, rbps=1000, wiops=100, riops=100’);
 ```
 
-Create a resource group to manage PL/Container resources specifying a memory limit of 10, and a CPU limit of 10:
+Create a resource group with a concurrent transaction limit of 20, a memory limit of 15, a CPU limit of 25, and disk I/O limits for a tablespace with oid 1663:
 
 ```
-CREATE RESOURCE GROUP plc_run1 WITH (MEMORY_LIMIT=100, CPU_MAX_PERCENT=10,
-  CONCURRENCY=0);
+CREATE RESOURCE GROUP rgroup2 WITH (CONCURRENCY=20,
+  MEMORY_LIMIT=150, CPU_MAX_PERCENT=25,
+  IO_LIMIT=’1663: wbps=1000, rbps=1000, wiops=100, riops=100’);
 ```
 
 Create a resource group with a memory limit percentage of 11 to which you assign CPU core 1 on the coordinator host, and cores 1 to 3 on segment hosts:

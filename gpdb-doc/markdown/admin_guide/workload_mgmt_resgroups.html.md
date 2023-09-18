@@ -158,7 +158,7 @@ Greenplum Database leverages Linux control groups to implement disk I/O limits. 
 
 When you limit disk I/O you speficy:
 
-- The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
+- The tablespace name or the tablespace object ID (OID) you set the limits for. Use `*` to set limits for all tablespaces.
 
 - The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `max`, which means there is no limit. 
 

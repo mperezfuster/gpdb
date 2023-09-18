@@ -14,7 +14,7 @@ where group_attribute is one of:
 [ CONCURRENCY=<integer> ]
 CPU_MAX_PERCENT=<integer> | CPUSET=<coordinator_cores>;<segment_cores>
 [ CPU_WEIGHT=<integer> ]
-[IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
+[IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_oid_3>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
 [ MEMORY_LIMIT=<integer> ]
 [ MIN_COST=<integer> ]
 ```
@@ -28,8 +28,6 @@ You can set or reset the concurrency limit of a resource group that you create f
 When you alter the CPU resource management mode or limit of a resource group, the new mode or limit is immediately applied.
 
 When you alter a memory limit of a resource group that you create for roles, the new resource limit is immediately applied if current resource usage is less than or equal to the new value and there are no running transactions in the resource group. If the current resource usage exceeds the new memory limit value, or if there are running transactions in other resource groups that hold some of the resource, then Greenplum Database defers assigning the new limit until resource usage falls within the range of the new value.
-
-When you increase the memory limit of a resource group that you create for external components, the new resource limit is phased in as system memory resources become available. If you decrease the memory limit of a resource group that you create for external components, the behavior is component-specific. For example, if you decrease the memory limit of a resource group that you create for a PL/Container runtime, queries in a running container may fail with an out of memory error.
 
 You can alter one limit type in a single `ALTER RESOURCE GROUP` call.
 
@@ -61,11 +59,11 @@ CPUSET <coordinator_cores>;<segment_cores>
 
 :   > **Note** You can configure `CPUSET` for a resource group only after you have enabled resource group-based resource management for your Greenplum Database cluster.
 
-IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>'
+[IO_LIMIT='<tablespace_name_1>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_name_2>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>;<tablespace_oid_3>:wbps=<wbps_value>, rbps=<rbps_value>, wiops=<wiops_value>, riops=<riops_value>']
 
 :   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. When you use this parameter, you may speficy:
 
-    - The name of the tablespace you set the limits for. Use `*` to set limits for all tablespaces.
+    - The tablespace name or the tablespace object ID (OID) you set the limits for. Use `*` to set limits for all tablespaces.
 
     - The values for `rpbs` and `wpbs` to limit the maximum read and write sequential disk I/O throughput in the resource group, in MB/S. The default value is `max`, which means there is no limit.
 
@@ -123,10 +121,10 @@ Reserve CPU core 1 for a resource group on the coordinator host and all segment 
 ALTER RESOURCE GROUP rgroup5 SET CPUSET '1;1';
 ```
 
-Set disk I/O limits for tablespaces `tablespace1` and `tablespace2`:
+Set disk I/O limits for tablespaces `tablespace1` and a tablespace with oid 1663:
 
 ```
-ALTER RESOURCE GROUP admin_group SET IO_LIMIT 'tablespace1:wbps=2000,wiops=2000;tablespace2:rbps=2024,riops=2024';
+ALTER RESOURCE GROUP admin_group SET IO_LIMIT 'tablespace1:wbps=2000,wiops=2000;1663:rbps=2024,riops=2024';
 ```
 
 ## <a id="compatibility"></a>Compatibility 
