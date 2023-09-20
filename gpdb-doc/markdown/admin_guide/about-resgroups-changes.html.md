@@ -37,17 +37,17 @@ The following resource group attributes have been removed:
 
 Greenplum 7 resource group management introduces the following changes to server configuration parameters:
 
-- The possible settings for the `gp_resource_manager` server configuration parameter have changed. They now include the following:
+- The possible settings for the [gp_resource_manager](../ref_guide/config_params/guc-list.html#gp_resource_manager) server configuration parameter have changed. They now include the following:
     - `none` - Configures Greenplum Database to not use any resource manager. This is the default.
     - `group` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v1 version of Linux cgroup functionality.
     - `group-v2` - Configures Greenplum Database to use resource groups and base resource group behavior on the cgroup v2 version of Linux cgroup functionality.
     - `queue` - Configures Greenplum Database to use resource queues.
 
-- The new server configuration parameter `gp_resgroup_memory_query_fixed_mem` allows you to override at a session level the fixed amount of memory reserved for all queries in a resource group.
+- The new server configuration parameter [gp_resgroup_memory_query_fixed_mem](../ref_guide/config_params/guc-list.html#gp_resgroup_memory_query_fixed_mem) allows you to override at a session level the fixed amount of memory reserved for all queries in a resource group.
 
-- The new server configuration parameter `gp_resource_group_move_timeout`
+- The new server configuration parameter [gp_resource_group_move_timeout](../ref_guide/config_params/guc-list.html#gp_resource_group_move_timeout) cancels the `pg_resgroup_move_query()` function, which moves a running query from one resouce group to another, if it waits longer than the specified number of miliseconds.
 
-- The new server configuration parameter `gp_resource_group_bypass_direct_dispatch` bypasses the resource group's limits for a direct dispatch query so it can run immediately. A direct dispatch query is a special type of query that only requires a single segment to participate in the execution.
+- The new server configuration parameter [gp_resource_group_bypass_direct_dispatch](../ref_guide/config_params/guc-list.html#gp_resource_group_bypass_direct_dispatch) bypasses the resource group's limits for a direct dispatch query so it can run immediately. A direct dispatch query is a special type of query that only requires a single segment to participate in the execution.
 
 - The server configuration parameter `gp_resource_group_cpu_ceiling_enforcement` has been removed.
 
