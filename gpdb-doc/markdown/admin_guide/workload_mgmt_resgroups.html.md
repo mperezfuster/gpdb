@@ -8,7 +8,7 @@ When you assign a resource group to a role, the resource limits that you define 
 
 Greenplum Database uses Linux-based control groups for CPU resource management, and Runaway Detector for statistics, tracking and management of memory. 
 
-When using resource groups to control resources like CPU cores, review the Hyperthreading note in [Hardware and Network](../install_guide/platform-requirements-overview.html#hardware-and-network-3).
+When using resource groups to control resources like CPU cores, review the Hyperthreading note in [Hardware and Network](../install_guide/platform-requirements-overview.html#hardware-requirements).
 
 **Parent topic:** [Managing Resources](wlmgmt.html)
 
@@ -30,7 +30,7 @@ When you create a resource group, you provide a set of limits that determine the
 |CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [1-100] | -1 (not set)|
 |CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
-|IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [[2 - 4294967295 or `max`] | -1 |
+|IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [2 - 4294967295 or `max`] | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (notset, use `statement_mem` as the memory limit for a single query) | 
 |MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer | 0 |
 
@@ -95,13 +95,13 @@ Resource groups that you configure with `CPUSET` have a higher priority on CPU r
 
 You configure a resource group with `CPU_MAX_PERCENT` in order to assign CPU resources by percentage. When you configure `CPU_MAX_PERCENT` for a resource group, Greenplum Database deactivates `CPUSET` for the group. 
 
-The parameter `CPU_MAX_PERCENT` reserves the specified percentage of the segment CPU for resource management. The minimum `CPU_MAX_PERCENT` percentage you can specify for a resource group is 1, the maximum is 100. The sum of `CPU_MAX_PERCENT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100. It specifies the total time ratio that all tasks in a resource group can run in one CPU cycle. Once the tasks in the resource group have used up all the time specified by the quota, they are throttled for the remainder of the time specified in that time period, and are not allowed to run until the next time period. 
+The parameter `CPU_MAX_PERCENT` sets a hard upper limit for the percentage of the segment CPU for resource management. The minimum `CPU_MAX_PERCENT` percentage you can specify for a resource group is 1, the maximum is 100. The sum of `CPU_MAX_PERCENT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100. It specifies the total time ratio that all tasks in a resource group can run in one CPU cycle. Once the tasks in the resource group have used up all the time specified by the quota, they are throttled for the remainder of the time specified in that time period, and are not allowed to run until the next time period. 
 
 When tasks in a resource group are idle and not using any CPU time, the leftover time is collected in a global pool of unused CPU cycles. Other resource groups can borrow CPU cycles from this pool. The actual amount of CPU time available to a resource group may vary, depending on the number of resource groups present on the system.
 
-The parameter `CPU_MAX_LIMIT` enforces a hard upper limit of CPU usage. For example, if it is set to 40%, it indicates that although the resource group can temporarily use some idle CPU resources from other groups, the maximum it can use is 40% of the CPU resources available to Greenplum. 
+The parameter `CPU_MAX_PERCENT` enforces a hard upper limit of CPU usage. For example, if it is set to 40%, it indicates that although the resource group can temporarily use some idle CPU resources from other groups, the maximum it can use is 40% of the CPU resources available to Greenplum. 
 
-You set the parameter `CPU_WEIGHT` to assign the scheduling priority of the current group. The default value is 100, and the range of values is 1 to 500. The value specifies the relative share of CPU time available to tasks in the resource group. For example, if one resource group has a relative share of 100 and another two groups have a relative share of 50, when processes in all the resource groups try to use 100% of the CPU (that means, the value of `CPU_MAX_LIMIT` for all groups is set to 100), the first resource group gets 50% of all CPU time, and the other two get 25% each. However, if you add another group with a relative share of 100, the first group is only allowed to use 33% of the CPU, and the remaining groups get 16.5%, 16.5%, and 33% respectively. 
+You set the parameter `CPU_WEIGHT` to assign the scheduling priority of the current group. The default value is 100, and the range of values is 1 to 500. The value specifies the relative share of CPU time available to tasks in the resource group. For example, if one resource group has a relative share of 100 and another two groups have a relative share of 50, when processes in all the resource groups try to use 100% of the CPU (that means, the value of `CPU_MAX_PERCENT` for all groups is set to 100), the first resource group gets 50% of all CPU time, and the other two get 25% each. However, if you add another group with a relative share of 100, the first group is only allowed to use 33% of the CPU, and the remaining groups get 16.5%, 16.5%, and 33% respectively. 
 
 For example, consider the following groups:
 
@@ -465,9 +465,9 @@ The [gp\_resgroup\_status](../ref_guide/system_catalogs/catalog_ref-views.html#g
 SELECT * FROM gp_toolkit.gp_resgroup_status;
 ```
 
-### <a id="topic23a"></a>Viewing Resource Group CPU/Memory Usage Per Host 
+### <a id="topic23a"></a>Viewing Resource Group Memory Usage Per Host 
 
-The [gp\_resgroup\_status\_per\_host](../ref_guide/system_catalogs/catalog_ref-views.html#gp_resgroup_status_per_host) `gp_toolkit` system view enables you to view the real-time CPU and memory usage of a resource group on a per-host basis. To view this information:
+The [gp\_resgroup\_status\_per\_host](../ref_guide/system_catalogs/catalog_ref-views.html#gp_resgroup_status_per_host) `gp_toolkit` system view enables you to view the real-time memory usage of a resource group on a per-host basis. To view this information:
 
 ```
 SELECT * FROM gp_toolkit.gp_resgroup_status_per_host;

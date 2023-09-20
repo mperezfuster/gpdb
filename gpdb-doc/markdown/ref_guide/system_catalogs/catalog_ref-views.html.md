@@ -286,7 +286,7 @@ The `gp_toolkit.gp_resgroup_config` view allows administrators to see the curren
 |`cpuset`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 4|The CPU cores reserved for the resource group (CPUSET), or -1.|
 |`memory_limit`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 5|The memory limit \(`MEMORY_LIMIT`\) value specified for the resource group.|
 |`min_cost`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 6|The minimum cost of a query plan to be included in the resource group (MIN_COST).|
-|`io_limit`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 7|The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace and resource group (IO_LIMIT).|
+|`io_limit`|text|pg\_resgroupcapability.value for pg\_resgroupcapability.reslimittype = 7|The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific tablespace (shown as the tablespace oid) and resource group (IO_LIMIT).|
 
 ## <a id="gp_resgroup_iostats_per_host"></a>gp_resgroup_iostats_per_host
 
