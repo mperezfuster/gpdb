@@ -18,6 +18,7 @@ The following table compares the main concepts of resource management and how ea
 |Limit Bypass|Limits are not enforced on `SET`, `RESET`, and `SHOW` commands|Limits are not enforced on `SET`, `RESET`, and `SHOW` commands. Additionally, certain queries may be configured to bypass the concurrency limit|
 |External Components|Manage PL/Container CPU and memory resources|None|
 
+> **Note** Disk I/O limits are only available when you use Linux Control Groups v2. See [Configuring and Using Resource Groups](workload_mgmt_resgroups.html#topic71717999) for more information.
 
 ### <a id="attributes"></a>Changes to Resource Groups Attributes
 
