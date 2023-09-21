@@ -9,8 +9,8 @@ The following table compares the main concepts of resource management and how ea
 |Metric|Resource Groups in Greenplum 6|Resource Groups in Greenplum 7|
 |------|---------------|---------------|
 |Concurrency|Managed at the transaction level|Managed at the transaction level|
-|CPU|Specify percentage of CPU resources or the number of CPU cores; uses Linux Control Groups|Specify percentage of CPU resources or the number of CPU cores; uses Linux Control Groups|
-|Memory|Managed at the transaction level, with enhanced allocation and tracking; users cannot over-subscribe|Managed at the transaction level, with enhanced allocation and tracking; users can over-subscribe|
+|CPU|Specify percentage of CPU resources or the number of CPU cores; uses Linux Control Groups|Specify percentage of CPU resources or the number of CPU cores, as well as set upper limits per resource group; uses Linux Control Groups|
+|Memory|Managed at the transaction level, with enhanced allocation and tracking; users cannot over-subscribe|Managed at the transaction level, with enhanced allocation and tracking; users can over-subscribe; simpler and more convenient configuration|
 |Disk I/O|None|Limit the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second|
 |Users|Limits are applied to `SUPERUSER` and non-admin users alike<br>There are two default resource groups: `admin_group` and `default_group`|Limits are applied to `SUPERUSER`, non-admin users, and system processes of non-user classes<br>There are three default resource groups: `admin_group`, `default_group`, and `system_group`|
 |Queueing|Queue when no slot is available or not enough available memory|Queue when no slot is available|
@@ -27,6 +27,8 @@ You may configure four new resource group attributes using the `CREATE RESOURCE 
 - `CPU_WEIGHT`, which configures the scheduling priority of the resource group.
 - `MIN_COST`, which configures the minimum amount a query's query plan cost for the query to remain in the resource group.
 - `IO_LIMIT`, which configures device I/O usage at the resource group level to manage the maximum throughput of read/write operations, and the maximum read/write operations per second. 
+
+In addition, the limit `MEMORY_LIMIT` is now an integer (in MB), instead of a percentage.
 
 The following resource group attributes have been removed:
 - `CPU_RATE_LIMIT`
