@@ -40,10 +40,7 @@ The internal workflow of JIT can be divided into three different stages:
     
     This stage takes place in the Greenplum Database coordinator. The planner generates the plan tree of a query and its estimated cost. By default, Greenplum Database uses GPORCA to generate a query plan. Otherwise it uses Postgres-based planner as a fallback method.
 
-> **Note** In order to use JIT, you must first install the LLVM libraries in your system:
-> ```
-> yum install llvm-libs
-> ```
+> **Note** In order to use JIT, you must first install the LLVM libraries in your system by running the command `yum install llvm-libs`.
 
     The planner decides to trigger JIT compilation if:
 
