@@ -2,7 +2,7 @@
 title: Using Resource Groups 
 ---
 
-You use resource groups to set and enforce CPU, memory, concurrent transaction limits, and disk I/O in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
+You use resource groups to manage and protect the resource allocation of CPU, memory, concurrent transaction limits, and disk I/O in Greenplum Database. Once you define a resource group, you assign the group to one or more Greenplum Database roles in order to control the resources used by them. 
 
 When you assign a resource group to a role, the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
 
@@ -26,12 +26,12 @@ When you create a resource group, you provide a set of limits that determine the
 
 |Limit Type|Description|Value Range|Default|
 |----------|-----------|-----| ------| 
-|CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.| 0-[max_connections](../ref_guide/config_params/guc-list.html#max_connections) | 20 |
+|CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.| [0-[max_connections](../ref_guide/config_params/guc-list.html#max_connections)] | 20 |
 |CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [1-100] | -1 (not set)|
 |CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
 |IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [2 - 4294967295 or `max`] | -1 |
-|MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (notset, use `statement_mem` as the memory limit for a single query) | 
+|MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set, use `statement_mem` as the memory limit for a single query) | 
 |MIN_COST| The minimum cost of a query plan to be included in the resource group.| Integer | 0 |
 
 > **Note** Resource limits are not enforced on `SET`, `RESET`, and `SHOW` commands.
@@ -95,7 +95,7 @@ Resource groups that you configure with `CPUSET` have a higher priority on CPU r
 
 You configure a resource group with `CPU_MAX_PERCENT` in order to assign CPU resources by percentage. When you configure `CPU_MAX_PERCENT` for a resource group, Greenplum Database deactivates `CPUSET` for the group. 
 
-The parameter `CPU_MAX_PERCENT` sets a hard upper limit for the percentage of the segment CPU for resource management. The minimum `CPU_MAX_PERCENT` percentage you can specify for a resource group is 1, the maximum is 100. The sum of `CPU_MAX_PERCENT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100. It specifies the total time ratio that all tasks in a resource group can run in one CPU cycle. Once the tasks in the resource group have used up all the time specified by the quota, they are throttled for the remainder of the time specified in that time period, and are not allowed to run until the next time period. 
+The parameter `CPU_MAX_PERCENT` sets a hard upper limit for the percentage of the segment CPU for resource management. The minimum `CPU_MAX_PERCENT` percentage you can specify for a resource group is 1, the maximum is 100. The sum of `CPU_MAX_PERCENT`s specified for all resource groups that you define in your Greenplum Database cluster can exceed 100. It specifies the total time ratio that all tasks in a resource group can run in a given CPU time period. Once the tasks in the resource group have used up all the time specified by the quota, they are throttled for the remainder of the time specified in that time period, and are not allowed to run until the next time period. 
 
 When tasks in a resource group are idle and not using any CPU time, the leftover time is collected in a global pool of unused CPU cycles. Other resource groups can borrow CPU cycles from this pool. The actual amount of CPU time available to a resource group may vary, depending on the number of resource groups present on the system.
 
@@ -156,11 +156,11 @@ Greenplum Database leverages Linux control groups to implement disk I/O limits. 
 
 > **Note** Disk I/O limits are only available when you use Linux Control Groups v2. See [Configuring and Using Resource Groups](#topic71717999) for more information.
 
-When you limit disk I/O you speficy:
+When you limit disk I/O you specify:
 
 - The tablespace name or the tablespace object ID (OID) you set the limits for. Use `*` to set limits for all tablespaces.
 
-- The values for `rpbs` and `wpbs` to limit the maximum read and write disk I/O throughput in the resource group, in MB/S. The default value is `max`, which means there is no limit. 
+- The values for `rbps` and `wbps` to limit the maximum read and write disk I/O throughput in the resource group, in MB/sec. The default value is `max`, which means there is no limit. 
 
 - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `max`, which means there is no limit. 
 
@@ -280,7 +280,7 @@ Complete the following tasks on each node in your Greenplum Database cluster to 
     ls -l <cgroup_mount_point>/memory/gpdb
     ```
 
-    If these directories exist and are owned by `gpadmin:gpadmin`, you have successfully configured cgroups for Greenplum Database CPU resource management.
+    If these directories exist and are owned by `gpadmin:gpadmin`, you have successfully configured cgroups for Greenplum Database resource management.
 
 #### <a id="cgroupv2"></a>Configuring cgroup v2
 
