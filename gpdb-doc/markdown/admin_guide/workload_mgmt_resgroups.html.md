@@ -184,13 +184,13 @@ You do not need to change your version of cgroup, you can simply skip to [Config
 
 - Red Hat 8/Rocky 8/Oracle 8 systems:
     ```
-    grubby --update-kernel=/boot/vmlinuz-$(uname -r) --args="systemd.unified_cgroup_hierarchy=1".
+    grubby --update-kernel=/boot/vmlinuz-$(uname -r) --args="systemd.unified_cgroup_hierarchy=1"
     ```
 - Ubuntu systems:
     ```
     vim /etc/default/grub
     # add or modify: GRUB_CMDLINE_LINUX="systemd.unified_cgroup_hierarchy=1"
-    update-grub && reboot now
+    update-grub
     ```
 
 If you want to switch from cgroup v2 to v1, run the following commands as root:
@@ -203,10 +203,10 @@ If you want to switch from cgroup v2 to v1, run the following commands as root:
     ```
     vim /etc/default/grub
     # add or modify: GRUB_CMDLINE_LINUX="systemd.unified_cgroup_hierarchy=0"
-    update-grub && reboot now
+    update-grub
     ```
 
-After that, reboot your host and make the changes take effect.
+After that, reboot your host in order for the changes to take effect.
 
 #### <a id="cgroupv1"></a>Configuring cgroup v1
 
@@ -297,12 +297,12 @@ Complete the following tasks on each node in your Greenplum Database cluster to 
 1. Create the directory `/sys/fs/cgroup/gpdb` and ensure `gpadmin` user has read and write permission on it.
     ```
     mkdir -p /sys/fs/cgroup/gpdb
+    echo "+cpuset +io +cpu +memory" | tee -a /sys/fs/cgroup/cgroup.subtree_control
     chown -R gpadmin:gpadmin /sys/fs/cgroup/gpdb
     ```
 1. Ensure that `gpadmin` has write permission on `/sys/fs/cgroup/cgroup.procs`.
     ```
-    usermod -aG root gpadmin
-    chmod g+w /sys/fs/cgroup/cgroup.procs
+    chmod a+w /sys/fs/cgroup/cgroup.procs
     ```
 1. Add all controllers.
    ```
