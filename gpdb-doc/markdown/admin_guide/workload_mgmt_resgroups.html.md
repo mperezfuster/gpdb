@@ -26,9 +26,9 @@ When you create a resource group, you provide a set of limits that determine the
 
 |Limit Type|Description|Value Range|Default|
 |----------|-----------|-----| ------| 
-|CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.| [0-[max_connections](../ref_guide/config_params/guc-list.html#max_connections)] | 20 |
-|CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [1-100] | -1 (not set)|
-|CPU_WEIGHT|The scheduling priority of the resource group.| [1-500] | 100 |
+|CONCURRENCY|The maximum number of concurrent transactions, including active and idle transactions, that are permitted in the resource group.| [0 - [max_connections](../ref_guide/config_params/guc-list.html#max_connections)] | 20 |
+|CPU_MAX_PERCENT|The maximum percentage of CPU resources the group can use.| [1 - 100] | -1 (not set)|
+|CPU_WEIGHT|The scheduling priority of the resource group.| [1 -  500] | 100 |
 |CPUSET|The specific CPU logical core (or logical thread in hyperthreading) reserved for this resource group.| It depends on system core configuration | -1 |
 |IO_LIMIT| The limit for the maximum read/write disk I/O throughput, and maximum read/write I/O operations per second. Set the value on a per-tablespace basis.| [2 - 4294967295 or `max`] | -1 |
 |MEMORY_LIMIT|The memory limit value specified for the resource group.| Integer (MB) | -1 (not set, use `statement_mem` as the memory limit for a single query) | 
