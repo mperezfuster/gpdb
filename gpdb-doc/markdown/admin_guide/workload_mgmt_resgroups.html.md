@@ -44,7 +44,7 @@ Each resource group is logically divided into a fixed number of slots equal to t
 
 The default `CONCURRENCY` limit value for a resource group for roles is 20. A value of 0 means that no query is allowed to run for this resource group.
 
-Greenplum Database queues any transactions submitted after the resource group reaches its `CONCURRENCY` limit. When a running transaction completes, Greenplum Database un-queues and runs the earliest queued transaction if sufficient memory resources exist. Note that if a transaction is in idle state, even if no statement is running, the concurrency slot is still in use.
+Greenplum Database queues any transactions submitted after the resource group reaches its `CONCURRENCY` limit. When a running transaction completes, Greenplum Database un-queues and runs the earliest queued transaction if sufficient memory resources exist. Note that if a transaction is in `idle in transaction` state, even if no statement is running, the concurrency slot is still in use.
 
 You can set the server configuration parameter [gp_resource_group_queuing_timeout](../ref_guide/config_params/guc-list.html#gp_resource_group_queuing_timeout) to specify the amount of time a transaction remains in the queue before Greenplum Database cancels the transaction. The default timeout is zero, Greenplum queues transactions indefinitely.
 
