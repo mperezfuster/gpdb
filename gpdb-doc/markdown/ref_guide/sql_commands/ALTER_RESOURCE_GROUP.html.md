@@ -69,17 +69,30 @@ CPUSET <coordinator_cores>;<segment_cores>
 :   > **Note** You can configure `CPUSET` for a resource group only after you have enabled resource group-based resource management for your Greenplum Database cluster.
 
 [ IO_LIMIT=' <tablespace_io_limit_spec> [; ...] ' ]
-Where  <tablespace_io_limit_spec> is:
+:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. 
+
+Where `<tablespace_io_limit_spec>` is:
+
+```
 <tablespace_name> | <oid> : <io_limit_option_spec> [, ...]
-Where <io_limit_option_spec> is:
+```
+
+Where `<io_limit_option_spec>` is:
+
+```
 wbps=<io_limit_option_value>
 | rbps=<io_limit_option_value>
 | wiops=<io_limit_option_value>
 | riops=<io_limit_option_value>
-Where <io_limit_option_vlaue> is:
-<integer> | max
+```
 
-:   Optional. The maximum read/write sequential disk I/O throughput, and the maximum read/write I/O operations per second for the queries assigned to a specific resource group. When you use this parameter, you may speficy:
+Where `<io_limit_option_vlaue>` is:
+
+```
+<integer> | max 
+```
+
+: When you use this parameter, you may speficy:
 
     - The tablespace name or the tablespace object ID (OID) you set the limits for. Use `*` to set limits for all tablespaces.
 
