@@ -7,6 +7,8 @@
 -   [gp\_partition\_template](gp_partition_template.html)
 -   [gp\_segment\_configuration](gp_segment_configuration.html)
 -   [gp\_version\_at\_initdb](gp_version_at_initdb.html)
+-   [gpexpand.status](gp_expansion_status.html)
+-   [gpexpand.status\_detail](gp_expansion_tables.html)
 -   [pg\_aggregate](pg_aggregate.html)
 -   [pg\_am](pg_am.html)
 -   [pg\_amop](pg_amop.html)
