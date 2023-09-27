@@ -1,16 +1,12 @@
 # System Tables 
 
--   [gp\_configuration\_history](gp_configuration_history.html)
 -   [gp\_distribution\_policy](gp_distribution_policy.html)
 -   [gp\_fastsequence](gp_fastsequence.html)
--   [gp\_global\_sequence](gp_global_sequence.html)
 -   [gp\_id](gp_id.html)
 -   [gp\_partition\_template](gp_partition_template.html)
 -   [gp\_stat\_replication](catalog_ref-views.html#gp_stat_replication)
 -   [gp\_segment\_configuration](gp_segment_configuration.html)
 -   [gp\_version\_at\_initdb](gp_version_at_initdb.html)
--   [gpexpand.status](gp_expansion_status.html)
--   [gpexpand.status\_detail](gp_expansion_tables.html)
 -   [pg\_aggregate](pg_aggregate.html)
 -   [pg\_am](pg_am.html)
 -   [pg\_amop](pg_amop.html)
