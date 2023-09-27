@@ -15,7 +15,7 @@ For compiled functions, both built-in and dynamically loaded, `prosrc` contains 
 |`prorows`|float4| |Estimated number of result rows \(zero if not `proretset`\).|
 |`provariadic`|oid|pg\_type.oid|Data type of the variadic array parameter's elements, or zero if the function does not have a variadic parameter.|
 |`prosupport`|regproc|pg_proc.oid|Planner support function for this function|
-|`prokind`|char| |Desc|
+|`prokind`|char| |`f` for a normal function, `p` for a procedure, `a` for an aggregate function, or `w` for a window function|
 |`prosecdef`|boolean| |Function is a security definer \(for example, a 'setuid' function\).|
 |`proleakproof`|boolean| |The function has no side effects. No information about the arguments is conveyed except via the return value. Any function that might throw an error depending on the values of its arguments is not leak-proof.|
 |`proisstrict`|boolean| |Function returns NULL if any call argument is NULL. In that case the function will not actually be called at all. Functions that are not strict must be prepared to handle NULL inputs.|
