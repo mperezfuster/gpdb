@@ -60,7 +60,7 @@ Most likely, you will want to run `gpfdist` on your ETL machines rather than the
 :   Sets the time allowed for Greenplum Database to establish a connection to a `gpfdist` process. Default is 5 seconds. Allowed values are 2 to 7200 seconds \(2 hours\). May need to be increased on systems with a lot of network traffic.
 
 -k clean_up_timeout
-:   Sets the number of seconds that `gpfdist` waits before cleaning up the session when there are no `POST` requests from the segments. Default is 300. Allowed values are 300 to 86400. You may increase its value when experiencing heavy network traffic.
+:   Sets the number of seconds that `gpfdist` waits before cleaning up the session when there are no `POST` requests from the segments. Default is 300. Allowed values are 300 to 86400. You may increase this value when experiencing heavy network traffic.
 
 -m max\_length
 :   Sets the maximum allowed data row length in bytes. Default is 32768. Should be used when user data includes very wide rows \(or when `line too long` error message occurs\). Should not be used otherwise as it increases resource allocation. Valid range is 32K to 256MB. \(The upper limit is 1MB on Windows systems.\)
