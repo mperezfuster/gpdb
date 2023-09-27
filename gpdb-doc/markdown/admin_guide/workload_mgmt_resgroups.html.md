@@ -164,13 +164,13 @@ When you limit disk I/O you specify:
 
 - The values for `riops` and `wiops` to limit the maximum read and write I/O operations per second in the resource group. The default value is `max`, which means there is no limit. 
 
-If the parameter `IO_LIMIT` is not set, the default value for `rbps`, `wpbs`, `riops`, and `wiops`s is set to `max`, which means that there are no disk I/O limits. In this scenario, the `gp_toolkit.gp_resgroup_config` system view displays its value as `-1`.
+If the parameter `IO_LIMIT` is not set, the default value for `rbps`, `wpbs`, `riops`, and `wiops`s is set to `max`, which means that there are no disk I/O limits. In this scenario, the `gp_toolkit.gp_resgroup_config` system view displays its value as `-1`. If only some of the values of `IO_LIMIT` are set (for example. `rbps`), the parameters that are not set default to `max` (in this example, `wbps`, `riops`, wiops`).
 
 ## <a id="topic71717999"></a>Configuring and Using Resource Groups 
 
 ### <a id="topic833"></a>Prerequisites
 
-Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources and disk I/O. There are two versions of cgroups: cgroup v1 and cgroup v2, which differ in the virtual file hierarchy implemented by v2. Greenplum Database 7 supports both versions, but it uses cgroup v2 by default, and it only supports the parameter `IO_LIMIT` for cgroup v2. The version of Linux Control Groups shipped by default with your Linux distribution depends on the operating system version. For Enterprise Linux 8 and older, the default version is v1. For Enterprise Linux 9 and later, the default version is v2. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
+Greenplum Database resource groups use Linux Control Groups \(cgroups\) to manage CPU resources and disk I/O. There are two versions of cgroups: cgroup v1 and cgroup v2. Greenplum Database 7 supports both versions, but it only supports the parameter `IO_LIMIT` for cgroup v2. The version of Linux Control Groups shipped by default with your Linux distribution depends on the operating system version. For Enterprise Linux 8 and older, the default version is v1. For Enterprise Linux 9 and later, the default version is v2. For detailed information about cgroups, refer to the Control Groups documentation for your Linux distribution.
 
 Verify what version of cgroup is configured in your environment by checking what filesystem is mounted by default during system boot:
 
@@ -275,7 +275,6 @@ Complete the following tasks on each node in your Greenplum Database cluster to 
 
     ```
     ls -l <cgroup_mount_point>/cpu/gpdb
-    ls -l <cgroup_mount_point>/cpuacct/gpdb
     ls -l <cgroup_mount_point>/cpuset/gpdb
     ls -l <cgroup_mount_point>/memory/gpdb
     ```
@@ -294,20 +293,19 @@ Complete the following tasks on each node in your Greenplum Database cluster to 
     ```
     reboot now
     ```
-1. Create the directory `/sys/fs/cgroup/gpdb` and ensure `gpadmin` user has read and write permission on it.
+1. Create the directory `/sys/fs/cgroup/gpdb`, add all the necessary controllers, and ensure `gpadmin` user has read and write permission on it.
     ```
     mkdir -p /sys/fs/cgroup/gpdb
     echo "+cpuset +io +cpu +memory" | tee -a /sys/fs/cgroup/cgroup.subtree_control
     chown -R gpadmin:gpadmin /sys/fs/cgroup/gpdb
     ```
-1. Ensure that `gpadmin` has write permission on `/sys/fs/cgroup/cgroup.procs`.
+
+You may encounter the error `Invalid argument` after running the above commands. This is because cgroups v2 do not support control of real-time processes, and the `cpu` controller can only be enabled when all the real-time processes are in the root cgroup. In this situation, find all real-time processes and move them to the root cgroup before you re-enable the controllers. 
+
+1. Ensure that `gpadmin` has write permission on `/sys/fs/cgroup/cgroup.procs`. This is required to move the Greenplum processes from the user slices to `/sys/fs/cgroup/gpdb/` after the cluster is started in order to manage the postmaster services and all its auxiliary processes.
     ```
     chmod a+w /sys/fs/cgroup/cgroup.procs
     ```
-1. Add all controllers.
-   ```
-   echo "+cpuset +io +cpu +memory" | tee -a /sys/fs/cgroup/cgroup.subtree_control
-   ```
 Since resource groups manually manage cgroup files, the above settings will become ineffective after a system reboot. Add the following bash script for systemd so it runs automatically during system startup. Perform the following steps as user root:
 
 1. Create `greenplum-cgroup-v2-config.service`.

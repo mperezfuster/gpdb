@@ -301,8 +301,8 @@ Memory amounts are specified in MBs.
 |`rsgname`|name| pg_resgroup.rsgname|The name of the resource group|
 |`hostname`|text|gp_segment_configuration.hostname|The hostname of the segment host|
 |`tablespace`|name|pg_tablespace.spcname|The name of the tablespace|
-|`rbps`|bigint||The real-time read sequential disk I/O throughput by the resource group on a host, in MB/S|
-|`wbps`|bigint||The real-time write sequential disk I/O throughput by the resource group on a host, in MB/S|
+|`rbps`|bigint||The real-time read sequential disk I/O throughput by the resource group on a host, in Bytes/s|
+|`wbps`|bigint||The real-time write sequential disk I/O throughput by the resource group on a host, in Bytes/s|
 |`riops`|bigint||The real-time read I/O operations per second by the resource group on a host|
 |`wiops`|bigint||The real-time write I/O operations per second by the resource group on a host|
 
@@ -312,7 +312,7 @@ Sample output for the `gp_resgroup_iostats_per_host` view:
 SELECT * from gp_toolkit.gp_resgroup_iostats_per_host;
  rsgname        | hostname | tablespace       | rbps | wbps | riops | wiops  
 ----------------+----------+------------------+------------------+------------------+-------------+-------------
- rg_test_group1 | mtspc    | pg_default       | 0                | 0                | 0           | 0           
+ rg_test_group1 | mtspc    | pg_default       | 21356347                | 29369067                | 162           | 36           
  rg_test_group2 | mtspc    | pg_default       | 0                | 0                | 0           | 0           
  rg_test_group3 | mtspc    | pg_default       | 0                | 0                | 0           | 0           
  rg_test_group4 | mtspc    | *                | 0                | 0                | 0           | 0           
