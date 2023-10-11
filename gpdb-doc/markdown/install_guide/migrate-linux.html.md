@@ -127,11 +127,11 @@ WHERE
 
 Hash distribution should be verified. [ Greenplum provided tool / steps to identify and perform this step ].
 
-### <a id="os_config"></a>Operating System Configuration Differences
+## <a id="os_config"></a>Operating System Configuration Differences
 
-When you prepare your operating system environment for Greenplum Database software installation, there are different configuration options depending on the version of your operating system. Documentation already exists in the pages [Configuring Your Systems](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/install_guide-prep_os.html) and [Using Resource Groups](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/admin_guide-workload_mgmt_resgroups.html#topic71717999). This section summarizes the main changes to take into consideration when you upgrade from EL 7 to EL 8, regardless of the upgrade method you use.
+When you prepare your operating system environment for Greenplum Database software installation, there are different configuration options depending on the version of your operating system. Documentation already exists in the pages [Configuring Your Systems](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/install_guide-prep_os.html) and [Using Resource Groups](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/admin_guide-workload_mgmt_resgroups.html#topic71717999). This section summarizes the main changes to take into consideration when you upgrade from EL 7 to EL 8 regardless of the upgrade method you use.
 
-#### <a id="xfs"></a>XFS Mount Options
+### <a id="xfs"></a>XFS Mount Options
 
 XFS is the preferred data storage file system on Linux platforms. Use the mount command with the following recommended XFS mount options. The nobarrier option is not supported on EL 8 or Ubuntu systems. Use only the options:
 
@@ -139,7 +139,7 @@ XFS is the preferred data storage file system on Linux platforms. Use the mount 
 rw,nodev,noatime,inode64
 ```
 
-#### <a id="diskio"></a>Disk I/O Settings
+### <a id="diskio"></a>Disk I/O Settings
 
 The Linux disk scheduler orders the I/O requests submitted to a storage device, controlling the way the kernel commits reads and writes to disk. A typical Linux disk I/O scheduler supports multiple access policies. The optimal policy selection depends on the underlying storage infrastructure. 
 
@@ -151,7 +151,7 @@ The Linux disk scheduler orders the I/O requests submitted to a storage device, 
 
 To specify the I/O scheduler at boot time for EL 8 you must either use TuneD or uDev rules. See Redhat documentation for full details: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/setting-the-disk-scheduler_monitoring-and-managing-system-status-and-performance. 
 
-#### <a id="ntp"></a>Synchronizing System Clocks
+### <a id="ntp"></a>Synchronizing System Clocks
 
 You should use NTP (Network Time Protocol) to synchronize the system clocks on all hosts that comprise your Greenplum Database system. See www.ntp.org for more information about NTP.
 
@@ -159,18 +159,26 @@ NTP on the segment hosts should either be configured to use the master host as t
 
 On EL 8, NTP should be configured with the Chorny service. See redhat documentation for full details https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/using-chrony_configuring-basic-system-settings
 
-#### <a id="resgroups"></a>Configuring and Using Resource Groups
+### <a id="resgroups"></a>Configuring and Using Resource Groups
 
 Greenplum Database resource groups use Linux Control Groups (cgroups) to manage CPU resources. Greenplum Database also uses cgroups to manage memory for resource groups for external components. With cgroups, Greenplum isolates the CPU and external component memory usage of your Greenplum processes from other processes on the node. This allows Greenplum to support CPU and external component memory usage restrictions on a per-resource-group basis.
 
-If you are using Redhat 8.x, make sure that you configured the system to mount the cgroups-v1 filesystem by default during system boot by running the following command:
+If you are using Redhat 8.x, make sure that you configured the system to mount the `cgroups-v1` filesystem by default during system boot by running the following command:
 
+```
 stat -fc %T /sys/fs/cgroup/
-For cgroup v1, the output is tmpfs.
-If your output is cgroup2fs, configure the system to mount cgroups-v1 by default during system boot by the systemd system and service manager:
+```
 
+For cgroup v1, the output is `tmpfs`. If your output is `cgroup2fs`, configure the system to mount `cgroups-v1` by default during system boot by the systemd system and service manager:
+
+```
 grubby --update-kernel=/boot/vmlinuz-$(uname -r) --args="systemd.unified_cgroup_hierarchy=0 systemd.legacy_systemd_cgroup_controller"
+```
+
 To add the same parameters to all kernel boot entries:
 
+```
 grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0 systemd.legacy_systemd_cgroup_controller"
+```
+
 Reboot the system for the changes to take effect.
