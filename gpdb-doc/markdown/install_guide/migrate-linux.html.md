@@ -119,7 +119,9 @@ ERROR:  no partition of relation "partition_range_test_2" found for row  (seg1 1
 DETAIL:  Partition key of the failing row contains (date) = ("01").
 ```
 
-Therefore, it is essential to the correct operation of a database that the locale definitions do not change during the lifetime of a database. See the [Postgres Documentation](https://wiki.postgresql.org/wiki/Locale_data_changes) for more details. You must take the following into consideration when planning an upgrade from EL 7 to EL 8:
+Therefore, it is essential to the correct operation of a database that the locale definitions do not change during the lifetime of a database. See the [Postgres Documentation](https://wiki.postgresql.org/wiki/Locale_data_changes) for more details. 
+
+You must take the following into consideration when planning an upgrade from EL 7 to EL 8:
 
 - All indexes involving columns of type `text`, `varchar`, `char`, and `citext` must be reindexed before the database instance is put into production.
 - Range-partitioned tables using those types in the partition key should be checked to verify that all rows are still in the correct partitions.
@@ -132,7 +134,7 @@ The following methods are the currently supported options to perform a major ver
 
 - Using Greenplum Copy Utility to copy from Greenplum on EL 7 to a separate Greenplum on EL 8.
 - Using Greenplum Backup and Restore to copy from Greenplum on EL 7 to a separate Greenplum on EL 8.
-- An in-place, simultaneous upgrade of EL 7 to EL 8 for all Greenplum hosts in a cluster.
+- Using the Leapp utility to perform an in-place, simultaneous upgrade of EL 7 to EL 8 for all Greenplum hosts in a cluster.
 
 ### <a id="gpcopy"></a>Greenplum Copy Utility
 
@@ -143,7 +145,7 @@ This utility is compatible with the Greenplum Database cluster from the source a
 The overall process of this upgrade method consists of:
 
 - Create a new Greenplum cluster on the EL 8 systems with no data.
-- Address any operating system configuration differences.
+- Address any [Operating System Configuration Differences](#os_config).
 - Use `gpcopy` to migrate data from the source Greenplum cluster on EL 7 to the destination Greenplum cluster on EL 8.
 - Remove the source Greenplum cluster from the EL 7 systems.
 
@@ -160,7 +162,7 @@ Greenplum Backup and Restore supports many different options for storage locatio
 The overall process of this upgrade method consists of:
 
 - Create a new Greenplum cluster on the EL 8 systems with no data.
-- Address any operating system configuration differences.
+- Address any [Operating System Configuration Differences](#os_config).
 - Use `gpbackup` to take a full backup of the source Greenplum cluster on EL 7.
 - Restore the backup with `gprestore` to the destination Greenplum cluster on EL 8.
 - Remove the source Greenplum cluster on the EL 7 systems.
@@ -173,7 +175,7 @@ Redhat and Oracle Linux both support options for in-place upgrade of the operati
 
 > **Note** In-Place upgrades with the Leapp utility are not supported with Rocky Linux.
 
-Greenplum Database includes the `upgrade_check.py` which helps you identify and address the main challenges associated with an in-place upgrade from EL 7 to 8.
+Greenplum Database includes the `upgrade_check.py` utility which helps you identify and address the main challenges associated with an in-place upgrade from EL 7 to 8 caused by the `glibc` GNU C library changes.
 
 The overall process of this upgrade method consists of:
 
@@ -195,7 +197,7 @@ python upgrade_check.py precheck-index --out index.out
 python upgrade_check.py precheck-table --out table.out
 ```
 
-Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C Library Changes. The provided information will help you estimate the amount of work required during the upgrade process, as well as the space requirements.
+Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process, as well as the space requirements.
 
 #### <a id="upgrade"></a>Perform the Upgrade
 
