@@ -197,13 +197,11 @@ python upgrade_check.py precheck-table --pre_upgrade --out table.out
 
 You may modify the name of the output files if using more than one database. For example, `index-database_name.out`, `table-database_name.out`.
 
-The command `precheck-index` checks each database for indexes involving columns of type `text`, `varchar`, `char`, and `citext`, and for range-partitioned tables using these types in the partition key. 
+The subcommand `precheck-index` checks each database for indexes involving columns of type `text`, `varchar`, `char`, and `citext`, and the subcommand `precheck-table` checks each database for range-partitioned tables using these types in the partition key. The option `--pre_upgrade` lists the partition tables with the partition key using buil-in collatable types.
 
-**Provide example output**.
+Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process.
 
-Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process, as well as the space requirements.
-
-**Needs further explanation about why we need space requirements**.
+In order to address the issues caused to the range-partitioned tables, the utility recreates the affected tables at a later step. This can result in additional space requirements for your database, so you must account for additional database space.
 
 #### <a id="upgrade"></a>Perform the Upgrade
 
@@ -217,17 +215,23 @@ Once the upgrade is complete, address any [Operating System Configuration Differ
 
 All indexes involving columns of collatable data types (`text`, `varchar`, `char`, and `citext`) must be reindexed before the database instance is put into production. 
 
-Run the post-fix utility to reindex the necessary indexes. Modify the input file name if required.
+Run the `upgrade_check.py` utility with the `migrate` subcommand for each database to reindex the necessary indexes. Modify the input file name if required.
 
 ```
-python upgrade_check.py postfix --input index.out
+python upgrade_check.py migrate --input index.out
 ```
 
 ##### <a id="rangepart"></a>Range-Partitioned Tables
 
 Range-partitioned tables using collatable data types in the partition key must be checked to verify that all rows are still in the correct partitions. 
 
-Use the post-fix utility to **Explain what this command actually does**. Modify the input file name if required.
+First, run the `upgrade_check.py` utility with the `precheck-table` subcommand for each database in order to verify if the rows are still in the correct partitions after the operating system upgrade. Modify the output file name if required.
+
+```
+python upgrade_check.py precheck-table --out table.out
+```
+
+The utility returns the list of range-partitioned tables whose rows have been affected. Run the utility using the `migrate` subcommand for each database to rebuild the partitions that have their rows in an incorrect order after the upgrade. Modify the input file name if required.
 
 ```
 python upgrade_check.py postfix --input table.out
@@ -242,7 +246,7 @@ python upgrade_check.py precheck-index --out index.out
 python upgrade_check.py precheck-table --out table.out
 ```
 
-If the output files are empty, you have successfully addressed all the issues in your Greenplum Database cluster caused by the `glibc` GNU C library changes.
+If the utility returns no indexes or tables, you have successfully addressed all the issues in your Greenplum Database cluster caused by the `glibc` GNU C library changes.
 
 ## <a id="os_config"></a>Operating System Configuration Differences
 
