@@ -123,8 +123,8 @@ Therefore, it is essential to the correct operation of a database that the local
 
 You must take the following into consideration when planning an upgrade from EL 7 to EL 8:
 
-- All indexes involving columns of type `text`, `varchar`, `char`, and `citext` must be reindexed before the database instance is put into production.
-- Range-partitioned tables using those types in the partition key should be checked to verify that all rows are still in the correct partitions.
+- All indexes involving columns of collatable data type, such as `text`, `varchar`, `char`, and `citext`, must be reindexed before the database instance is put into production.
+- Range-partitioned tables using collatable data types in the partition key should be checked to verify that all rows are still in the correct partitions.
 - To avoid downtime due to reindexing or repartitioning, consider upgrading using logical replication instead of an in-place upgrade.
 - Databases or table columns using the `C` or `POSIX` locales are not affected. All other locales are potentially affected.
 
@@ -173,20 +173,18 @@ The advantages of this method are different options for storage locations, and a
 
 Redhat and Oracle Linux both support options for in-place upgrade of the operating system using the Leapp utility. 
 
-> **Note** In-Place upgrades with the Leapp utility are not supported with Rocky Linux.
+> **Note** In-Place upgrades with the Leapp utility are not supported with Rocky Linux. You must use a logical replication method such as Greenplum Copy or Greenplum Backup and Restore instead.
 
 Greenplum Database includes the `upgrade_check.py` utility which helps you identify and address the main challenges associated with an in-place upgrade from EL 7 to 8 caused by the `glibc` GNU C library changes.
 
 The overall process of this upgrade method consists of:
 
-- Run the `upgrade_check.py` utility to perform a pre-check script to get the details (name and size) of any objects that can potentially have data impact from upgrade.
-- Stop the Greenplum cluster.
-- Use Leapp to run an in-place upgrade of the operating system.
+- Run the `upgrade_check.py` utility to perform the pre-check scripts to get the details of any objects that can potentially have data impact from upgrade.
+- Stop the Greenplum cluster and use Leapp to run an in-place upgrade of the operating system.
 - Address any required operating system configuration differences and start the Greenplum cluster.
 - Follow the required steps for fixing the data that is impacted by the `glibc` locale sorting changes.
-- A post-upgrade script will be provided to rewrite the potentially affected objects.
 
-The advantage of this method is that it does not require two different Greenplum clusters. The disadvantages, however, include the risk of performing an in-place operating system upgrade, no downgrade options after any issues, the risk of issues that could leave your cluster in a non-operating state, and it requires additional steps after the upgrade is complete to address the `glibc` changes. You must also plan downtime for your Greenplum database for the entire process.
+The advantage of this method is that it does not require two different Greenplum clusters. The disadvantages are the risk of performing an in-place operating system upgrade, no downgrade options after any issues, the risk of issues that could leave your cluster in a non-operating state, and the requirement of additional steps after the upgrade is complete to address the `glibc` changes. You must also plan downtime of your Greenplum database for the entire process.
 
 #### <a id="precheck"></a>Run the Pre-Check Script
 
@@ -194,10 +192,18 @@ Before you begin with the upgrade, connect to each database in your Greenplum Da
 
 ```
 python upgrade_check.py precheck-index --out index.out
-python upgrade_check.py precheck-table --out table.out
+python upgrade_check.py precheck-table --pre_upgrade --out table.out
 ```
 
+You may modify the name of the output files if using more than one database. For example, `index-database_name.out`, `table-database_name.out`.
+
+The command `precheck-index` checks each database for indexes involving columns of type `text`, `varchar`, `char`, and `citext`, and for range-partitioned tables using these types in the partition key. 
+
+**Provide example output**.
+
 Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process, as well as the space requirements.
+
+**Needs further explanation about why we need space requirements**.
 
 #### <a id="upgrade"></a>Perform the Upgrade
 
@@ -209,57 +215,34 @@ Once the upgrade is complete, address any [Operating System Configuration Differ
 
 ##### <a id="indexes"></a>Indexes
 
-All indexes involving columns of type `text`, `varchar`, `char`, and `citext` must be reindexed before the database instance is put into production. You must reindex all indexes with the [REINDEX](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/ref_guide-sql_commands-REINDEX.html) command.
+All indexes involving columns of collatable data types (`text`, `varchar`, `char`, and `citext`) must be reindexed before the database instance is put into production. 
 
-Use the following query in each database to find out which indexes are affected: **(needed? or provided by pre-check script?)**
+Run the post-fix utility to reindex the necessary indexes. Modify the input file name if required.
 
 ```
-SELECT coll, indexrelid, indrelid::regclass::text, indexrelid::regclass::text, collname, pg_get_indexdef(indexrelid)
-FROM (SELECT indexrelid, indrelid, indcollation[i] coll FROM pg_index, generate_subscripts(indcollation, 1) g(i)) s
-JOIN pg_collation c ON coll=c.oid
-WHERE collname NOT IN ('C', 'POSIX');
+python upgrade_check.py postfix --input index.out
 ```
 
 ##### <a id="rangepart"></a>Range-Partitioned Tables
 
-Range-partitioned tables using those types in the partition key must be checked to verify that all rows are still in the correct partitions. 
+Range-partitioned tables using collatable data types in the partition key must be checked to verify that all rows are still in the correct partitions. 
 
-Use the following query in each database to find out which range-partitioned tables are affected: **(needed? or provided by pre-check script?)**
-
-```
-SELECT
-  coll,
-  attrelid::regclass::text,
-  attname,
-  attnum
-FROM
-  (
-    select
-      t.attcollation coll,
-      t.attrelid,
-      t.attname,
-      t.attnum
-    from
-      pg_partition p
-      join pg_attribute t on p.parrelid = t.attrelid
-      and t.attnum = ANY(p.paratts :: smallint[])
-  ) s
-  JOIN pg_collation c ON coll = c.oid
-WHERE
-  collname NOT IN ('C', 'POSIX');
-```
-
-**Steps on how to fix.**
-
-#### <a id="postfix"></a>Run the Post-Fix Scripts
-
-Run the following command to verify that all required changes in the database have been addressed:
+Use the post-fix utility to **Explain what this command actually does**. Modify the input file name if required.
 
 ```
 python upgrade_check.py postfix --input table.out
 ```
 
-**Need more information about this**
+#### <a id="postfix"></a>Verify the Changes
+
+Run the pre-upgrade scripts again to verify that all required changes in the database have been addressed:
+
+```
+python upgrade_check.py precheck-index --out index.out
+python upgrade_check.py precheck-table --out table.out
+```
+
+If the output files are empty, you have successfully addressed all the issues in your Greenplum Database cluster caused by the `glibc` GNU C library changes.
 
 ## <a id="os_config"></a>Operating System Configuration Differences
 
