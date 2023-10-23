@@ -14,7 +14,7 @@ The GNU C Library, commonly known as `glibc`, is the GNU Project's implementatio
 
 PostgreSQL and Greenplum databases use locale data provided by the operating system’s C library for sorting text. Sorting happens in a variety of contexts, including for user output, merge joins, B-tree indexes, and range partitions. In the latter two cases, sorted data is persisted to disk. If the locale data in the C library changes during the lifetime of a database, the persisted data may become inconsistent with the expected sort order, which could lead to erroneous query results and other incorrect behavior. 
 
-If an index is not sorted in a way that an index scan is expecting it, a query could fail to find data, and an update could insert duplicate data. Similarly, in a partitioned table, a query could look in the wrong partition and an update could write to the wrong partition. For example, a range-partitioned table using default partitions could display the rows in an incorrect order after an upgrade:
+If an index is not sorted in a way that an index scan is expecting it, a query could fail to find data, and an update could insert duplicate data. Similarly, in a partitioned table, a query could look in the wrong partition and an update could write to the wrong partition. A range-partitioned table using default partitions could display the rows in an incorrect order after an upgrade. For example:
 
 ```
 CREATE TABLE partition_range_test_1 (id int, date text) DISTRIBUTED BY (id)
@@ -149,7 +149,7 @@ The overall process of this upgrade method consists of:
 - Use `gpcopy` to migrate data from the source Greenplum cluster on EL 7 to the destination Greenplum cluster on EL 8.
 - Remove the source Greenplum cluster from the EL 7 systems.
 
-The advantages of this method are optimized performance, any migration issues do not impact the source cluster, and that it does not require table locks. The disadvantage of this method is that it requires two separate Greenplum clusters during the migration.
+The advantages of this method are optimized performance, migration issues not impacting the source cluster, and that it does not require table locks. The disadvantage of this method is that it requires two separate Greenplum clusters during the migration.
 
 ### <a id="gpbackup"></a>Greenplum Backup and Restore
 
@@ -167,7 +167,7 @@ The overall process of this upgrade method consists of:
 - Restore the backup with `gprestore` to the destination Greenplum cluster on EL 8.
 - Remove the source Greenplum cluster on the EL 7 systems.
 
-The advantages of this method are different options for storage locations, and any migration issues do not impact the source cluster. The disadvantage of this method is that it requires two separate Greenplum clusters during the migration. It is also generally slower than Greenplum Copy, and it requires table locks to perform a full backup.
+The advantages of this method are different options for storage locations, and migration issues not impacting the source cluster. The disadvantage of this method is that it requires two separate Greenplum clusters during the migration. It is also generally slower than Greenplum Copy, and it requires table locks to perform a full backup.
 
 ### <a id="simultaneous"></a>Simultaneous, In-Place Upgrade
 
@@ -186,6 +186,8 @@ The overall process of this upgrade method consists of:
 
 The advantage of this method is that it does not require two different Greenplum clusters. The disadvantages are the risk of performing an in-place operating system upgrade, no downgrade options after any issues, the risk of issues that could leave your cluster in a non-operating state, and the requirement of additional steps after the upgrade is complete to address the `glibc` changes. You must also plan downtime of your Greenplum database for the entire process.
 
+Continue reading for a detailed list of steps to upgrade your cluster using this method.
+
 #### <a id="precheck"></a>Run the Pre-Check Script
 
 Before you begin with the upgrade, connect to each database in your Greenplum Database cluster, and run the following commands:
@@ -197,7 +199,7 @@ python upgrade_check.py precheck-table --pre_upgrade --out table.out
 
 You may modify the name of the output files if using more than one database. For example, `index-database_name.out`, `table-database_name.out`.
 
-The subcommand `precheck-index` checks each database for indexes involving columns of type `text`, `varchar`, `char`, and `citext`, and the subcommand `precheck-table` checks each database for range-partitioned tables using these types in the partition key. The option `--pre_upgrade` lists the partition tables with the partition key using buil-in collatable types.
+The subcommand `precheck-index` checks each database for indexes involving columns of type `text`, `varchar`, `char`, and `citext`, and the subcommand `precheck-table` checks each database for range-partitioned tables using these types in the partition key. The option `--pre_upgrade` lists the partition tables with the partition key using built-in collatable types.
 
 Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process.
 
@@ -234,23 +236,23 @@ python upgrade_check.py precheck-table --out table.out
 The utility returns the list of range-partitioned tables whose rows have been affected. Run the utility using the `migrate` subcommand for each database to rebuild the partitions that have their rows in an incorrect order after the upgrade. Modify the input file name if required.
 
 ```
-python upgrade_check.py postfix --input table.out
+python upgrade_check.py migrate --input table.out
 ```
 
 #### <a id="postfix"></a>Verify the Changes
 
-Run the pre-upgrade scripts again to verify that all required changes in the database have been addressed:
+Run the pre-upgrade scripts again for each database to verify that all required changes in the database have been addressed.
 
 ```
 python upgrade_check.py precheck-index --out index.out
 python upgrade_check.py precheck-table --out table.out
 ```
 
-If the utility returns no indexes or tables, you have successfully addressed all the issues in your Greenplum Database cluster caused by the `glibc` GNU C library changes.
+If the utility returns no indexes nor tables, you have successfully addressed all the issues in your Greenplum Database cluster caused by the `glibc` GNU C library changes.
 
 ## <a id="os_config"></a>Operating System Configuration Differences
 
-When you prepare your operating system environment for Greenplum Database software installation, there are different configuration options depending on the version of your operating system. Detailed documentation already exists in the pages [Configuring Your Systems](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/install_guide-prep_os.html) and [Using Resource Groups](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/admin_guide-workload_mgmt_resgroups.html#topic71717999). This section summarizes the main differences to take into consideration when you upgrade from EL 7 to EL 8 regardless of the upgrade method you use.
+When you prepare your operating system environment for Greenplum Database software installation, there are different configuration options depending on the version of your operating system. Detailed documentation already exists in the pages [Configuring Your Systems](install_guide-prep_os.html) and [Using Resource Groups](../admin_guide/workload_mgmt_resgroups.html#topic71717999). This section summarizes the main differences to take into consideration when you upgrade from EL 7 to EL 8 regardless of the upgrade method you use.
 
 ### <a id="xfs"></a>XFS Mount Options
 
@@ -276,5 +278,5 @@ You must use NTP (Network Time Protocol) to synchronize the system clocks on all
 
 Greenplum Database resource groups use Linux Control Groups (cgroups) to manage CPU resources. Greenplum Database also uses cgroups to manage memory for resource groups for external components. With cgroups, Greenplum isolates the CPU and external component memory usage of your Greenplum processes from other processes on the node. This allows Greenplum to support CPU and external component memory usage restrictions on a per-resource-group basis.
 
-If you are using Redhat 8.x, make sure that you configured the system to mount the `cgroups-v1` filesystem by default during system boot. See [Using Resource Groups](https://docs.vmware.com/en/VMware-Greenplum/6/greenplum-database/admin_guide-workload_mgmt_resgroups.html#topic71717999) for more details. 
+If you are using Redhat 8.x, make sure that you configured the system to mount the `cgroups-v1` filesystem by default during system boot. See [Using Resource Groups](../admin_guide/workload_mgmt_resgroups.html#topic71717999) for more details. 
 
