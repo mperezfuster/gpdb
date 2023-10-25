@@ -1087,7 +1087,7 @@ communication. In these cases, you must configure this parameter to use a wildca
 
 ## <a id="gp_interconnect_cursor_ic_table_size"></a>gp_interconnect_cursor_ic_table_size
 
-Specifies the size of the Cursor History Table for UDP interconnect. You may increase it if running a user-defined function which contains many concurrent cursor queries hangs. The default value is 128.
+Specifies the size of the Cursor History Table for UDP interconnect. Although it is not usually necessary, you may increase it if running a user-defined function which contains many concurrent cursor queries hangs. The default value is 128.
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
