@@ -140,6 +140,8 @@ Views available in the `diskquota` module include:
 -   [diskquota.hard\_limit](#hardlimit) -  Activates or deactivates  the hard limit enforcement of disk usage.
 -   [diskquota.max\_workers](#maxworkers) -  Specifies the maximum number of diskquota worker processes that may be running at any one time.
 -   [diskquota.max\_table\_segments](#maxtableseg) -  Specifies the maximum number of *table segments* in the cluster.
+-   [diskquota.max_quota_probes](#maxquotaprobes) - Specifies the maximum number of of quota probes pre-allocated at the cluster level.
+-   [diskquota.max_monitored_databases](#maxmonitoreddatabases) - Specifies the maximum number of database that the module can monitor.
 
 You use the `gpconfig` command to set these parameters in the same way that you would set any Greenplum Database server configuration parameter.
 
@@ -193,6 +195,23 @@ A Greenplum table \(including a partitioned table’s child tables\) is distribu
 
 The runtime value of `diskquota.max_table_segments` equals the maximum number of tables multiplied by \(number\_of\_segments + 1\). The default value is `10 * 1024 * 1024`.
 
+### <a id="maxquotaprobes"></a>Specifying the Maximum Number of Quota Probes
+
+The `diskquota.max_quota_probes` server configuration parameter specifies the number of quota probes allowed at the cluster level. `diskquota` requires thousands of probes to collect different quota usage in the cluster, and each quota probe is only used to monitor a specific quota usage, such as how much disk space a role uses on a certain tablespace in a certain database. Even if you do not define the corresponding disk quota, the corresponding probe runs in the background.  
+
+You may calculate the number of maximum active probes for a database using the following formula:
+
+```
+role_num * database_num + schema_num + role_num * tablespace_num * database_num + schema_num * tablespace_num
+```
+
+where `role_num` is the number of roles in the cluster, `tablespace_number` is the number of tablespaces in the cluster, and `schema_num` is the total number of schemas in all databases. 
+
+You must set `diskquota.max_quota_probes` to a number greater than the calculated maximum number of active quota probes: the higher the value, the more memory is used. The memory used by the probes can be calculated as `diskquota.max_quota_probes*48` (in bytes). The default value of `diskquota.max_quota_probes` is `1048576`, which means that the memory used by the probes by default is `1048576 * 48`, which is approximately 50MB. 
+
+### <a id="maxmonitoreddatabases"></a>Specifying the Maximum Number of Databases
+
+The `diskquota.max_monitored_databases` server configuration parameter specifies the maximum number of databases that can be monitored by `diskquota`. The default value is 50 and the maximum value is 1024.  
 
 ## <a id="using"></a>Using the diskquota Module 
 
