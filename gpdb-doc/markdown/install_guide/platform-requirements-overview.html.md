@@ -10,7 +10,7 @@ Greenplum Database 7 runs on the following operating system platforms:
 -   Oracle Linux 64-bit 8.7 or later, using the Red Hat Compatible Kernel \(RHCK\)
 -   Rocky Linux 8.7 or later
 
-> **Note** If you use endpoint security software on your Greenplum Database hosts, it may affect your database performance and stability. See [About Endpoint Security Sofware](../security-guide/topics/preface.html.md) for more information.
+> **Note** If you use endpoint security software on your Greenplum Database hosts, it may affect your database performance and stability. See [About Endpoint Security Sofware](../security-guide/topics/preface.html#endpoint_security) for more information.
 
 > **Caution** A kernel issue in Red Hat Enterprise Linux 8.5 and 8.6 can cause I/O freezes and synchronization problems with XFS filesystems. This issue is fixed in RHEL 8.7. See [RHEL8: xfs_buf deadlock between inode deletion and block allocation](https://access.redhat.com/solutions/6984334).
 

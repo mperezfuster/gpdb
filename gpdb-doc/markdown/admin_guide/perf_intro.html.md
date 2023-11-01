@@ -22,7 +22,7 @@ Several key performance factors influence database performance. Understanding th
 
 Database performance relies heavily on disk I/O and memory usage. To accurately set performance expectations, you need to know the baseline performance of the hardware on which your DBMS is deployed. Performance of hardware components such as CPUs, hard disks, disk controllers, RAM, and network interfaces will significantly affect how fast your database performs.
 
-> **Note** If you use endpoint security software on your Greenplum Database hosts, it may affect your database performance and stability. See [About Endpoint Security Sofware](../security-guide/topics/preface.html.md) for more information.
+> **Note** If you use endpoint security software on your Greenplum Database hosts, it may affect your database performance and stability. See [About Endpoint Security Sofware](../security-guide/topics/preface.html#endpoint_security) for more information.
 
 ### <a id="topic4"></a>Workload 
 
