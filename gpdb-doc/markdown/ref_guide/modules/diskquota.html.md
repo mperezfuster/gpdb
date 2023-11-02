@@ -197,9 +197,9 @@ The runtime value of `diskquota.max_table_segments` equals the maximum number of
 
 ### <a id="maxquotaprobes"></a>Specifying the Maximum Number of Quota Probes
 
-The `diskquota.max_quota_probes` server configuration parameter specifies the number of quota probes allowed at the cluster level. `diskquota` requires thousands of probes to collect different quota usage in the cluster, and each quota probe is only used to monitor a specific quota usage, such as how much disk space a role uses on a certain tablespace in a certain database. Even if you do not define the corresponding disk quota, the corresponding probe runs in the background.  
+The `diskquota.max_quota_probes` server configuration parameter specifies the number of quota probes allowed at the cluster level. `diskquota` requires thousands of probes to collect different quota usage in the cluster, and each quota probe is only used to monitor a specific quota usage, such as how much disk space a role uses on a certain tablespace in a certain database. Even if you do not define its corresponding disk quota rule, its corresponding quota probe runs in the background. For example, if you have 100 roles in a cluster, but you only defined disk quota rules for 10 of the roles' disk usage, Greenplum still requires quota probes for the 100 roles in the cluster.
 
-You may calculate the number of maximum active probes for a database using the following formula:
+You may calculate the number of maximum active probes for a cluster using the following formula:
 
 ```
 role_num * database_num + schema_num + role_num * tablespace_num * database_num + schema_num * tablespace_num
@@ -207,7 +207,7 @@ role_num * database_num + schema_num + role_num * tablespace_num * database_num 
 
 where `role_num` is the number of roles in the cluster, `tablespace_number` is the number of tablespaces in the cluster, and `schema_num` is the total number of schemas in all databases. 
 
-You must set `diskquota.max_quota_probes` to a number greater than the calculated maximum number of active quota probes: the higher the value, the more memory is used. The memory used by the probes can be calculated as `diskquota.max_quota_probes*48` (in bytes). The default value of `diskquota.max_quota_probes` is `1048576`, which means that the memory used by the probes by default is `1048576 * 48`, which is approximately 50MB. 
+You must set `diskquota.max_quota_probes` to a number greater than the calculated maximum number of active quota probes: the higher the value, the more memory is used. The memory used by the probes can be calculated as `diskquota.max_quota_probes * 48` (in bytes). The default value of `diskquota.max_quota_probes` is `1048576`, which means that the memory used by the probes by default is `1048576 * 48`, which is approximately 50MB. 
 
 ### <a id="maxmonitoreddatabases"></a>Specifying the Maximum Number of Databases
 
@@ -465,7 +465,7 @@ The `diskquota` module has the following limitations and known issues:
 
 ## <a id="topic_sfb_gb1_b3b"></a>Notes 
 
-The `diskquota` module can detect a newly created table inside of an uncommitted transaction. The size of the new table is included in the disk usage calculated for the corresponding schema or role. Hard limit enforcement of disk usage must enabled for a quota-exceeding operation to trigger a `quota exceeded` error in this scenario.
+The `diskquota` module can detect a newly created table inside of an uncommitted transaction. The size of the new table is included in the disk usage calculated for its corresponding schema or role. Hard limit enforcement of disk usage must enabled for a quota-exceeding operation to trigger a `quota exceeded` error in this scenario.
 
 Deleting rows or running `VACUUM` on a table does not release disk space, so these operations cannot alone remove a schema or role from the `diskquota` denylist. The disk space used by a table can be reduced by running `VACUUM FULL` or `TRUNCATE TABLE`.
 
