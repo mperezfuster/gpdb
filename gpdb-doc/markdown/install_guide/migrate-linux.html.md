@@ -10,67 +10,78 @@ Major version upgrades of Linux operating systems are always a complex task in a
 
 ## <a id="glib"></a>About the glibc GNU C Library Changes
 
-The GNU C Library, commonly known as `glibc`, is the GNU Project's implementation of the C standard library. Between EL 7 and 8, the version of `glibc` changes from 2.17 to 2.28. This is a major change that impacts many languages and their collation. The collation of a database specifies how to sort and compare strings of character data. A change in sorting for common languages can have a significant impact on PostgreSQL and Greenplum databases.
+The GNU C Library, commonly known as `glibc`, is the GNU Project's implementation of the C standard library. Between EL 7 and 8, the version of `glibc` changes from 2.17 to 2.28. This is a major change that impacts many languages and their collations. The collation of a database specifies how to sort and compare strings of character data. A change in sorting for common languages can have a significant impact on PostgreSQL and Greenplum databases.
 
 PostgreSQL and Greenplum databases use locale data provided by the operating system’s C library for sorting text. Sorting happens in a variety of contexts, including for user output, merge joins, B-tree indexes, and range partitions. In the latter two cases, sorted data is persisted to disk. If the locale data in the C library changes during the lifetime of a database, the persisted data may become inconsistent with the expected sort order, which could lead to erroneous query results and other incorrect behavior. 
 
 If an index is not sorted in a way that an index scan is expecting it, a query could fail to find data, and an update could insert duplicate data. Similarly, in a partitioned table, a query could look in the wrong partition and an update could write to the wrong partition. A range-partitioned table using default partitions could display the rows in an incorrect order after an upgrade. For example:
 
 ```
-CREATE TABLE partition_range_test_1 (id int, date text) DISTRIBUTED BY (id)
+CREATE TABLE partition_range_test_3(id int, date text) DISTRIBUTED BY (id)
 PARTITION BY RANGE (date)
-      (PARTITION feb START ( '02') INCLUSIVE ,
-      PARTITION Mar START ( '03') INCLUSIVE,
-      DEFAULT partition others);
+      (
+        PARTITION jan START ('01') INCLUSIVE,
+        PARTITION feb START ('"02"') INCLUSIVE,
+        PARTITION mar START ('"03"') INCLUSIVE );
 
-INSERT into partition_range_test_1 VALUES (1, '01'), (1, '"01"'), (2, '"02"'), (2, '02'), (3, '03'), (3, '"03"'), (4, '04'), (4, '"04"');
+INSERT INTO partition_range_test_3 VALUES (1, '01'), (1, '"01"'), (1, '"02"'), (1, '02'), (1, '03'), (1, '"03"'), (1, '04'), (1, '"04"');
 ```
 
 Results for EL 7:
 
 ```
-# SELECT * FROM partition_range_test_1 ORDER BY date;
-id | date
+# SELECT * FROM partition_range_test_3 ORDER BY date;
+ id | date
+----+------
+  1 | "01"
+  1 | 01
+  1 | "02"
+  1 | 02
+  1 | "03"
+  1 | 03
+  1 | "04"
+  1 | 04
+(8 rows)
+
+# SELECT * FROM partition_range_test_3_1_prt_jan;
+ id | date
 ----+------
   1 | 01
   1 | "01"
-  2 | 02
-  2 | "02"
-  3 | 03
-  3 | "03"
-  4 | 04
-  4 | "04"
-(8 rows)
+  1 | 02
+(3 rows)
 
-# SELECT * FROM partition_range_test_1_1_prt_feb;
+# SELECT * FROM partition_range_test_3_1_prt_feb;
  id | date
 ----+------
-  2 | "02"
-  2 | 02
+  1 | "02"
+  1 | 03
 (2 rows)
 ```
 
 After upgrading to EL 8:
 
 ```
-# SELECT * FROM partition_range_test_1 ORDER BY date;
+# SELECT * FROM partition_range_test_3 WHERE date='03';
  id | date
 ----+------
-  1 | "01"
-  1 | 01
-  2 | "02"
-  2 | 02
-  3 | "03"
-  3 | 03
-  4 | "04"
-  4 | 04
-(8 rows)
+(0 rows)
 
-# SELECT * FROM partition_range_test_1_1_prt_feb;
+=# EXPLAIN SELECT * FROM partition_range_test_3 WHERE date='03';
+                                           QUERY PLAN
+------------------------------------------------------------------------------------------------
+ Gather Motion 4:1  (slice1; segments: 4)  (cost=0.00..720.00 rows=50 width=36)
+   ->  Append  (cost=0.00..720.00 rows=13 width=36)
+         ->  Seq Scan on partition_range_test_3_1_prt_mar  (cost=0.00..720.00 rows=13 width=36)
+               Filter: (date = '03'::text)
+ Optimizer: Postgres query optimizer
+(5 rows)
+
+# SELECT * FROM partition_range_test_3_1_prt_feb;
  id | date
 ----+------
-  2 | 02
-  3 | "03"
+  1 | "02"
+  1 | 03
 (2 rows)
 ```
 
@@ -125,7 +136,7 @@ You must take the following into consideration when planning an upgrade from EL 
 
 - All indexes involving columns of collatable data type, such as `text`, `varchar`, `char`, and `citext`, must be reindexed before the database instance is put into production.
 - Range-partitioned tables using collatable data types in the partition key should be checked to verify that all rows are still in the correct partitions.
-- To avoid downtime due to reindexing or repartitioning, consider upgrading using logical replication instead of an in-place upgrade.
+- To avoid downtime due to reindexing or repartitioning, consider upgrading using Greenplum Copy or Greenplum Backup and Restore instead.
 - Databases or table columns using the `C` or `POSIX` locales are not affected. All other locales are potentially affected.
 
 ## <a id="methods"></a>Upgrade Methods
@@ -173,7 +184,7 @@ The advantages of this method are different options for storage locations, and m
 
 Redhat and Oracle Linux both support options for in-place upgrade of the operating system using the Leapp utility. 
 
-> **Note** In-Place upgrades with the Leapp utility are not supported with Rocky Linux. You must use a logical replication method such as Greenplum Copy or Greenplum Backup and Restore instead.
+> **Note** In-Place upgrades with the Leapp utility are not supported with Rocky Linux. You must use Greenplum Copy or Greenplum Backup and Restore instead.
 
 Greenplum Database includes the `upgrade_check.py` utility which helps you identify and address the main challenges associated with an in-place upgrade from EL 7 to 8 caused by the `glibc` GNU C library changes.
 
@@ -201,7 +212,7 @@ The subcommand `precheck-index` checks each database for indexes involving colum
 
 Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process.
 
-In order to address the issues caused to the range-partitioned tables, the utility recreates the affected tables at a later step. This can result in additional space requirements for your database, so you must account for additional database space.
+In order to address the issues caused to the range-partitioned tables, the utility rebuilds the affected tables at a later step. This can result in additional space requirements for your database, so you must account for additional database space.
 
 #### <a id="upgrade"></a>Perform the Upgrade
 
