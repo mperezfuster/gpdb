@@ -199,6 +199,8 @@ The advantage of this method is that it does not require two different Greenplum
 
 Continue reading for a detailed list of steps to upgrade your cluster using this method.
 
+> **Important** We recommend you take a backup of your cluster before proceeding with this method, as you will not be able to recover the database if the upgrade does not complete successfully.
+
 #### <a id="precheck"></a>Run the Pre-Check Script
 
 Before you begin the upgrade, run the following commands:
