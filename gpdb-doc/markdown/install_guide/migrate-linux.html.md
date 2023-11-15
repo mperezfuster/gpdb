@@ -2,19 +2,21 @@
 title: Migrating VMware Greenplum from Enterprise Linux 7 to 8
 ---
 
-Use this procedure to migrate a VMware Greenplum Database installation from Enterprise Linux version 7 to Enterprise Linux 8, while maintaining your existing version of Greenplum Database.
+Use this procedure to migrate a VMware Greenplum Database installation from Enterprise Linux (EL) version 7 to Enterprise Linux 8, while maintaining your existing version of Greenplum Database.
 
 Enterprise Linux includes CentOS, Rocky, Redhat (RHEL), and Oracle Linux (OEL) as the variants supported by Greenplum. See [Platform Requirements](platform-requirements-overview.md.hbs) for a list of the supported operating systems.
 
-Major version upgrades of Linux operating systems are always a complex task in a Greenplum environment. You must weigh the risks of the different upgrade methods versus not upgrading at all, as well as consider the impact of the required downtime.
+Major version upgrades of Linux operating systems are always a complex task in a Greenplum environment. You must weigh the risks of the different upgrade methods, as well as consider the impact of the required downtime.
 
-## <a id="glib"></a>About the glibc GNU C Library Changes
+## <a id="glib"></a>Important Upgrade Considerations
 
 The GNU C Library, commonly known as `glibc`, is the GNU Project's implementation of the C standard library. Between EL 7 and 8, the version of `glibc` changes from 2.17 to 2.28. This is a major change that impacts many languages and their collations. The collation of a database specifies how to sort and compare strings of character data. A change in sorting for common languages can have a significant impact on PostgreSQL and Greenplum databases.
 
 PostgreSQL and Greenplum databases use locale data provided by the operating system’s C library for sorting text. Sorting happens in a variety of contexts, including for user output, merge joins, B-tree indexes, and range partitions. In the latter two cases, sorted data is persisted to disk. If the locale data in the C library changes during the lifetime of a database, the persisted data may become inconsistent with the expected sort order, which could lead to erroneous query results and other incorrect behavior. 
 
-If an index is not sorted in a way that an index scan is expecting it, a query could fail to find data, and an update could insert duplicate data. Similarly, in a partitioned table, a query could look in the wrong partition and an update could write to the wrong partition. A range-partitioned table using default partitions could display the rows in an incorrect order after an upgrade. For example:
+If an index is not sorted in a way that an index scan is expecting it, a query could fail to find data, and an update could insert duplicate data. Similarly, in a partitioned table, a query could look in the wrong partition and an update could write to the wrong partition. It is essential to the correct operation of a database that you are aware of and understand any locale definition changes. Below are examples of the impact from locale changes in an EL 7 to EL 8 upgrade:
+
+**Example 1** A range-partitioned table using default partitions displaying the rows in an incorrect order after an upgrade:
 
 ```
 CREATE TABLE partition_range_test_3(id int, date text) DISTRIBUTED BY (id)
@@ -85,7 +87,7 @@ After upgrading to EL 8:
 (2 rows)
 ```
 
-A range-partitioned table not using a default partition could encounter errors after the upgrade to EL 8. For example:
+**Example 2** A range-partitioned table not using a default partition encountering errors after the upgrade.
 
 ```
 CREATE TABLE partition_range_test_2 (id int, date text) DISTRIBUTED BY (id)
@@ -130,8 +132,6 @@ ERROR:  no partition of relation "partition_range_test_2" found for row  (seg1 1
 DETAIL:  Partition key of the failing row contains (date) = ("01").
 ```
 
-Therefore, it is essential to the correct operation of a database that the locale definitions do not change during the lifetime of a database. See the [Postgres Documentation](https://wiki.postgresql.org/wiki/Locale_data_changes) for more details. 
-
 You must take the following into consideration when planning an upgrade from EL 7 to EL 8:
 
 - All indexes involving columns of collatable data type, such as `text`, `varchar`, `char`, and `citext`, must be reindexed before the database instance is put into production.
@@ -155,7 +155,7 @@ This utility is compatible with the Greenplum Database cluster from the source a
 
 As part of the overall process of this upgrade method, you:
 
-- Create a new Greenplum cluster on the EL 8 systems with no data.
+- Create a new Greenplum cluster using EL 8 with no data.
 - Address any [Operating System Configuration Differences](#os_config).
 - Use `gpcopy` to migrate data from the source Greenplum cluster on EL 7 to the destination Greenplum cluster on EL 8. You must disable the option `-parallelize-leaf-partitions` to ensure that partitioned tables are copied as one single table based on the root partition. 
 - Remove the source Greenplum cluster from the EL 7 systems.
@@ -184,7 +184,7 @@ The advantages of this method are different options for storage locations, and m
 
 Redhat and Oracle Linux both support options for in-place upgrade of the operating system using the Leapp utility. 
 
-> **Note** In-Place upgrades with the Leapp utility are not supported with Rocky Linux. You must use Greenplum Copy or Greenplum Backup and Restore instead.
+> **Note** In-Place upgrades with the Leapp utility are not supported with Rocky or CentOS Linux. You must use Greenplum Copy or Greenplum Backup and Restore instead.
 
 Greenplum Database includes the `upgrade_check.py` utility which helps you identify and address the main challenges associated with an in-place upgrade from EL 7 to 8 caused by the `glibc` GNU C library changes.
 
@@ -193,13 +193,13 @@ As part of the overall process of this upgrade method, you:
 - Run the `upgrade_check.py` utility to perform pre-check scripts, these scripts report information on any objects whose data the upgrade might affect.
 - Stop the Greenplum cluster and use Leapp to run an in-place upgrade of the operating system.
 - Address any required operating system configuration differences and start the Greenplum cluster.
-- Follow the required steps for fixing the data that is impacted by the `glibc` locale sorting changes.
+- Follow the required steps given by the `upgrade_check.py` utility for fixing the data that is impacted by the `glibc` locale sorting changes.
 
 The advantage of this method is that it does not require two different Greenplum clusters. The disadvantages are the risk of performing an in-place operating system upgrade, no downgrade options after any issues, the risk of issues that could leave your cluster in a non-operating state, and the requirement of additional steps after the upgrade is complete to address the `glibc` changes. You must also plan downtime of your Greenplum database for the entire process.
 
 Continue reading for a detailed list of steps to upgrade your cluster using this method.
 
-> **Important** We recommend you take a backup of your cluster before proceeding with this method, as you will not be able to recover the database if the upgrade does not complete successfully.
+> **Important** We recommend you take a backup of your cluster before proceeding with this method, as you will not be able to recover the database if the upgrade does not complete successfully. You may also be prepared to contact your operating system vendor for any issues encountered with the Leapp utility.
 
 #### <a id="precheck"></a>Run the Pre-Check Script
 
