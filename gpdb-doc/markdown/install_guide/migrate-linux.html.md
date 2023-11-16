@@ -136,7 +136,7 @@ You must take the following into consideration when planning an upgrade from EL 
 
 - When using an in-place upgrade method, all indexes involving columns of collatable data type, such as `text`, `varchar`, `char`, and `citext`, must be reindexed before the database instance is put into production.
 - - When using an in-place upgrade method, range-partitioned tables using collatable data types in the partition key should be checked to verify that all rows are still in the correct partitions.
-- To avoid downtime due to reindexing or repartitioning, consider upgrading using Greenplum Copy or Greenplum Backup and Restore instead.
+- To avoid downtime due to reindexing or repartitioning, consider upgrading using Greenplum Copy or Greenplum Backup and Restore instead of an in-place upgrade.
 - Databases or table columns using the `C` or `POSIX` locales are not affected. All other locales are potentially affected.
 
 ## <a id="methods"></a>Upgrade Methods
