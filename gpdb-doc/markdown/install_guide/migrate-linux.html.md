@@ -151,7 +151,7 @@ The following methods are the currently supported options to perform a major ver
 
 The [Greenplum Copy Utility](https://docs.vmware.com/en/VMware-Greenplum-Data-Copy-Utility/index.html) is a utility for transferring data between databases in different Greenplum Database systems. 
 
-This utility is compatible with the Greenplum Database cluster from the source and destination running on different operating systems, including EL 7 to EL 8. The `glibc` changes are not relevant for the most part of this migration method because the data is rewritten to disk on the new cluster, which addresses any locale sorting changes. However, since Greenplum Copy enables the option `-parallelize-leaf-partitions` by default, which copies the leaf partition tables of a partitioned table in parallel, it may lead to data being copied to an incorrect partition caused by the `glibc` changes. You must disable this option so that the table is copied as one single table based on the root partition table. 
+This utility is compatible with the Greenplum Database cluster from the source and destination running on different operating systems, including EL 7 to EL 8. The `glibc` changes are not relevant for this migration method because the data is rewritten on copy to the target cluster, which addresses any locale sorting changes. However, since Greenplum Copy enables the option `-parallelize-leaf-partitions` by default, which copies the leaf partition tables of a partitioned table in parallel, it may lead to data being copied to an incorrect partition caused by the `glibc` changes. You must disable this option so that the table is copied as one single table based on the root partition table. 
 
 As part of the overall process of this upgrade method, you:
 
