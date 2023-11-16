@@ -144,7 +144,7 @@ You must take the following into consideration when planning an upgrade from EL 
 The following methods are the currently supported options to perform a major version upgrade from EL 7 to EL 8 with Greenplum Database.
 
 - Using Greenplum Copy Utility to copy from Greenplum on EL 7 to a separate Greenplum on EL 8.
-- Using Greenplum Backup and Restore to copy from Greenplum on EL 7 to a separate Greenplum on EL 8.
+- Using Greenplum Backup and Restore to restore a backup taken from Greenplum on EL 7 to a separate Greenplum on EL 8.
 - Using the Leapp utility to perform an in-place, simultaneous upgrade of EL 7 to EL 8 for all Greenplum hosts in a cluster.
 
 ### <a id="gpcopy"></a>Greenplum Copy Utility
