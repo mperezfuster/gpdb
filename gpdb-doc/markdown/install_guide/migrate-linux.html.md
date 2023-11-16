@@ -145,7 +145,7 @@ The following methods are the currently supported options to perform a major ver
 
 - Using Greenplum Copy Utility to copy from Greenplum on EL 7 to a separate Greenplum on EL 8.
 - Using Greenplum Backup and Restore to restore a backup taken from Greenplum on EL 7 to a separate Greenplum on EL 8.
-- Using the Leapp utility to perform an in-place, simultaneous upgrade of EL 7 to EL 8 for all Greenplum hosts in a cluster.
+- Using operating system vendor supported utilities, such as `leapp` to perform an in-place, simultaneous upgrade of EL 7 to EL 8 for all Greenplum hosts in a cluster then following the required post upgrade steps.
 
 ### <a id="gpcopy"></a>Greenplum Copy Utility
 
