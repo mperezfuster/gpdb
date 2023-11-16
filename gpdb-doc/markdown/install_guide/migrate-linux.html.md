@@ -146,7 +146,7 @@ The following methods are the currently supported options to perform a major ver
 - Using Greenplum Copy Utility to copy from Greenplum on EL 7 to a separate Greenplum on EL 8.
 - Using Greenplum Backup and Restore to restore a backup taken from Greenplum on EL 7 to a separate Greenplum on EL 8.
 - Using operating system vendor supported utilities, such as `leapp` to perform an in-place, simultaneous upgrade of EL 7 to EL 8 for all Greenplum hosts in a cluster then following the required post upgrade steps.
-
+Greenplum does not support a rolling upgrade, such that some Greenplum Segment Hosts are operating with EL 7 and others with EL 8. All Segment Hosts must be upgraded together or otherwise before Greenplum is started and workload continued after an upgrade. ```
 ### <a id="gpcopy"></a>Greenplum Copy Utility
 
 The [Greenplum Copy Utility](https://docs.vmware.com/en/VMware-Greenplum-Data-Copy-Utility/index.html) is a utility for transferring data between databases in different Greenplum Database systems. 
