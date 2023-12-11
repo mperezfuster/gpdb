@@ -43,6 +43,9 @@ The `gpstate` utility displays information about a running Greenplum Database in
 
         > **Note** `gpstate -e`does not display segment pairs that are in sync.
 
+
+        > **Note** You must have `rsync` version 3.1.x or higher installed in order to view the tracking information for segments undergoing a differential recovery.
+
     -   Whether any primary-mirror segment pairs are not in their preferred roles.
 
 -f \(show standby coordinator details\)
