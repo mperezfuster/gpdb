@@ -195,7 +195,7 @@ auth_hba_file = hba_bouncer_for_ldap.conf
 
 #### <a id="pgb_ldap_encrypt_passwd"></a>About Specifying an Encrypted LDAP Password
 
-Starting in Greenplum Database version 6.26, PgBouncer supports encrypted LDAP passwords. To utilize an encrypted LDAP password with PgBouncer, you must:
+Starting in Greenplum Database version 7.1, PgBouncer supports encrypted LDAP passwords. To utilize an encrypted LDAP password with PgBouncer, you must:
 
 - Place the encrypted password in the `${HOME}/.ldapbindpass` file.
 - Specify `ldapbindpasswd="$bindpasswd"` in the HBA-based authentication file for PgBouncer.
