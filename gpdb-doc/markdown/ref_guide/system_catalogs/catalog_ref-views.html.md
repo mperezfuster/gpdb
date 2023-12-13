@@ -36,6 +36,7 @@ Greenplum Database provides the following system views:
 -   [gp_stat_progress_cluster](#gp_stat_progress_cluster)
 -   [gp_stat_progress_copy](#gp_stat_progress_copy)
 -   [gp_stat_progress_create_index](#gp_stat_progress_create_index)
+-   [gp_stat_progress_dtx_recovery](#gp_stat_progress_dtx_recovery)
 -   [gp_stat_progress_vacuum](#gp_stat_progress_vacuum)
 -   [gp_stat_replication](#gp_stat_replication)
 -   [gp_stat_resqueues](#gp_stat_resqueues)
@@ -100,6 +101,7 @@ For more information on summary views, see [Summary Views](#summary_views), belo
 - gp_stat_progress_cluster_summary
 - gp_stat_progress_copy_summary
 - gp_stat_progress_create_index_summary
+- gp_stat_progress_dtx_recovery
 - gp_stat_progress_vacuum_summary
 - gp_stat_slru_summary
 - gp_stat_sys_indexes_summary
@@ -835,6 +837,18 @@ The `gp_stat_progress_create_index_summary` view aggregates across the Greenplum
 | `tuples_done` | bigint | Number of tuples already processed in the current phase. |
 | `partitions_total` | bigint | When creating an index on a partitioned table, this column is set to the total number of partitions on which the index is to be created. This field is 0 during a `REINDEX`. |
 | `partitions_done` | bigint | When creating an index on a partitioned table, this column is set to the number of partitions on which the index has been completed. This field is 0 during a `REINDEX`. |
+
+### <a id="gp_stat_progress_dtx_recovery"></a>gp_stat_progress_dtx_recovery
+
+The `gp_stat_progress_dtx_recovery` view is a cluster-wide view that displays the progress of the routine to recover distributed transactions.
+
+|Column|Type|Description|
+|------|----|-----------|
+|`phase`|text | Status of the recovery. The possible values are: 'initializing', 'recovering commited distributed transactions', 'gathering in-doubt transactions', 'aborting in-doubt transactions', 'gathering in-doubt orphaned transactions', and 'managing in-doubt orphaned transactions'.|
+|`recover_commited_dtx_total`|integer| Total number of commited transactions found to recover.|
+|`recover_commited_dtx_completed`|integer| Total number of in-doubt transaction found, used in startup and non-startup phases.|
+|`in_doubt_tx_in_progress`|integer| Number of in-progress, in-doubt transactions. Its value is always 0 for startup.|
+|`in_doubt_tx_aborted`|integer| Number of aborted in-doubt transactions.|
 
 ### <a id="gp_stat_progress_vacuum"></a>gp_stat_progress_vacuum
 
