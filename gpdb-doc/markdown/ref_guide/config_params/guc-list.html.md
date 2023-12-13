@@ -2031,7 +2031,7 @@ When you specify the value as an absolute path outside the data directory, Green
 
 |Value Range|Default|Set Classifications|
 |-----------|-------|-------------------|
-|String|log|coordinator, system, restart, superuser|
+|String|log|coordinator, system, reload, superuser|
 
 ## <a id="log_disconnections"></a>log\_disconnections 
 
