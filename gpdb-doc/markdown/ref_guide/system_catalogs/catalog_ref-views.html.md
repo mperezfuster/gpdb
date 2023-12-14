@@ -840,7 +840,9 @@ The `gp_stat_progress_create_index_summary` view aggregates across the Greenplum
 
 ### <a id="gp_stat_progress_dtx_recovery"></a>gp_stat_progress_dtx_recovery
 
-The `gp_stat_progress_dtx_recovery` view is a cluster-wide view that displays the progress of the routine to recover distributed transactions.
+The `gp_stat_progress_dtx_recovery` view is a cluster-wide view that displays the progress of the Distributed Transaction (DTX) Recovery process, which runs in the backgroup during Postgres startup. 
+
+This view may be useful if a coordinator restart remains in a recovery state for a long time. Greenplum will not accept connections until all "in-doubt" transactions are resolved. In-doubt transactions are transactions that have been prepared but not committed yet. If there were many transactions running before the coordinator restarted, the recovery of the database may take longer than expected, and you may use this view to monitor the current phase of the recovery. Note that in this scenario, as Greenplum is still starting up, you will need to access the database in utility mode to check this view.
 
 |Column|Type|Description|
 |------|----|-----------|
