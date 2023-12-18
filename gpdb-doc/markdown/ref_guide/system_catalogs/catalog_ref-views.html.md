@@ -850,7 +850,7 @@ This view may be useful if a coordinator restart remains in a recovery state for
 |`recover_commited_dtx_total`|integer| Total number of committed transactions found to recover.|
 |`recover_commited_dtx_completed`|integer| Number of committed transactions that have been recovered.| 
 | in_doubt_tx_total`|integer| Total number of in-doubt transaction found, used in startup and non-startup phases.|
-|`in_doubt_tx_in_progress`|integer| Number of in-progress, in-doubt transactions. Its value is always 0 for startup.|
+|`in_doubt_tx_in_progress`|integer| Number of in-progress, in-doubt transactions.|
 |`in_doubt_tx_aborted`|integer| Number of aborted in-doubt transactions.|
 
 ### <a id="gp_stat_progress_vacuum"></a>gp_stat_progress_vacuum
