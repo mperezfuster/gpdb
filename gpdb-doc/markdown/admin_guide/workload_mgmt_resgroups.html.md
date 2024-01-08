@@ -6,8 +6,6 @@ You use resource groups to manage and protect the resource allocation of CPU, me
 
 When you assign a resource group to a role, the resource limits that you define for the group apply to all of the roles to which you assign the group. For example, the memory limit for a resource group identifies the maximum memory usage for all running transactions submitted by Greenplum Database users in all roles to which you assign the group.
 
-Similarly, when you assign a resource group to an external component, the group limits apply to all running instances of the component. For example, if you create a resource group for a PL/Container external component, the memory limit that you define for the group specifies the maximum memory usage for all running instances of each PL/Container runtime to which you assign the group.
-
 Greenplum Database uses Linux-based control groups for CPU resource management, and Runaway Detector for statistics, tracking and management of memory. 
 
 When using resource groups to control resources like CPU cores, review the Hyperthreading note in [Hardware and Network](../install_guide/platform-requirements-overview.html#hardware-requirements).
@@ -330,7 +328,7 @@ Since resource groups manually manage cgroup files, the above settings will beco
    Delegate=yes
    Slice=-.slice
 
-   set hierarchies only if cgroup v2 mounted
+   # set hierarchies only if cgroup v2 mounted
    ExecCondition=bash -c '[ xcgroup2fs = x$(stat -fc "%%T" /sys/fs/cgroup) ] || exit 1'
    ExecStartPre=bash -ec " \
    chown -R gpadmin:gpadmin .; \
