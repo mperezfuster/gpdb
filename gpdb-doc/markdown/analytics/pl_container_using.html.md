@@ -18,10 +18,10 @@ PL/Container manages resource usage at two levels - the container level and the 
 
 You cannot, by default, restrict the number of running PL/Container container instances, nor can you restrict the total amount of memory or CPU resources that they consume.
 
-Resource groups for external components such as PL/Container use Linux control groups \(cgroups\) to manage component-level use of memory and CPU resources. 
+Resource groups for external components such as PL/Container use Linux control groups \(cgroups\) to manage component-level use of CPU resources. 
 
 ```
-CREATE RESOURCE GROUP plpy_run1_rg WITH (CONCURRENCY=10, CPU_MAX_PERCENT=10, MEMORY_LIMIT=10);
+CREATE RESOURCE GROUP plpy_run1_rg WITH (CONCURRENCY=10, CPU_MAX_PERCENT=10);
 ```
 
 You can create one or more resource groups to manage your running PL/Container instances. After you create a resource group for PL/Container, you assign the resource group to one or more PL/Container runtimes. You make this assignment using the `groupid` of the resource group. You can determine the `groupid` for a given resource group name from the `gp_resgroup_config` `gp_toolkit` view. For example, the following query displays the `groupid` of a resource group named `plpy_run1_rg`:
@@ -44,7 +44,7 @@ plcontainer runtime-add -r python_run1 -i pivotaldata/plcontainer_python_shared:
 
 You can also assign a resource group to a PL/Container runtime using the `plcontainer runtime-edit` command. For information about the `plcontainer` command, see [plcontainer](../utility_guide/ref/plcontainer.html) reference page.
 
-After you assign a resource group to a PL/Container runtime, all container instances that share the same runtime configuration are subject to the CPU limit that you configured for the group. If you decrease the memory limit of a PL/Container resource group, queries running in containers in the group may fail with an out of memory error. If you drop a PL/Container resource group while there are running container instances, Greenplum Database terminates the running containers.
+After you assign a resource group to a PL/Container runtime, all container instances that share the same runtime configuration are subject to the CPU limit that you configured for the group. If you drop a PL/Container resource group while there are running container instances, Greenplum Database terminates the running containers.
 
 ### <a id="topic_resgroupcfg"></a>Configuring Resource Groups for PL/Container 
 
