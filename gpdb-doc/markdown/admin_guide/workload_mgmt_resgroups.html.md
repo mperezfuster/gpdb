@@ -312,12 +312,12 @@ You may encounter the error `Invalid argument` after running the above commands.
     ```
 Since resource groups manually manage cgroup files, the above settings will become ineffective after a system reboot. Add the following bash script for systemd so it runs automatically during system startup. Perform the following steps as user root:
 
-1. Create `gpdb-service`.
+1. Create `gpdb.service`.
    ```
    vim /etc/systemd/system/gpdb.service 
    ```
 
-2. Write the following content into `gpdb-service`, if the user is not `gpadmin`, replace it with the appropriate user.
+2. Write the following content into `gpdb.service`, if the user is not `gpadmin`, replace it with the appropriate user.
 
    ```
    [Unit]
