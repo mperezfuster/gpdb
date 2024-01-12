@@ -166,38 +166,16 @@ where
 - `task` is the objective of the experiment: `regression`, `classification` or `cluster`.
 - `relation_name` is the Postgres table or view where the training data is stored or defined.
 - `y_column_name` is the name of the label column in the training table.
-- `algorithm` is the algorithm to train on the dataset, see the task specific pages for available algorithms: [regression](#pgml_train_algorithms_regression), [classification](#pgml_train_algorithms_classification), [clustering](#pgml_train_algorithms_clustering).
+- `algorithm` is the algorithm to train on the dataset, the available algorithms are `regression`, `classification`, and `clustering`.
 - `hyperparams` are the hyperparameters to pass to the algorithm for training, JSON formatted.
-- `search` indicates, if set, whether or not PostgresML performs a hyperparameter search to find the best hyperparameters for the algorithm. See [Hyperparameter Search](#pgml_train_hyperparameter) for details.
+- `search` indicates, if set, whether or not PostgresML performs a hyperparameter search to find the best hyperparameters for the algorithm. 
 - `search_params` are the search parameters used in the `hyperparameter` search, using the scikit-learn notation, JSON formatted.
 - `search_args` are the configuration parameters for the `search`, JSON formatted. Currently only `n_iter` is supported for `random` search.
 - `test_size` is the fraction of the dataset to use for the test set and algorithm validation.
 - `test_sampling` is the algorithm used to fetch test data from the dataset: `random`, `first`, or `last`.
-- `preprocess` are the preprocessing steps to impute NULLS, encode categoricals and scale inputs. See [Data Pre-Processing](#pgml_train_datapreproc) for details.
+- `preprocess` are the preprocessing steps to impute NULLS, encode categoricals and scale inputs. 
 
-#### <a id="pgml_train_algorithms"></a>Algorithms
-
-##### <a id="pgml_train_algorithms_regression"></a>Regression
-
-PostgresML currently supports regression algorithms from [scikit-learn](https://scikit-learn.org/), [XGBoost](https://xgboost.readthedocs.io/), [LightGBM](https://lightgbm.readthedocs.io/) and [Catboost](https://catboost.ai/).
-
-##### <a id="pgml_train_algorithms_classification"></a>Classification
-
-This technique assigns new observations to categorical labels or classes based on a model built from labeled training data.
-
-##### <a id="pgml_train_algorithms_clustering"></a>Clustering
-
-You can train models using `pgml.train` on unlabeled data to identify groups within the data. To build clusters on a given dataset, you can use the table or a view. Since clustering is an unsupervised algorithm, you do not need a column that represents a label as one of the inputs to `pgml.train`.
-
-#### <a id="pgml_train_hyperparameter"></a>Hyperparameter Search
-
-You can further refine the models by using hyperparameter search and cross validation. PostgresML currently supports `random` and `grid` search algorithms, and `k-fold` cross validation.
-
-#### <a id="pgml_train_datapreproc"></a>Data Pre-Processing
-
-The training function also provides the option to pre-process data with the `preprocess` parameter. You can configure the pre-processors on a per-column basis for the training data set. There are currently three types of preprocessing available, for both categorical and quantitative variables. Below is a brief example for training data to learn a model of whether we should carry an umbrella or not.
-
-Preprocessing steps are saved after training, and repeated identically for future calls to `pgml.predict()`.
+For more information about the available algorithms, hyperparameter search, and data pre-processing, visit the official [PostgresML Documentation](https://postgresml.org/docs/introduction/apis/sql-extensions/pgml.train/).
 
 ## <a id="Example"></a>Example
 
