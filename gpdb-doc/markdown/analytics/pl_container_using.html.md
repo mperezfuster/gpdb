@@ -468,7 +468,7 @@ For information about the `pg.spi` methods, see [http://www.joeconway.com/plr/do
 
 ## <a id="remote_container"></a>Configuring a Remote PL/Container
 
-You may configure an additional host outside your Greenplum cluster to use as a remote container host. The PL/Container workload can be dispatched to this host for execution and it wil return the results. This results in a reduced computing overload of the Greenplum hosts.
+You may configure one or more hosts outside your Greenplum cluster to use as a remote container host. The PL/Container workload can be dispatched to this host for execution and it will return the results, reducing the computing overload of the Greenplum hosts.
 
 ### <a id="prereq"></a>Prerequisites
 
@@ -478,7 +478,7 @@ You may configure an additional host outside your Greenplum cluster to use as a 
 
 ### <a id="setup_host"></a>Configure the Remote Host
 
-Install docker on the remote machine, this step may vary depending on your operating system. For example, for RHEL 7:
+Install docker on the remote host. This step may vary depending on your operating system. For example, for RHEL 7:
 
 ```
 sudo yum install -y yum-utils 
@@ -503,34 +503,41 @@ ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375
 sudo systemctl restart docker 
 ```
 
-Set up the remote host. This example assumes that you have created the `gpadmin` user, enabled password-less ssh access, and that `python3` and `rsync` are installed.
+Set up the remote host. This example assumes that you have created the `gpadmin` user, enabled password-less ssh access, and that `python3` and `rsync` are installed in the remote host.
 
 ```
 ssh gpadmin@<remoteip> "sudo mkdir $GPHOME && sudo chown gpadmin:gpadmin $GPHOME"  
-plcontainer remote-setup --hosts <host ip 1, host ip 2, host ip 3> 
 ```
 
-This operation copies the client directory from the current host to the remote host.
+From the Greenplum coordinator, copy the `plcontainer` client to the remote host.
+
+```
+plcontainer remote-setup --hosts <remoteip>
+```
+
+If you are configuring multiple hosts, you may run the command against multiple remote hosts:
+
+```
+plcontainer remote-setup --hosts <remoteip_1>, <remoteip_2>, <remoteip_3>
+```
 
 ### <a id="loading"></a>Load the Docker Image to the Remote Host
 
-```
-plcontainer image-add --hosts <host ip 1, host ip 2, host ip 3> -f <the image file> 
-```
-
-Or 
+From the coordinator host, load the Docker image into the remote host. You may run the command against multiple remote hosts:
 
 ```
-docker save <the image name> | plcontainer image-load –hosts <host ip 1, host ip 2, host ip 3>  /dev/stdin 
+plcontainer image-add --hosts <remoteip_1>, <remoteip_2>, <remoteip_3> -f <image_file> 
 ```
 
 ### <a id="backend"></a>Configure a Backend Node
 
-Add a new <backend> node. And modify the address and port. 
+Run the following command from the coordinator host:
 
 ```
 plcontainer runtime-edit 
 ```
+
+This command provides the PL/Container configuration XML file. Add the backend section, as depicted in the below example, specifying the remote host IP address and port. Then edit the existing runtime section to use the newly added backend. 
 
 ```
 <?xml version="1.0" ?> 
@@ -549,9 +556,11 @@ plcontainer runtime-edit
 </configuration> 
 ```
 
+If you are using multiple remote hosts, you must create separate backend sections. Because you can only set one backend per runtime, you must also create a separate runtime section per backend.
+
 ### <a id="verify"></a>Verify the Configuration
 
-Run from the `psql` command prompt:
+Run the following from the `psql` command line:
 
 ```
 CREATE FUNCTION dummyPython() RETURNS text AS $$ 
@@ -562,4 +571,5 @@ $$ LANGUAGE plcontainer;
 SELECT * from dummyPython() 
 ```
 
-The function is now running on the remote host.
+If the function runs successfully, it is running on the remote host.
+
