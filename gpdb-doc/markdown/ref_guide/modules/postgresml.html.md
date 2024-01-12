@@ -72,10 +72,11 @@ in **every** database in which you registered/use the extension.
 
 The `postgresml` extension currently supports just a subset of all of the user-defined functions provided by PostgresML. They are these three:
 
-- `pgml.load_dataset()`: Loads a dataset into tables in VMware Greenplum using the `INSERT` SQL command. Read more about loading data [here](https://postgresml.org/docs/guides/machine-learning/natural-language-processing/).
-- `pgml.embed()` - Generates an embedding for the dataset. Read more about PostgresML embeddings [here](https://postgresml.org/docs/guides/machine-learning/natural-language-processing/embeddings). 
-- `pgml.transform()`: Applies a pre-trained transformer to process data. Read more about PostgresML pre-trained models [here](https://postgresml.org/docs/guides/machine-learning/natural-language-processing/).
-- `pgml.train()`: Handles different training tasks which are configurable with the function parameters.
+- `pgml.load_dataset()`: Loads a dataset into tables in VMware Greenplum using the `INSERT` SQL command. Read more about loading data [here](https://postgresml.org/docs/use-cases/natural-language-processing).
+- `pgml.embed()` - Generates an embedding for the dataset. Read more about PostgresML embeddings [here](https://postgresml.org/docs/use-cases/embeddings/). 
+- `pgml.transform()`: Applies a pre-trained transformer to process data. Read more about PostgresML pre-trained models [here](https://postgresml.org/docs/use-cases/natural-language-processing).
+- `pgml.train()`: Handles different training tasks which are configurable with the function parameters. Read more about supervised learning [here](https://postgresml.org/docs/use-cases/supervised-learning).
+- `pgml.predict()`: Provides online predictions using the best, automatically deployed model for a project. Read more about supervised learning [here](https://postgresml.org/docs/use-cases/supervised-learning).
 
 VMware anticipates adding support for the additional PostgresML functions in future releases. 
 
@@ -163,7 +164,7 @@ pgml.train(
 where
 
 - `project_name` is an easily recognizable identifier to organize your work.
-- `task` is the objective of the experiment: `regression`, `classification` or `cluster`.
+- `task` is the objective of the experiment: `regression`, `classification`, or `cluster`.
 - `relation_name` is the Postgres table or view where the training data is stored or defined.
 - `y_column_name` is the name of the label column in the training table.
 - `algorithm` is the algorithm to train on the dataset, the available algorithms are `regression`, `classification`, and `clustering`.
@@ -177,7 +178,23 @@ where
 
 For more information about the available algorithms, hyperparameter search, and data pre-processing, visit the official [PostgresML Documentation](https://postgresml.org/docs/introduction/apis/sql-extensions/pgml.train/).
 
-## <a id="Example"></a>Example
+### <a id="pgml_predict"></a>pgml.predict()
+
+#### Syntax
+
+```
+select pgml.predict (
+    project_name TEXT,
+    features REAL[]
+)
+```
+
+where
+
+- `project_name` is the project name used to train models in [pgml.train()](#pgml.train).
+- `features` is an aggregate of feature vectors used to predict novel data points
+
+## <a id="Example"></a>Examples
 
 The following example:
 
@@ -217,3 +234,35 @@ SELECT pgml.transform(
     ] 
 ) AS french; 
 ```
+
+The following example:
+
+1. Obtains training data.
+2. Trains a model.
+3. Performs a prediction.
+
+```
+# Obtain training data from a dataset
+
+SELECT * FROM pgml.load_dataset('digits');
+SELECT target, image
+FROM pgml.digits LIMIT 5;
+
+# Train a model using an algorithm using the default linear algorithm 
+
+SELECT * FROM pgml.train(
+'Handwritten Digit Image Classifier',
+'classification',
+'pgml.digits',
+'target'
+);
+
+# Predict
+
+SELECT
+target,
+pgml.predict('Handwritten Digit Image Classifier', image) AS prediction
+FROM pgml.digits
+LIMIT 10;
+```
+
