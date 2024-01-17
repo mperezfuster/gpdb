@@ -90,7 +90,7 @@ user
 :   If the `user=` parameter is not set, PgBouncer attempts to log in to the destination database with the user name passed by the client. In this situation, there will be one pool for each user who connects to the database.
 
 password
-: If no password is specified here, the password from the `auth_file` or `auth_query` will be used.
+:   If no password is specified here, the password from the `auth_file` or `auth_query` will be used.
 
 auth\_user
 :   Override of the global `auth_user` setting, if specified.
@@ -872,7 +872,7 @@ REVOKE ALL ON FUNCTION pgbouncer.user_lookup(text) FROM public, pgbouncer;
 GRANT EXECUTE ON FUNCTION pgbouncer.user_lookup(text) TO pgbouncer;
 ```
 
-Example configuration for 2 peered PgBouncer processes to create a multi-core PgBouncer setup using `so_reuseport`. The configuration for the first process is:
+Example configuration for two peered PgBouncer processes to create a multi-core PgBouncer setup using `so_reuseport`. The configuration for the first process is:
 
 ```
 [databases]

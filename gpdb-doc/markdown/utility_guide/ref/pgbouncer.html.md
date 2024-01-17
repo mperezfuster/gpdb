@@ -45,12 +45,11 @@ For additional information about PgBouncer, refer to the [PgBouncer FAQ](https:/
 :   To stop a PgBouncer process that was started as a daemon, issue the `SHUTDOWN` command from the PgBouncer administration console.
 
 -R \| --reboot
-
-    >  **Note** This option is deprecated. Instead, use a rolling restart with multiple Pgbouncer processes listening on the same port using `so_reuseport` instead.
-
 :   Restart PgBouncer using the specified command line arguments. That means connecting to the running process, loading the open sockets from it, and then using them. If there is no active process, boot normally. Non-TLS connections to databases are maintained during restart; TLS connections are dropped.
 
 :   To restart PgBouncer as a daemon, specify the options `-Rd`.
+
+    >  **Note** This option is deprecated. Instead, use a rolling restart with multiple Pgbouncer processes listening on the same port using `so_reuseport` instead.
 
     > **Note** Restart is available only if the operating system supports Unix sockets and the PgBouncer `unix_socket_dir` configuration is not deactivated.
 
@@ -60,7 +59,7 @@ For additional information about PgBouncer, refer to the [PgBouncer FAQ](https:/
 -v \| --verbose
 :   Increase message verbosity. Can be specified multiple times.
 
-\{-u \| --user=\}\<username\>
+\{-u \| --user=\} \<username\>
 :   Assume the identity of username on PgBouncer process start-up.
 
 -V \| --version
