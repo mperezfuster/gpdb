@@ -877,33 +877,17 @@ Example configuration for two peered PgBouncer processes to create a multi-core 
 ```
 [databases]
 postgres = host=localhost dbname=postgres
-​
+
 [peers]
 1 = host=/tmp/pgbouncer1
 2 = host=/tmp/pgbouncer2
-​
+
 [pgbouncer]
 listen_addr=127.0.0.1
 auth_file=auth_file.conf
 so_reuseport=1
 unix_socket_dir=/tmp/pgbouncer1
 peer_id=1
-The config for the second process:
-
-[databases]
-postgres = host=localhost dbname=postgres
-​
-[peers]
-1 = host=/tmp/pgbouncer1
-2 = host=/tmp/pgbouncer2
-​
-[pgbouncer]
-listen_addr=127.0.0.1
-auth_file=auth_file.conf
-so_reuseport=1
-; only unix_socket_dir and peer_id are different
-unix_socket_dir=/tmp/pgbouncer2
-peer_id=2
 ```
 
 The configuration for the second process is:
