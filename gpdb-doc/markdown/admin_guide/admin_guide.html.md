@@ -1,7 +1,7 @@
 ---
 title: Greenplum Database Administrator Guide 
 ---
-
+.
 Information about configuring, managing and monitoring Greenplum Database installations, and administering, monitoring, and working with databases. The guide also contains information about Greenplum Database architecture and concepts such as parallel processing.
 
 -   **[Greenplum Database Concepts](intro/partI.html)**  
