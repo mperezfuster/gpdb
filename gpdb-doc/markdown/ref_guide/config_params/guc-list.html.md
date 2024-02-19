@@ -938,6 +938,14 @@ Specifies the executing interval \(in seconds\) of the global deadlock detector 
 |-----------|-------|-------------------|
 |5 - `INT_MAX` secs|120 secs|master, system, reload|
 
+## <a id="gp_keep_partition_children_locks"></a>gp_keep_partition_children_locks
+
+Maintains the relation locks on append-optimized partition leaves that are taken during query planning.
+
+|Value Range|Default|Set Classifications|
+|-----------|-------|-------------------|
+|Boolean|false|master, session, reload|
+
 ## <a id="gp_log_endpoints"></a>gp\_log\_endpoints
 
 Controls the amount of parallel retrieve cursor endpoint detail that Greenplum Database writes to the server log file.
