@@ -24,10 +24,6 @@ ALTER EXTENSION q3c UPDATE TO '2.0.1';
 
 in **every** database in which you registered/use the extension.
 
-## <a id="topic_info"></a>Module Documentation
+## <a id="topic_docs"></a>Module Documentation
 
 Refer to the [q3c github documentation](https://github.com/segasai/q3c/blob/master/README.md) for detailed information about using the module.
-
-~                        
-
-
