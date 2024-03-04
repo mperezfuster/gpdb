@@ -147,7 +147,7 @@ The following methods are the currently supported options to perform a major ver
 - Using Greenplum Backup and Restore to restore a backup taken from Greenplum on EL 7 to a separate Greenplum on EL 8 or EL 9.
 - Using operating system vendor supported utilities, such as `leapp` to perform an in-place, simultaneous upgrade of EL 7 to EL 8 or EL 9 for all Greenplum hosts in a cluster then following the required post upgrade steps.
 
-> *Note* Greenplum does not support a rolling upgrade, such that some Greenplum Segment Hosts are operating with EL 7 and others with EL 8 or EL 9. All Segment Hosts must be upgraded together or otherwise before Greenplum is started and workload continued after an upgrade.
+> **Note** Greenplum does not support a rolling upgrade, such that some Greenplum Segment Hosts are operating with EL 7 and others with EL 8 or EL 9. All Segment Hosts must be upgraded together or otherwise before Greenplum is started and workload continued after an upgrade.
 
 ### <a id="gpcopy"></a>Greenplum Copy Utility
 
@@ -211,7 +211,12 @@ Before you begin the upgrade, run the following commands:
 python el8_migrate_locale.py precheck-index --out index.out
 python el8_migrate_locale.py precheck-table --pre_upgrade --out table.out
 ```
+
 The subcommand `precheck-index` checks each database for indexes involving columns of type `text`, `varchar`, `char`, and `citext`, and the subcommand `precheck-table` checks each database for range-partitioned tables using these types in the partition key. The option `--pre_upgrade` lists the partition tables with the partition key using built-in collatable types.
+
+Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process before you perform the OS upgrade.
+
+ Note that the `--pre_upgrade` option only reports tables based on the metadata available. We recommend you use the `precheck-table` option before the OS upgrade, and run it again without the `--pre_upgrade` option after the OS upgrade has completed, in order to verify the table data in the partition key. This will return the exact tables that you need to address, which can be the same or a subset of the tables reported before the upgrade. 
 
 These two script commands will effectively execute the following queries on each database within the cluster:
 
@@ -266,10 +271,59 @@ FROM
 WHERE
   collname NOT IN ('C', 'POSIX');
 ```
+,
 
-Examine the output files to identify which indexes and range-partitioned tables are affected by the `glibc` GNU C library changes. The provided information will help you estimate the amount of work required during the upgrade process.
+In the following example, the `precheck-table` subcommand with the `--pre_upgrade` option before the OS upgrade returns that there are 6 affected tables:
 
-In order to address the issues caused to the range-partitioned tables, the utility rebuilds the affected tables at a later step. This can result in additional space requirements for your database, so you must account for additional database space.
+```
+$ python el8_migrate_locale.py precheck-table --pre_upgrade --out table_pre_upgrade.out
+2023-10-18 08:04:06,907 - INFO - There are 6 partitioned tables in database testupgrade that should be checked when doing OS upgrade from EL7->EL8.
+2023-10-18 08:04:06,947 - WARNING - no default partition for testupgrade.partition_range_test_3
+2023-10-18 08:04:06,984 - WARNING - no default partition for testupgrade.partition_range_test_ao
+2023-10-18 08:04:07,021 - WARNING - no default partition for testupgrade.partition_range_test_2
+2023-10-18 08:04:07,100 - WARNING - no default partition for testupgrade.root
+---------------------------------------------
+total partition tables size  : 416 KB
+total partition tables       : 6
+total leaf partitions        : 19
+---------------------------------------------
+```
+
+However, after the upgrade, it only reports 2 tables, which is the most accurate output.
+
+```
+$ python el8_migrate_locale.py precheck-table --out table.out
+2023-10-16 04:12:19,064 - WARNING - There are 2 tables in database test that the distribution key is using custom operator class, should be checked when doing OS upgrade from EL7->EL8.
+---------------------------------------------
+tablename | distclass
+('testdiskey', 16397)
+('testupgrade.test_citext', 16454)
+---------------------------------------------
+2023-10-16 04:12:19,064 - INFO - There are 6 partitioned tables in database testupgrade that should be checked when doing OS upgrade from EL7->EL8.
+2023-10-16 04:12:19,066 - INFO - worker[0]: begin:
+2023-10-16 04:12:19,066 - INFO - worker[0]: connect to <testupgrade> ...
+2023-10-16 04:12:19,110 - INFO - start checking table testupgrade.partition_range_test_3_1_prt_mar ...
+2023-10-16 04:12:19,162 - INFO - check table testupgrade.partition_range_test_3_1_prt_mar OK.
+2023-10-16 04:12:19,162 - INFO - start checking table testupgrade.partition_range_test_3_1_prt_feb ...
+2023-10-16 04:12:19,574 - INFO - check table testupgrade.partition_range_test_3_1_prt_feb error out: ERROR:  trying to insert row into wrong partition  (seg1 10.0.138.96:20001 pid=3975)
+DETAIL:  Expected partition: partition_range_test_3_1_prt_mar, provided partition: partition_range_test_3_1_prt_feb.
+
+2023-10-16 04:12:19,575 - INFO - start checking table testupgrade.partition_range_test_3_1_prt_jan ...
+2023-10-16 04:12:19,762 - INFO - check table testupgrade.partition_range_test_3_1_prt_jan error out: ERROR:  trying to insert row into wrong partition  (seg1 10.0.138.96:20001 pid=3975)
+DETAIL:  Expected partition: partition_range_test_3_1_prt_feb, provided partition: partition_range_test_3_1_prt_jan.
+
+2023-10-16 04:12:19,804 - WARNING - no default partition for testupgrade.partition_range_test_3
+...
+2023-10-16 04:12:22,058 - INFO - Current progress: have 0 remaining, 2.77 seconds passed.
+2023-10-16 04:12:22,058 - INFO - worker[0]: finish.
+---------------------------------------------
+total partition tables size  : 416 KB
+total partition tables       : 6
+total leaf partitions        : 19
+---------------------------------------------
+```
+
+In order to address the issues caused to the range-partitioned tables, the utility rebuilds the affected tables at a later step. This can result in additional space requirements for your database, so you must account for the additional database space reported by the `precheck-index` subcommand.
 
 #### <a id="upgrade"></a>Perform the Upgrade
 
