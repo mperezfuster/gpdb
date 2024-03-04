@@ -11,13 +11,17 @@ The `pg_cron` module is installed when you install Greenplum Database. Before yo
 You can only install the `pg_cron` module in one database per Greenplum cluster. First, set the database where you want `pg_cron` to create its metadata tables, by default it uses the `postgres` database. In order to change it, run the following command and restart Greenplum Database:
 
 ```
-gpconfig -c cron.database_name -v 'db_name'
+gpconfig -c cron.database_name -v 'db_name' --skipvalidation
 ```
 
-Enable the extension as a preloaded library. First, check if there are any preloaded shared libraries by running the following command:
+Enable the extension as a preloaded library. First, check if there are any preloaded shared libraries by running the `gpconfig` command. The following example shows that the `auto_explain` libraries are already enabled for the cluster:
 
 ```
 gpconfig -s shared_preload_libraries
+Values on all segments are consistent
+GUC              : shared_preload_libraries
+Coordinator value: auto_explain
+Segment     value: auto_explain
 ```
 
 Use the output of the above command to enable the `pg_cron` module, along any other shared libraries, and restart Greenplum Database:
