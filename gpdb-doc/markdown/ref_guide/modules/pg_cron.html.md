@@ -94,7 +94,7 @@ SELECT cron.schedule_in_database('weekly-vacuum', '0 4 * * 0', 'VACUUM', 'some_o
 > **Important** Since the `TRIGGER` statement is not supported in Greenplum, if a user runs an `UPDATE` or `INSERT` statement, or manually deletes any of the cron jobs instead of using the UDFs in the `cron` schema, you must run the following UDF to update the `pg_cron` cache:
 >
 > ```
-> SELECT cron_reload_job();
+> SELECT cron.reload_job();
 > ```
 
 ## <a id="topic_docs"></a>Module Documentation
