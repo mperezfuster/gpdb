@@ -218,53 +218,45 @@ Examine the output files to identify which indexes and range-partitioned tables 
 
 Note that the `--pre_upgrade` option only reports tables based on the metadata available. We recommend that you use the `precheck-table` subcommand with the `--pre_upgrade` option before the OS upgrade to get an estimate, and run it again without the `--pre_upgrade` option after the OS upgrade has completed, in order to verify the exact tables that you need to address, which can be the same or a subset of the tables reported before the upgrade. 
 
-For example, the `precheck-table` subcommand with the `--pre_upgrade` option before the OS upgrade reports that there are 6 affected tables:
+For example, the `precheck-table` subcommand with the `--pre_upgrade` option before the OS upgrade reports that there are 2 affected tables:
 
 ```
 $ python el8_migrate_locale.py precheck-table --pre_upgrade --out table_pre_upgrade.out
-2023-10-18 08:04:06,907 - INFO - There are 6 partitioned tables in database testupgrade that should be checked when doing OS upgrade from EL7->EL8.
-2023-10-18 08:04:06,947 - WARNING - no default partition for testupgrade.partition_range_test_3
-2023-10-18 08:04:06,984 - WARNING - no default partition for testupgrade.partition_range_test_ao
-2023-10-18 08:04:07,021 - WARNING - no default partition for testupgrade.partition_range_test_2
-2023-10-18 08:04:07,100 - WARNING - no default partition for testupgrade.root
+2024-03-05 07:48:57,527 - WARNING - There are 2 range partitioning tables with partition key in collate types(like varchar, char, text) in database testupgrade, these tables might be affected due to Glibc upgrade and should be checked when doing OS upgrade from EL7 to EL8.
+2024-03-05 07:48:57,558 - WARNING - no default partition for testupgrade.normal
 ---------------------------------------------
-total partition tables size  : 416 KB
-total partition tables       : 6
-total leaf partitions        : 19
+total partition tables size  : 128 KB
+total partition tables       : 2
+total leaf partitions        : 4
 ---------------------------------------------
 ```
 
-However, after the upgrade, it only reports 2 tables, which is the most accurate output.
+However, after the upgrade, it only reports 1 table, which is the most accurate output.
 
 ```
 $ python el8_migrate_locale.py precheck-table --out table.out
-2023-10-16 04:12:19,064 - WARNING - There are 2 tables in database test that the distribution key is using custom operator class, should be checked when doing OS upgrade from EL7->EL8.
----------------------------------------------
-tablename | distclass
-('testdiskey', 16397)
-('testupgrade.test_citext', 16454)
----------------------------------------------
-2023-10-16 04:12:19,064 - INFO - There are 6 partitioned tables in database testupgrade that should be checked when doing OS upgrade from EL7->EL8.
-2023-10-16 04:12:19,066 - INFO - worker[0]: begin:
-2023-10-16 04:12:19,066 - INFO - worker[0]: connect to <testupgrade> ...
-2023-10-16 04:12:19,110 - INFO - start checking table testupgrade.partition_range_test_3_1_prt_mar ...
-2023-10-16 04:12:19,162 - INFO - check table testupgrade.partition_range_test_3_1_prt_mar OK.
-2023-10-16 04:12:19,162 - INFO - start checking table testupgrade.partition_range_test_3_1_prt_feb ...
-2023-10-16 04:12:19,574 - INFO - check table testupgrade.partition_range_test_3_1_prt_feb error out: ERROR:  trying to insert row into wrong partition  (seg1 10.0.138.96:20001 pid=3975)
-DETAIL:  Expected partition: partition_range_test_3_1_prt_mar, provided partition: partition_range_test_3_1_prt_feb.
+2024-03-05 07:49:23,940 - WARNING - There are 2 range partitioning tables with partition key in collate types(like varchar, char, text) in database testupgrade, these tables might be affected due to Glibc upgrade and should be checked when doing OS upgrade from EL7 to EL8.
+2024-03-05 07:49:23,941 - INFO - worker[0]: begin:
+2024-03-05 07:49:23,941 - INFO - worker[0]: connect to <testupgrade> ...
+2024-03-05 07:49:23,973 - INFO - start checking table testupgrade.normal_1_prt_1 ...
+2024-03-05 07:49:23,999 - INFO - check table testupgrade.normal_1_prt_1 OK.
+2024-03-05 07:49:24,000 - INFO - Current progress: have 1 remaining, 0.06 seconds passed.
+2024-03-05 07:49:24,007 - INFO - start checking table testupgrade.partition_range_test_1_1_prt_mar ...
+2024-03-05 07:49:24,171 - INFO - check table testupgrade.partition_range_test_1_1_prt_mar error out: ERROR:  trying to insert row into wrong partition  (seg0 10.0.138.21:20000 pid=4204)
+DETAIL:  Expected partition: partition_range_test_1_1_prt_feb, provided partition: partition_range_test_1_1_prt_mar.
 
-2023-10-16 04:12:19,575 - INFO - start checking table testupgrade.partition_range_test_3_1_prt_jan ...
-2023-10-16 04:12:19,762 - INFO - check table testupgrade.partition_range_test_3_1_prt_jan error out: ERROR:  trying to insert row into wrong partition  (seg1 10.0.138.96:20001 pid=3975)
-DETAIL:  Expected partition: partition_range_test_3_1_prt_feb, provided partition: partition_range_test_3_1_prt_jan.
+2024-03-05 07:49:24,171 - INFO - start checking table testupgrade.partition_range_test_1_1_prt_feb ...
+2024-03-05 07:49:24,338 - INFO - check table testupgrade.partition_range_test_1_1_prt_feb error out: ERROR:  trying to insert row into wrong partition  (seg3 10.0.138.20:20001 pid=4208)
+DETAIL:  Expected partition: partition_range_test_1_1_prt_others, provided partition: partition_range_test_1_1_prt_feb.
 
-2023-10-16 04:12:19,804 - WARNING - no default partition for testupgrade.partition_range_test_3
-...
-2023-10-16 04:12:22,058 - INFO - Current progress: have 0 remaining, 2.77 seconds passed.
-2023-10-16 04:12:22,058 - INFO - worker[0]: finish.
+2024-03-05 07:49:24,338 - INFO - start checking table testupgrade.partition_range_test_1_1_prt_others ...
+2024-03-05 07:49:24,349 - INFO - check table testupgrade.partition_range_test_1_1_prt_others OK.
+2024-03-05 07:49:24,382 - INFO - Current progress: have 0 remaining, 0.44 seconds passed.
+2024-03-05 07:49:24,383 - INFO - worker[0]: finish.
 ---------------------------------------------
-total partition tables size  : 416 KB
-total partition tables       : 6
-total leaf partitions        : 19
+total partition tables size  : 96 KB
+total partition tables       : 1
+total leaf partitions        : 3
 ---------------------------------------------
 ```
 
